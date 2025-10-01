@@ -17,3 +17,14 @@ General public who are effected by the system - this can be directly (e.g. peopl
 Legislators (for example, with an interest in GDPR and data privacy) 
 
 
+# Team Members
+
+Name | Email 
+--- | --- 
+Alex Hetherington | ss24495@bristol.ac.uk
+--- | ---
+Morgan Parry | vi24348@bristol.ac.uk
+--- | ---
+Freddie De Bruyn | ii24783@bristol.ac.uk
+--- | ---
+Euan Chan | AH24354@bristol.ac.uk
