@@ -2,10 +2,10 @@
 
 ## Contents
 * [Project overview](#project-overview)
-* [Technology Stack](#technology-stack)
 * [Client Information](#client-information)
 * [Stakeholders](#stakeholders)
 * [User Stories](#user-stories)
+* [Technology Stack](#technology-stack)
 * [Project Structure](#project-structure)
 * [Architecture Diagram](#architecture-diagram)
 * [Team Members](#team-members)
