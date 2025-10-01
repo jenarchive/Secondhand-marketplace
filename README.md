@@ -2,7 +2,9 @@
 
 ## Contents
 * [Project overview](#project-overview)
+* [Technology Stack](#technology-stack)
 * [Stakeholders](#stakeholders)
+* [User Stories](#user-stories)
 * [Team Members](#team-members)
 
 ## Project overview
@@ -10,13 +12,21 @@
 GreenCheck AI is an innovative software prototype focused on Explainable AI (XAI) for sustainability fraud (greenwashing) 
 detection. This project directly addresses the "black box" problem of traditional AI by providing clear, plain-language explanations for every flagged sustainability claim in corporate reports and public data. 
 
+## Technology Stack
+
+Backend:
+*
+Frontend:
+*
+Development tools:
+*
 
 ## Stakeholders
 
 
 
+## User Stories
 
-User stories: 
 End users
 Organisation and system managers
 Organisation and system owners
