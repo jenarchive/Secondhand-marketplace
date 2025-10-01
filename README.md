@@ -7,6 +7,7 @@
 * [Stakeholders](#stakeholders)
 * [User Stories](#user-stories)
 * [Project Structure](#project-structure)
+* [Architecture Diagram](#architecture-diagram)
 * [Team Members](#team-members)
 
 ## Project overview
@@ -49,7 +50,11 @@ Legislators (for example, with an interest in GDPR and data privacy)
 
 ## Project Structure
 
-# Team Members
+
+## Architecture Diagram
+
+
+## Team Members
 
 Name | Email 
 --- | ---
