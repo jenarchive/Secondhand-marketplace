@@ -15,11 +15,11 @@ detection. This project directly addresses the "black box" problem of traditiona
 ## Technology Stack
 
 Backend:
-*
+* ...
 Frontend:
-*
+* ...
 Development tools:
-*
+* ...
 
 ## Stakeholders
 
