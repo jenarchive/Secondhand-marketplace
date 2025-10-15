@@ -33,3 +33,17 @@
 * Ideally work on existing project, to make an extension or something measurable 
 * Meeting will be weekly on Friday 3pm 
 * Will need to contact dev personnel and confirm tech stack
+
+## Mentor 15th Oct
+* Tech stack needed to fill out, include development tools (git, github, github action)
+* Information diagram: explains how we do what we did, architecture info with tech info
+* fix yml file (CI), include permission (read/write)
+* include pylint in yml file to achieve constant coding style 
+* Issues labeling and relation with other issues
+
+## Client (CTO) 15th Oct
+* Tech Stack: 
+    * Back end: FastAPI - Python 
+    * Front end: React and TypeScript - Deployed on web browser
+* Current ongoing project: rapper around Gemini - using prompts to extract useful info to give feedback
+* Requirement so far: fast processing time 
