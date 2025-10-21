@@ -47,3 +47,17 @@
     * Front end: React and TypeScript - Deployed on web browser
 * Current ongoing project: rapper around Gemini - using prompts to extract useful info to give feedback
 * Requirement so far: fast processing time 
+
+## Sarah 16th Oct 
+* Not allowed to work on their existing codebase, as it is not software developing
+* Need to discuss and consider about which direction the team is going: 
+    1. Building the same project but start from scratch, facing the same client
+    2. Change project as a team of 4 or 3 and 1 split up joining other projects
+    3. All 4 split up and join different projects 
+
+## Sarah 17th Oct 
+* Morgan decided to split as his area of interest does not overlap with others
+* Decided to choose 3 projects that sounds interesting for the rest: 
+    1. F1 commentary
+    2. Secondhand marketplace
+    3. Detecting human with radar 
