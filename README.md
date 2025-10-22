@@ -37,16 +37,20 @@ Development tools:
 Legal Pythia is a legal tech startup that strives to help legal, finance and government organisations to manage large volumes of documents and data more efficiently using Explainable Artificial Intelligence (XAI). Their tools aim to allow clients to increase the efficiency of identifying fraud, detecting greenwashing and managing administrative/legal workflows.
 
 ## Stakeholders
-### Financial institutes/corporations: 
+### Financial institutes/corporations (direct): 
 * Financial institutes/corporations will be primary users of the platform. They will be able to confirm and understand if a sustainable claim is attainable or suspicious. 
-### Government bodies: 
-* Govt bodies will be able to use this tool as a supplementary aid for understanding and decisions. This will allow them to work more efficiently. 
+### Government bodies (direct): 
+* Govt bodies will be able to use this tool as a supplementary aid for understanding and decide if corporates have unrealistic sustainability claims. This will allow them to work more efficiently. 
+### Legislators (indirect): 
+* GDPR, as data is collected during conversation with chatbot and any files uploaded. 
 
 
 ## User Stories
-*  As a financial institute/corporation manager, I want to confidently know if a "green" claim is suspicious and why, so that I can avoid possible regulatory and reputational risks caused by false claims.
-* As a government worker, I want to get an precise analysis of a sustainable claim, so that I can work more efficiently.
+*  As a financial institute manager, I want to confidently know if a "green" claim is suspicious and why, so that I can avoid possible regulatory and reputational risks caused by false claims.
+* As a government worker, I want to get an precise analysis of a sustainable claim, so that I can work more efficiently. 
 
+## Basic Flow
+* ...
 
 ## Project Structure
 
