@@ -61,3 +61,10 @@
     1. F1 commentary
     2. Secondhand marketplace
     3. Detecting human with radar 
+
+## Mentor 22nd Oct 
+* Prepare items that can be transferred to new project:
+    * CI / CD
+    * Pull request and Issue templates
+* Recommended to prepare a skeleton for frontend and backend for MVP demo to get feedbacks 
+* Clean up branches 
