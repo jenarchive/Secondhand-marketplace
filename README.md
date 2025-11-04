@@ -1,4 +1,4 @@
-# 2025-GreenCheckAI 
+# 2025-Secondhand Marketplace2
 
 ## Contents
 * [Project overview](#project-overview)
@@ -8,12 +8,12 @@
 * [Technology Stack](#technology-stack)
 * [Project Structure](#project-structure)
 * [Architecture Diagram](#architecture-diagram)
+* [Project Management](#project-management)
 * [Team Members](#team-members)
 
 ## Project overview
 
-GreenCheck AI is an innovative web prototype focused on Explainable AI (XAI) for sustainability fraud (greenwashing) 
-detection. This project directly addresses the "black box" problem of traditional AI by providing clear, plain-language explanations for every flagged sustainability claim in corporate reports and public data. Users will be provided with visualisations explaining why a claim is suspicious with factual environmental data in English, German and Spanish.
+Secondhand Marketplace is a online platform for selling, browsing and purchasing secondhand items, that emphasize on user engagement and efficiency. This includes advanced user reputation system and smart recommnedation engine under a wrapper of gamification system. 
 
 ## Technology Stack
 
@@ -27,30 +27,36 @@ Development tools:
 * ...
 * 
 
-^^(include picture diagram like in previous projects)
+^^(include picture diagram like in other projects)
 
 
-## Client Information
-
-### Client: Legal Pythia
-
-Legal Pythia is a legal tech startup that strives to help legal, finance and government organisations to manage large volumes of documents and data more efficiently using Explainable Artificial Intelligence (XAI). Their tools aim to allow clients to increase the efficiency of identifying fraud, detecting greenwashing and managing administrative/legal workflows.
+## Client Information 
+### Client: 
+Individual 
 
 ## Stakeholders
-### Financial institutes/corporations (direct): 
-* Financial institutes/corporations will be primary users of the platform. They will be able to confirm and understand if a sustainable claim is attainable or suspicious. 
-### Government bodies (direct): 
-* Govt bodies will be able to use this tool as a supplementary aid for understanding and decide if corporates have unrealistic sustainability claims. This will allow them to work more efficiently. 
-### Legislators (indirect): 
-* GDPR, as data is collected during conversation with chatbot and any files uploaded. 
-
+* End users:
+    * Seller 
+    * Buyer
+* Owners and managers: 
+    * System Owner
+    * System manager
+* Legislators: 
+    * GDPR
 
 ## User Stories
-*  As a financial institute manager, I want to confidently know if a "green" claim is suspicious and why, so that I can avoid possible regulatory and reputational risks caused by false claims.
-* As a government worker, I want to get an precise analysis of a sustainable claim, so that I can work more efficiently. 
+- As a seller ... 
+- As a buyer ... 
+- As a owner ... 
+- As a manager ...
 
-## Basic Flow
-* ...
+## User Flow Steps
+### Basic Flow
+1. ...
+
+### Alternative Flow
+1. ...
+
 
 ## Project Structure
 
@@ -58,11 +64,18 @@ Legal Pythia is a legal tech startup that strives to help legal, finance and gov
 ## Architecture Diagram
 
 
+## User Instructions
+
+
+## Project Management
+- [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
+- [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
+
+
 ## Team Members
 
 Name | Email 
 --- | ---
 Alex Hetherington | ss24495@bristol.ac.uk
-Morgan Parry | vi24348@bristol.ac.uk
 Freddie De Bruyn | ii24783@bristol.ac.uk
 Euan Chan | AH24354@bristol.ac.uk
