@@ -45,10 +45,9 @@ Individual
     * GDPR
 
 ## User Stories
-- As a seller ... 
-- As a buyer ... 
-- As a owner ... 
-- As a manager ...
+- As a **Buyer**, I want my experience of online clothes shopping to feel playful and exciting, unlike other online second-hand stores. I want an enganging and interactive marketplace to easily find the clothes I'm looking for, and to explore reviews and ratings of sellers. I would also like to browse or be recommended clothes that would interest me, with the option to filter by brand, colour, price and condition.
+- As a **Seller**, I want a user-friendly marketplace to conviniently list the clothes I want to sell, and for them to reach the right audience of potential buyers. This will encourage me to contribute to the community, instead of throwing away clothes I don't want anymore.
+- As a **Highly rated Seller**, I want a reliable system allowing buyers to trust me, and enabling me to have an impactful and leading role in the community, potentially building a brand/identity.
 
 ## User Flow Steps
 ### Basic Flow
