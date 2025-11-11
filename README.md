@@ -13,7 +13,7 @@
 
 ## Project overview
 
-Secondhand Marketplace is a online platform for selling, browsing and purchasing secondhand items, that emphasize on user engagement and efficiency. This includes advanced user reputation system and smart recommnedation engine under a wrapper of gamification system. 
+Secondhand Marketplace is a online platform for selling, browsing and purchasing secondhand items, that emphasize on user engagement and efficiency, through polished features and an interactive user interface. This includes advanced user reputation system and smart recommnedation engine under a wrapper of gamification system.
 
 ## Technology Stack
 
@@ -32,23 +32,20 @@ Development tools:
 
 ## Client Information 
 ### Client: 
-Individual 
+Marius Jurt has a strong passion for an online second-hand marketplace platform that masters engagement, user-friendlyness and gamification. He loves working with students and has tasked us with building this online experience.
 
 ## Stakeholders
-* End users:
-    * Seller 
-    * Buyer
-* Owners and managers: 
-    * System Owner
-    * System manager
-* Legislators: 
-    * GDPR
+* Buyers
+     - Buyers are the users looking to purchase items. They will be able to find specific items they are looking for that fit their requirements, or discover items recommended by the platform. Many buyers will care about the reliability of sellers so will be able to view reviews of individual sellers and the platform's top rated sellers. They will also want a user-friendly system for contacting the seller for queries related to an item or purchase.
+* Viewers
+     - Viewers are the users that browse the platform to see what items are available or to help curate their taste in aesthetic items such as clothes, without the original intent of buying anything. They will want a fun and interactive system for finding items that match the style they're looking for, and to easily find sellers they might be interested in.
+* Sellers: 
+     - Sellers are the users the list items for sale. They want to list and manage items with ease and to be recognised for delivering what they promised and on time with a review and rating system used by potential buyers.
 
 ## User Stories
-- As a seller ... 
-- As a buyer ... 
-- As a owner ... 
-- As a manager ...
+- As a **Buyer**, I want my experience of online second-hand shopping to feel playful and exciting, unlike other online stores. I want an enganging and interactive marketplace to easily find the items I'm looking for, and to explore reviews and ratings of sellers. I would also like to browse or be recommended items that would interest me, with the option to filter by specific requirements.
+- As a **Seller**, I want a user-friendly marketplace to conviniently list the items I want to sell, and for them to reach the right audience of potential buyers. This will encourage me to contribute to the community, instead of throwing away items I don't want anymore.
+- As a **Highly rated Seller**, I want a reliable system allowing buyers to trust me, and enabling me to have an impactful and leading role in the community, potentially building a brand/identity.
 
 ## User Flow Steps
 ### Basic Flow
