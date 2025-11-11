@@ -1,4 +1,5 @@
 # 2025-Secondhand Marketplace2
+[![React](https://img.shields.io/badge/React-61DBFB?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev/) 
 
 ## Contents
 * [Project overview](#project-overview)
@@ -18,17 +19,19 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 ## Technology Stack
 
 Backend:
-* ...
-* 
+* Python
+* PostgreSQL
 Frontend:
-* ...
-* 
+* Reac native
 Development tools:
-* ...
-* 
+* Git
+* Github 
+* Github Actions
+* AWS
 
-^^(include picture diagram like in other projects)
-
+<p align="left">
+  <img width="918" alt="architecture image" src="./docs/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+</p>
 
 ## Client Information 
 ### Client: 
@@ -58,10 +61,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 ## Project Structure
 
 
-## Architecture Diagram
-
-
-## User Instructions
+## Dev Instructions
 
 
 ## Project Management
