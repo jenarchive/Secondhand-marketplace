@@ -1,5 +1,7 @@
 # 2025-Secondhand Marketplace2
-[![Static Badge](https://img.shields.io/badge/React-61DBFB?logo=React&logoColor=FFFFFF&textColor=FFFFFF)](https://reactnative.dev/) 
+[![Static Badge](https://img.shields.io/badge/React-61DBFB?style=for-the-badge&logo=react&logoColor=white)](https://flutter.dev/)
+[![Static Badge](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Static Badge](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.python.org/)
 
 ## Contents
 * [Project overview](#project-overview)
@@ -18,12 +20,12 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 
 ## Technology Stack
 
-Backend:
+### Backend:
 * Python
 * PostgreSQL
-Frontend:
+### Frontend:
 * React native
-Development tools:
+### Development tools:
 * Git
 * Github 
 * Github Actions
