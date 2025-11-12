@@ -1,5 +1,5 @@
 # 2025-Secondhand Marketplace2
-[![React](https://img.shields.io/badge/React-61DBFB?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev/) 
+[![Static Badge](https://img.shields.io/badge/React-61DBFB?logo=React&logoColor=FFFFFF&textColor=FFFFFF)](https://reactnative.dev/) 
 
 ## Contents
 * [Project overview](#project-overview)
@@ -22,15 +22,14 @@ Backend:
 * Python
 * PostgreSQL
 Frontend:
-* Reac native
+* React native
 Development tools:
 * Git
 * Github 
 * Github Actions
-* AWS
 
 <p align="left">
-  <img width="918" alt="architecture image" src="./docs/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="architecture image" src="doc/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
 ## Client Information 
