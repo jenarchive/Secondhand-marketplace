@@ -68,3 +68,21 @@
     * Pull request and Issue templates
 * Recommended to prepare a skeleton for frontend and backend for MVP demo to get feedbacks 
 * Clean up branches 
+
+## Client (new) 5th Oct
+* Open-ended project, scope set by our interest and focus 
+* Online secondhand platform which is unique in some areas
+* Possible focus: 
+    * Gamification 
+    * Recommendation Engine 
+    * Trustworthy / user reviews 
+* Client's current tech stack: next.js, react, typescript, node.js, postgreSQL, Aws 
+* We decide to start from scratch 
+* Contact client every 2-3 weeks with demo 
+* Wants a personal close-sourced license 
+
+## Mentor 5th Oct
+* Might be mobile app
+* Gamification case study: Revolut and Duolingo - Notification system and use of elements / animation
+* Focus on user feedback 
+* Consider about different system (ios and andriod and pc), planning to make it works on all or at least ios and pc 
