@@ -1,0 +1,94 @@
+{
+    "items": [
+        {
+        "id": 1,
+        "title": "Used Bicycle",
+        "description": "A well-maintained used bicycle in good condition.",
+        "price": 150,
+        "image": "https://example.com/images/bicycle.jpg",
+        "category": "Sports & Outdoors",
+        "location": "New York, NY"
+        },
+        {
+        "id": 2,
+        "title": "Vintage Camera",
+        "description": "A classic vintage camera for photography enthusiasts.",
+        "price": 300,
+        "image": "https://example.com/images/camera.jpg",
+        "category": "Electronics",
+        "location": "Los Angeles, CA"
+        },
+        {
+        "id": 3,
+        "title": "Leather Sofa",
+        "description": "Comfortable leather sofa, perfect for living rooms.",
+        "price": 500,
+        "image": "https://example.com/images/sofa.jpg",
+        "category": "Furniture",
+        "location": "Chicago, IL"
+        },
+        {
+        "id": 4,
+        "title": "Electric Guitar",
+        "description": "A high-quality electric guitar for music lovers.",
+        "price": 400,
+        "image": "https://example.com/images/guitar.jpg",
+        "category": "Musical Instruments",
+        "location": "Austin, TX"
+        },
+        {
+        "id": 5,
+        "title": "Kitchen Appliances Set",
+        "description": "A set of essential kitchen appliances in excellent condition.",
+        "price": 250,
+        "image": "https://example.com/images/kitchen_appliances.jpg",
+        "category": "Home & Kitchen",
+        "location": "Miami, FL"
+        }, 
+        {
+        "id": 6,
+        "title": "Mountain Bike",
+        "description": "A rugged mountain bike suitable for off-road trails.",
+        "price": 350,
+        "image": "https://example.com/images/mountain_bike.jpg",
+        "category": "Sports & Outdoors",
+        "location": "Denver, CO"
+        },
+        {
+        "id": 7,
+        "title": "Smartphone",
+        "description": "A latest model smartphone with all accessories included.",
+        "price": 600,
+        "image": "https://example.com/images/smartphone.jpg",
+        "category": "Electronics",
+        "location": "San Francisco, CA"
+        },
+        {
+        "id": 8,
+        "title": "Dining Table Set",
+        "description": "A stylish dining table set that seats six people.",
+        "price": 450,
+        "image": "https://example.com/images/dining_table.jpg",
+        "category": "Furniture",
+        "location": "Seattle, WA"
+        },
+        {
+        "id": 9,
+        "title": "Acoustic Guitar",
+        "description": "A beautiful acoustic guitar with a rich sound.",
+        "price": 200,
+        "image": "https://example.com/images/acoustic_guitar.jpg",
+        "category": "Musical Instruments",
+        "location": "Nashville, TN"
+        },
+        {
+        "id": 10,
+        "title": "Blender",
+        "description": "A powerful blender perfect for smoothies and shakes.",
+        "price": 80,
+        "image": "https://example.com/images/blender.jpg",
+        "category": "Home & Kitchen",
+        "location": "Boston, MA"
+        }
+    ]
+}       
