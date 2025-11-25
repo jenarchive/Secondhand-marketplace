@@ -21,7 +21,7 @@ Backend:
 * ...
 * 
 Frontend:
-* ...
+*  expo (react-native framework) 
 * 
 Development tools:
 * ...
@@ -71,7 +71,6 @@ Individual
 - [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
 - [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
 
-
 ## Team Members
 
 Name | Email 
@@ -79,3 +78,25 @@ Name | Email
 Alex Hetherington | ss24495@bristol.ac.uk
 Freddie De Bruyn | ii24783@bristol.ac.uk
 Euan Chan | AH24354@bristol.ac.uk
+
+## Dev Instructions
+## Get started: Frontend
+
+1. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+
+In the output, you'll find options to open the app in a
+
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
