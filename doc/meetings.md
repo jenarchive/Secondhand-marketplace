@@ -69,7 +69,7 @@
 * Recommended to prepare a skeleton for frontend and backend for MVP demo to get feedbacks 
 * Clean up branches 
 
-## Client (new) 5th Oct
+## Client (new) 5th Nov
 * Open-ended project, scope set by our interest and focus 
 * Online secondhand platform which is unique in some areas
 * Possible focus: 
@@ -81,8 +81,16 @@
 * Contact client every 2-3 weeks with demo 
 * Wants a personal close-sourced license 
 
-## Mentor 5th Oct
+## Mentor 5th Nov
 * Might be mobile app
 * Gamification case study: Revolut and Duolingo - Notification system and use of elements / animation
 * Focus on user feedback 
 * Consider about different system (ios and andriod and pc), planning to make it works on all or at least ios and pc 
+
+## Mentor 12th Nov
+* Tech stack diagram need to change 
+* Slides needed for presentation 
+    * Check github page and prepare for answer 
+    * The process of changing project
+    * Make sure fulfill the unit objectives
+* Try to get something for backend 
