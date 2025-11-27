@@ -11,7 +11,6 @@ export default function TabTwoScreen() {
       headerImage={<Image/>
       }>
       <ThemedView className="px-4 pt-4">
-        <ThemedText type='title'>EXPLORE</ThemedText>
       </ThemedView>
     </ParallaxScrollView>
   );
