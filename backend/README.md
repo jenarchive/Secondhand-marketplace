@@ -16,7 +16,7 @@ Ensure you have Python 3.10+ installed.
 cd backend
 python3 -m venv .venv
 . .venv/bin/activate
-pip install Flask Flask-CORS Flask-JWT-Extended
+pip install -r requirements.txt
 ```
 
 </details>
@@ -28,7 +28,7 @@ pip install Flask Flask-CORS Flask-JWT-Extended
 cd backend
 py -3 -m venv .venv
 .venv\Scripts\activate
-pip install Flask Flask-CORS Flask-JWT-Extended
+pip install -r requirements.txt
 ```
 
 </details>
@@ -36,5 +36,5 @@ pip install Flask Flask-CORS Flask-JWT-Extended
 ## Run Locally
 
 ```bash
-python -m flask
+flask --app app run
 ```
