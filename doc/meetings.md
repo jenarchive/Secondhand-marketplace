@@ -94,3 +94,41 @@
     * The process of changing project
     * Make sure fulfill the unit objectives
 * Try to get something for backend 
+
+## Client 19th Nov: 
+* Maybe a bit of competition between sellers - super sellers are pushed to more users 
+* Liked the idea of simple and straightforward UI/UX 
+* Would like to have a timeline / roadmap for what features would be implemented at what time and which features are we prioritizing
+* Things to expect next meeting: 
+    * UI design, front-backend interacting, roadmap and what feature we want to focus on 
+
+## Mentor 19th Nov: 
+* Database: put in readme how it runs and interacts 
+* Readme of subfolder (e.g. frontend folder)
+* Issues need to be more descriptive and link to PR and branch 
+* Slides and CI are overdue 
+* .vscode clean up in frontend 
+* More thorough review on PR 
+* Project structure optional, would be good to have
+* Consider more on other stakeholders: providers of payment service and postal service
+* Focus on getting more code in 
+* Can apply for app dev license for beta
+* Viva: proof of progress throughout 
+* Consider about the design principles of the app
+
+## MVP VIVA 26th Nov:
+* Need to decide on which features to focus on - not possible to do all features in a very detailed manner, need to choose which to really spend time on 
+* Consider about what makes it standout specifically in the Swiss market - where it is meant to go online
+* Understand why UI/UX are designed in this way and be able to explain - maybe do some research on psychology in Ui/UX design
+
+## Mentor 26th Nov:
+* For UI/UX, email for Sarah to ask for help on user testers and gain feedback 
+* On past issues, focus on what we learned from it and how we changed after that 
+* CI - split it into 2 issues, linting and running unit tests 
+* CD and linking front and back - good if done before TB2
+* Aim for more than 6 code commits each person to dev before TB1 ends
+* Database: update documentation and database 
+* Each issue should link to a branch and PR 
+    * Remove emojis in templates 
+* AI-docs: update for slides and sample data 
+* For recommendation engine - consider about word-mapping, use ai to do semantic analysis - expensive on big scale - need to discuss with client about this
