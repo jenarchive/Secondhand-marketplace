@@ -5,6 +5,11 @@ on:
     paths:
       - 'backend/**'
       - 'database/**'
+  pull_request: 
+    types: [open, reopened] 
+    branches: 
+      - 'dev'
+      - 'main'
 
 jobs:
   build:
