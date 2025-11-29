@@ -45,6 +45,10 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
      - Viewers are the users that browse the platform to see what items are available or to help curate their taste in aesthetic items such as clothes, without the original intent of buying anything. They will want a fun and interactive system for finding items that match the style they're looking for, and to easily find sellers they might be interested in.
 * Sellers: 
      - Sellers are the users the list items for sale. They want to list and manage items with ease and to be recognised for delivering what they promised and on time with a review and rating system used by potential buyers.
+* Postal Service Providers:
+     - Postal service providers are the external service responsible for delivering items from sellers to buyers. They require accurate address information and effective integration into the app to operate efficiently. It is critical they have reliable delivery speed and conditions as this will impact the reputation of sellers and trustworthness of the marketplace.
+* Payment Service Providers:
+     - Payment service providers are the external partners that facilitate secure financial transactions between buyers and sellers. They require reliable security protocols to handle payments and manage refunds, which is essential for users' trust in purchasing from marketplace.
 
 ## User Stories
 - As a **Buyer**, I want my experience of online second-hand shopping to feel playful and exciting, unlike other online stores. I want an enganging and interactive marketplace to easily find the items I'm looking for, and to explore reviews and ratings of sellers. I would also like to browse or be recommended items that would interest me, with the option to filter by specific requirements.
