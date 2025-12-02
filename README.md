@@ -40,9 +40,6 @@ Development tools:
 * ...
 * 
 
-^^(include picture diagram like in other projects)
->>>>>>> origin/frontend
-
 <p align="left">
   <img width="918" alt="architecture image" src="doc/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
@@ -76,21 +73,6 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 
 ## Dev Instructions
-
-
-## Project Management
-- [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
-- [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
-
-## Team Members
-
-Name | Email 
---- | ---
-Alex Hetherington | ss24495@bristol.ac.uk
-Freddie De Bruyn | ii24783@bristol.ac.uk
-Euan Chan | AH24354@bristol.ac.uk
-
-## Dev Instructions
 ## Get started: Frontend
 
 1. Install dependencies
@@ -117,3 +99,17 @@ For this current iteration you can run the frontend in an Expo Go app on your ph
 Alternatively, if you have a mac you can the frontend in an iOS simulator (docs above)
 
 If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
+
+
+## Project Management
+- [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
+- [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
+
+## Team Members
+
+Name | Email 
+--- | ---
+Alex Hetherington | ss24495@bristol.ac.uk
+Freddie De Bruyn | ii24783@bristol.ac.uk
+Euan Chan | AH24354@bristol.ac.uk
+

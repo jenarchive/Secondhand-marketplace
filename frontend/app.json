@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.freddiedebruyn.frontend",
+      "bundleIdentifier": "com.SecondhandMarketplace.frontend",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
