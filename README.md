@@ -26,19 +26,11 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 * PostgreSQL
 ### Frontend:
 * React native
+*  expo (react-native framework) 
 ### Development tools:
 * Git
 * Github 
 * Github Actions
-Backend:
-* ...
-* 
-Frontend:
-*  expo (react-native framework) 
-* 
-Development tools:
-* ...
-* 
 
 <p align="left">
   <img width="918" alt="architecture image" src="doc/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
