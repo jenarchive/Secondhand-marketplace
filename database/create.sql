@@ -28,12 +28,12 @@ CREATE TABLE reviews (
 -- shopping cart that user can add products to before checkout
 CREATE TABLE cart (
     buyer_id INT REFERENCES users(user_id), 
-    product_id INT REFERENCES products(product_id), 
+    list_of_product_id INT[], 
     quantity INT NOT NULL
 ) ;
 
 CREATE TABLE category (
     category_id SERIAL PRIMARY KEY, 
-    category_name VARCHAR(30) NOT NULL 
+    category_name VARCHAR(30) NOT NULL, 
 ) ;
 
