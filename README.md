@@ -20,7 +20,7 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 
 ## Technology Stack
 
-<<<<<<< HEAD
+
 ### Backend:
 * Python
 * PostgreSQL
@@ -30,7 +30,6 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 * Git
 * Github 
 * Github Actions
-=======
 Backend:
 * ...
 * 
