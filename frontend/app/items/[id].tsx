@@ -57,7 +57,7 @@ export default function HomeScreen() {
     <>
     <ParallaxScrollView
       headerImage={<View style={{ height: 0 }} />}
-      headerBackgroundColor={{ light: '#fff', dark: '#000' }}>
+      headerBackgroundColor={{ light: '#fff', dark: '#191C1F' }}>
       <ThemedView style={styles.listingContainer}>
     <Pressable onPress={handleUserPress}>
     <ThemedView style={styles.userProfileContainer}>
@@ -123,6 +123,11 @@ export default function HomeScreen() {
   );
 }
 
+const colours = {
+  container: '#25282B',
+  button: '#28289D'
+}
+
 const styles = StyleSheet.create({
   listingContainer: {
     gap: 15, 
@@ -133,8 +138,8 @@ const styles = StyleSheet.create({
     padding: 16,
     fontSize: 18,
     fontWeight: '600',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 8
+    backgroundColor: colours.container,
+    borderRadius: 16
   },
 
   listingLink: {
@@ -145,7 +150,7 @@ const styles = StyleSheet.create({
 
   image: {
     width: '100%',
-    borderRadius: 8,
+    borderRadius: 16,
     aspectRatio: 1
   },
 
@@ -165,7 +170,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 8,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colours.container,
   },
 
   listingDescription: {
@@ -173,8 +178,8 @@ const styles = StyleSheet.create({
     padding: 16,
     fontSize: 18,
     fontWeight: '600',
-    backgroundColor: '#1A1A1A',
-    borderRadius: 8
+    backgroundColor: colours.container,
+    borderRadius: 16
   },
 
   userProfileContainer: {
@@ -182,9 +187,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     marginTop: 0,
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colours.container,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 16,
   },
 
   userProfileImage: {
@@ -223,10 +228,10 @@ const styles = StyleSheet.create({
   },
 
   buyButton: {
-    backgroundColor: '#28289D',
+    backgroundColor: colours.button,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
+    borderRadius: 16,
     marginRight: 15,
     minWidth: 100,
     alignItems: 'center',
@@ -234,10 +239,10 @@ const styles = StyleSheet.create({
   },
 
   offerButton: {
-    backgroundColor: '#28289D',
+    backgroundColor: colours.button,
     paddingVertical: 12,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 16,
     minWidth: 100,
     alignItems: 'center',
     justifyContent: 'center',

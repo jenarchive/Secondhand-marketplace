@@ -31,7 +31,7 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#A1CEDC', dark: '#191C1F' }}
       headerImage={<Image />}>
       
       <ThemedView>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     padding: 12,
     flex: 1,
     borderRadius: 8,
-    backgroundColor: "#1A1A1A",
+    backgroundColor: "#25282B",
     overflow: 'hidden'
 
   },
