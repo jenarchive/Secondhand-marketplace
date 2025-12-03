@@ -20,11 +20,13 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 
 ## Technology Stack
 
+
 ### Backend:
 * Python
 * PostgreSQL
 ### Frontend:
 * React native
+*  expo (react-native framework) 
 ### Development tools:
 * Git
 * Github 
@@ -67,12 +69,37 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 
 ## Dev Instructions
+## Get started: Frontend
+
+1. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+
+In the output, you'll find options to open the app in a
+
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+
+For this current iteration you can run the frontend in an Expo Go app on your phone if you scan the QR code that is shown in the terminal. 
+
+Alternatively, if you have a mac you can the frontend in an iOS simulator (docs above)
+
+If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
 
 
 ## Project Management
 - [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
 - [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
-
 
 ## Team Members
 
@@ -81,3 +108,4 @@ Name | Email
 Alex Hetherington | ss24495@bristol.ac.uk
 Freddie De Bruyn | ii24783@bristol.ac.uk
 Euan Chan | AH24354@bristol.ac.uk
+

@@ -5,7 +5,7 @@
         "title": "Used Bicycle",
         "description": "A well-maintained used bicycle in good condition.",
         "price": 150,
-        "image": "https://example.com/images/bicycle.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Sports & Outdoors",
         "location": "New York, NY"
         },
@@ -13,8 +13,8 @@
         "id": 2,
         "title": "Vintage Camera",
         "description": "A classic vintage camera for photography enthusiasts.",
-        "price": 300,
-        "image": "https://example.com/images/camera.jpg",
+        "price": 300.5,
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Electronics",
         "location": "Los Angeles, CA"
         },
@@ -23,7 +23,7 @@
         "title": "Leather Sofa",
         "description": "Comfortable leather sofa, perfect for living rooms.",
         "price": 500,
-        "image": "https://example.com/images/sofa.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Furniture",
         "location": "Chicago, IL"
         },
@@ -32,7 +32,7 @@
         "title": "Electric Guitar",
         "description": "A high-quality electric guitar for music lovers.",
         "price": 400,
-        "image": "https://example.com/images/guitar.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Musical Instruments",
         "location": "Austin, TX"
         },
@@ -40,8 +40,8 @@
         "id": 5,
         "title": "Kitchen Appliances Set",
         "description": "A set of essential kitchen appliances in excellent condition.",
-        "price": 250,
-        "image": "https://example.com/images/kitchen_appliances.jpg",
+        "price": 250.99,
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Home & Kitchen",
         "location": "Miami, FL"
         }, 
@@ -50,7 +50,7 @@
         "title": "Mountain Bike",
         "description": "A rugged mountain bike suitable for off-road trails.",
         "price": 350,
-        "image": "https://example.com/images/mountain_bike.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Sports & Outdoors",
         "location": "Denver, CO"
         },
@@ -59,7 +59,7 @@
         "title": "Smartphone",
         "description": "A latest model smartphone with all accessories included.",
         "price": 600,
-        "image": "https://example.com/images/smartphone.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Electronics",
         "location": "San Francisco, CA"
         },
@@ -68,7 +68,7 @@
         "title": "Dining Table Set",
         "description": "A stylish dining table set that seats six people.",
         "price": 450,
-        "image": "https://example.com/images/dining_table.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Furniture",
         "location": "Seattle, WA"
         },
@@ -77,7 +77,7 @@
         "title": "Acoustic Guitar",
         "description": "A beautiful acoustic guitar with a rich sound.",
         "price": 200,
-        "image": "https://example.com/images/acoustic_guitar.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Musical Instruments",
         "location": "Nashville, TN"
         },
@@ -86,7 +86,7 @@
         "title": "Blender",
         "description": "A powerful blender perfect for smoothies and shakes.",
         "price": 80,
-        "image": "https://example.com/images/blender.jpg",
+        "image": "https://preview.redd.it/main-picture-examples-v0-ik3yxeml2vne1.jpg?width=640&crop=smart&auto=webp&s=9371fbf7ec343cd233aa314cc25f2c9124f32898",
         "category": "Home & Kitchen",
         "location": "Boston, MA"
         }
