@@ -22,7 +22,7 @@ pip install -r requirements.txt
 </details>
 
 <details>
-<summary><strong> Windwos </strong></summary>
+<summary><strong> Windows </strong></summary>
 
 ```bash
 cd backend
