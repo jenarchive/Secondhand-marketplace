@@ -20,11 +20,13 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 
 ## Technology Stack
 
+
 ### Backend:
 * Python
 * PostgreSQL
 ### Frontend:
 * React native
+*  expo (react-native framework) 
 ### Development tools:
 * Git
 * Github 
@@ -45,6 +47,10 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
      - Viewers are the users that browse the platform to see what items are available or to help curate their taste in aesthetic items such as clothes, without the original intent of buying anything. They will want a fun and interactive system for finding items that match the style they're looking for, and to easily find sellers they might be interested in.
 * Sellers: 
      - Sellers are the users the list items for sale. They want to list and manage items with ease and to be recognised for delivering what they promised and on time with a review and rating system used by potential buyers.
+* Postal Service Providers:
+     - Postal service providers are the external service responsible for delivering items from sellers to buyers. They require accurate address information and effective integration into the app to operate efficiently. It is critical they have reliable delivery speed and conditions as this will impact the reputation of sellers and trustworthness of the marketplace.
+* Payment Service Providers:
+     - Payment service providers are the external partners that facilitate secure financial transactions between buyers and sellers. They require reliable security protocols to handle payments and manage refunds, which is essential for users' trust in purchasing from marketplace.
 
 ## User Stories
 - As a **Buyer**, I want my experience of online second-hand shopping to feel playful and exciting, unlike other online stores. I want an enganging and interactive marketplace to easily find the items I'm looking for, and to explore reviews and ratings of sellers. I would also like to browse or be recommended items that would interest me, with the option to filter by specific requirements.
@@ -63,12 +69,37 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 
 ## Dev Instructions
+## Get started: Frontend
+
+1. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+
+In the output, you'll find options to open the app in a
+
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+
+For this current iteration you can run the frontend in an Expo Go app on your phone if you scan the QR code that is shown in the terminal. 
+
+Alternatively, if you have a mac you can the frontend in an iOS simulator (docs above)
+
+If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
 
 
 ## Project Management
 - [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
 - [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
-
 
 ## Team Members
 
@@ -77,3 +108,4 @@ Name | Email
 Alex Hetherington | ss24495@bristol.ac.uk
 Freddie De Bruyn | ii24783@bristol.ac.uk
 Euan Chan | AH24354@bristol.ac.uk
+
