@@ -1,10 +1,15 @@
 -- create tables
 
 CREATE TABLE users (
-    user_id INT PRIMARY KEY, 
+    user_id SERIAL PRIMARY KEY, 
     username VARCHAR(80) NOT NULL, 
     email_address VARCHAR(100) NOT NULL
 ) ; 
+
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY, 
+    category_name VARCHAR(30) NOT NULL, 
+) ;
 
 -- quantity = number of items available 
 CREATE TABLE products (
@@ -30,10 +35,5 @@ CREATE TABLE cart (
     buyer_id INT REFERENCES users(user_id), 
     list_of_product_id INT[], 
     quantity INT NOT NULL
-) ;
-
-CREATE TABLE category (
-    category_id SERIAL PRIMARY KEY, 
-    category_name VARCHAR(30) NOT NULL, 
 ) ;
 
