@@ -62,11 +62,11 @@ export default function HomeScreen() {
     <Pressable onPress={handleUserPress}>
     <ThemedView style={styles.userProfileContainer}>
       <ThemedView style={styles.userProfileImage}>
-        <ThemedText type="defaultSemiBold">U</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>U</ThemedText>
       </ThemedView>
       <ThemedView style={styles.userMeta}>
-        <ThemedText type="defaultSemiBold">User{itemData.id}</ThemedText>
-        <ThemedText type="defaultSemiBold">{MyData.location}</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>User{itemData.id}</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{MyData.location}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${userRatingValue} out of 5`}>
         {Array.from({ length: 5 }).map((_, i) => {
@@ -93,17 +93,17 @@ export default function HomeScreen() {
                         source={{ uri: MyData.image }}
     />
   <ThemedView style={styles.listingTitle}>
-    <ThemedText type="defaultSemiBold">{MyData.title}</ThemedText>
-    <ThemedText type="default">Category: {MyData.category}</ThemedText>
+    <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{MyData.title}</ThemedText>
+    <ThemedText type="default" style={{color: '#fff'}}>Category: {MyData.category}</ThemedText>
     <ThemedView style={styles.priceContainer}>
-      <ThemedText type="default">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price)}</ThemedText>
-      <ThemedText type="default">Price Incl Postage: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price + 5)}</ThemedText>
+      <ThemedText type="default" style={{color: '#fff'}}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price)}</ThemedText>
+      <ThemedText type="default" style={{color: '#fff'}}>Price Incl Postage: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price + 5)}</ThemedText>
     </ThemedView>
   </ThemedView>
   <ThemedView style={styles.listingDescription}>
     <ThemedView style={{ backgroundColor: 'transparent' }}>  
-      <ThemedText type="defaultSemiBold">Description</ThemedText>
-      <ThemedText type="default">{MyData.description}</ThemedText>
+      <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Description</ThemedText>
+      <ThemedText type="default" style={{color: '#fff'}}>{MyData.description}</ThemedText>
     </ThemedView>
 
   </ThemedView>
@@ -113,10 +113,10 @@ export default function HomeScreen() {
     {/* Floating action bar (fixed) */}
     <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}> 
       <Pressable style={styles.buyButton} onPress={handleBuy} accessibilityLabel="Buy now">
-        <ThemedText type="defaultSemiBold">Buy Now</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Buy Now</ThemedText>
       </Pressable>
       <Pressable style={styles.offerButton} onPress={handleMakeOffer} accessibilityLabel="Make offer">
-        <ThemedText type="defaultSemiBold">Make Offer</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Make Offer</ThemedText>
       </Pressable>
     </View>
     </>
