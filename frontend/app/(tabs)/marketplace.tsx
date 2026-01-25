@@ -91,11 +91,11 @@ export default function HomeScreen() {
                     source={{ uri: item.image }}
                   />
                     <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
-                  
+                      
                     <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
                       {item.description}
                     </ThemedText>
-                  <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
+                  <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </ThemedView>
               </Pressable>
             ))}
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-
+    marginBottom: 64
   },
 
   descriptionText: {
