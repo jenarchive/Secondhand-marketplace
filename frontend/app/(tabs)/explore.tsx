@@ -42,7 +42,7 @@ export default function TabTwoScreen() {
       >
         {visibleItems.map((item, index) => (
         <ThemedView 
-          style={[styles.cardContainer, { zIndex: index }]} 
+          style={[styles.cardContainer, { zIndex: index+1 }]} 
           key={item.id}
           pointerEvents={index === visibleItems.length - 1 ? 'auto' : 'none'}
         >
@@ -63,8 +63,8 @@ export default function TabTwoScreen() {
           </ThemedView>
         </ThemedView>
         ))}
-        <ThemedView>
-          <Button title='soiejf' onPress={spawnButterfly} />
+        <ThemedView style={{ zIndex: 0 }}>
+          <Button title='generate butterfly' onPress={spawnButterfly} />
             {butterflies.map((id) => (
             <Butterfly
               key={id}

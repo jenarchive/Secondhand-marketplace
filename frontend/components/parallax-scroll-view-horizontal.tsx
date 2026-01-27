@@ -8,11 +8,12 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { useRef } from 'react';
+import { Children, useRef } from 'react';
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import * as Haptics from 'expo-haptics';
+import { ThemedText } from './themed-text';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HEADER_WIDTH = SCREEN_WIDTH;
@@ -62,17 +63,19 @@ export default function ParallaxScrollView({
         const x = event.nativeEvent.contentOffset.x;
 
         if (x > 50 && !hasLoggedRef.current) {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           console.log('Scrolled more than 50px horizontally');
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
         }else if (x < -50 && !hasLoggedRef.current) {
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           console.log('Scrolled less than -50px horizontally');
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
         }
         //reset if user scrolls back
         if (x <= 50 && hasLoggedRef.current && x >= -50) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          
           
           hasLoggedRef.current = false;
           hasExceededRef.current = false;

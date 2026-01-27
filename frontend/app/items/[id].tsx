@@ -1,15 +1,13 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Pressable, View } from 'react-native';
+import { StyleSheet, Pressable, View } from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
-import { DarkTheme } from '@react-navigation/native';
-import { Link } from 'expo-router';
-import { use, useState } from 'react';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
+import UserHeader from '@/components/user-header';
 
 export default function HomeScreen() {
 
@@ -34,12 +32,6 @@ export default function HomeScreen() {
 
   const insets = useSafeAreaInsets();
 
-  const handleUserPress = async () => {
-    try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
-    // TODO: implement user profile navigation
-    console.log('User profile pressed', MyData.id);
-  };
-
   // action handlers for floating buttons
   const handleBuy = async () => {
     try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); } catch {}
@@ -59,38 +51,13 @@ export default function HomeScreen() {
       headerImage={<View style={{ height: 0 }} />}
       headerBackgroundColor={{ light: '#fff', dark: '#191C1F' }}>
       <ThemedView style={styles.listingContainer}>
-    <Pressable onPress={handleUserPress}>
-    <ThemedView style={styles.userProfileContainer}>
-      <ThemedView style={styles.userProfileImage}>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>U</ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.userMeta}>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>User{itemData.id}</ThemedText>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{MyData.location}</ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${userRatingValue} out of 5`}>
-        {Array.from({ length: 5 }).map((_, i) => {
-          const starIndex = i + 1;
-          const filled = starIndex <= Math.round(userRatingValue);
-          return (
-            <ThemedText
-              key={starIndex}
-              type="defaultSemiBold"
-              style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 2 }}
-            >
-              {filled ? '★' : '☆'}
-            </ThemedText>
-          );
-        })}
-      </ThemedView>
-    </ThemedView>
-    </Pressable>
+      <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id}/>
     <Image
-                        alt={MyData.title}
-                        style={styles.image}
-                        placeholder={{ blurhash }}
-                        contentFit="cover"
-                        source={{ uri: MyData.image }}
+      alt={MyData.title}
+      style={styles.image}
+      placeholder={{ blurhash }}
+      contentFit="cover"
+      source={{ uri: MyData.image }}
     />
   <ThemedView style={styles.listingTitle}>
     <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{MyData.title}</ThemedText>
