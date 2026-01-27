@@ -20,12 +20,12 @@ export default function HomeScreen() {
         <Image 
         style = {styles.profilePhoto}
         source={require('../../assets/images/avatar.png')} />
-        <View>
-          {/* <ThemedText style={styles.profileUsername}> */}
-            <ThemedText>
-              Username
-            {/* </ThemedText> */}
+        <View style={styles.profileUsername}>
+          <ThemedText>
+            Username
           </ThemedText>
+        </View>
+        <View style={styles.profileEmail}>
           <ThemedText>
             Email
           </ThemedText>
@@ -73,53 +73,56 @@ export default function HomeScreen() {
 }
 
 const colours = {
-  container: '#353636',
+  container: '#191C1F',
 };
 
 const styles = StyleSheet.create({
   mainContainer:{
     flex:1, 
     paddingLeft: moderateScale(51),
+    paddingRight: moderateScale(51),
+    backgroundColor: colours.container,
   },
   profileFrame:{
     height: moderateScale(170),
     width: moderateScale(300),
-    borderColor: '#a29191',
+    backgroundColor: '#FFFFFF',
     paddingTop: moderateScale(100),
     // paddingLeft: moderateScale(51),
   },
   profilePhoto:{
     height: moderateScale(110),
     width: moderateScale(110),
-    paddingTop: moderateScale(30),
-    paddingLeft: moderateScale(30),
+    borderRadius:  moderateScale(110),
+    // paddingTop: moderateScale(30),
+    // paddingLeft: moderateScale(30),
   },
   profileView:{
-
+    height: moderateScale(110),
+    width: moderateScale(110),
+    paddingTop: moderateScale(30),
+    paddingLeft: moderateScale(30),
+    borderRadius:  moderateScale(110),
   },
   profileUsername:{
     height: moderateScale(44),
     width: moderateScale(100),
     paddingTop: moderateScale(50),
     paddingLeft: moderateScale(170),
-    alignContent: 'center',
-    justifyContent: 'center',
-    color: '#a29191',
-    
+    backgroundColor: '#a29191'
   },
   profileEmail:{
     height: moderateScale(44),
     width: moderateScale(100),
     paddingTop: moderateScale(70),
     paddingLeft: moderateScale(170),
-    alignContent: 'center',
-    justifyContent: 'center',
-    color: '#a29191',
+    backgroundColor: '#a29191'
   },
   options:{
     height: moderateScale(70),
     width: moderateScale(130), 
-    color: '#a29191',
+    // color: '#a29191',
+    backgroundColor: '#a29191'
   },
 });
 
