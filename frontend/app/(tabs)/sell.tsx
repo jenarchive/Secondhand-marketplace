@@ -46,14 +46,22 @@ export default function HomeScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsMultipleSelection: true,
-      selectionLimits: 5 - images.length,
-      quality: 1,
+      selectionLimit: 5 - images.length,
+      // preferredAssetRepresentationMode: ImagePicker.AssetRepresentationMode.Compatible,
+      // quality: 1,
     });
 
     if (!result.canceled) {
       const newUris = result.assets.map(asset => asset.uri);
+      const uniqueNewUris = newUris.filter(uri => !images.includes(uri));
+
+      if (uniqueNewUris.length === 0 && newUris.length > 0) {
+        alert('At least one of these photos has already been selected');
+        return;
+      }
+
       setImages([...images, ...newUris]);
     }
   };
@@ -198,6 +206,16 @@ export default function HomeScreen() {
             </View>
 
           </View>
+
+          <TouchableOpacity
+            style={styles.uploadButton}
+            onPress={() => {
+              // implement upload handling later when integrating backend and db
+              console.log("item uploaded")
+            }}
+          >
+            <ThemedText style={styles.uploadButtonText}>Upload</ThemedText>
+          </TouchableOpacity>
 
         </View>
 
@@ -396,6 +414,20 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 16,
     color: 'white',
+  },
+  // upload button
+  uploadButton: {
+    marginTop: 20,
+    backgroundColor: '#007AFF',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    width: '100%',
+  },
+  uploadButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   stepContainer: {
     gap: 8,
