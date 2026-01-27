@@ -5,16 +5,17 @@ import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
-import { Link } from 'expo-router';
-import { use, useState } from 'react';
+import { Link, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
+import { use, useState, useLayoutEffect } from 'react';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
 
 export default function HomeScreen() {
 
-  const id = Number(useLocalSearchParams().id);
+  const params = useLocalSearchParams();
+  const id = Number(params.id);
   const itemData = TestData.items[id - 1];
+  const navigation = useNavigation();
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -53,8 +54,23 @@ export default function HomeScreen() {
     console.log('Make offer', MyData.id);
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: MyData.title,
+      headerBackTitleVisible: false,
+    });
+  }, [navigation, MyData]);
+
   return (
     <>
+    
+    <Stack.Screen
+      options={{
+        title: MyData.title,
+        headerBackTitleVisible: false,
+      }}
+    />
+
     <ParallaxScrollView
       headerImage={<View style={{ height: 0 }} />}
       headerBackgroundColor={{ light: '#fff', dark: '#191C1F' }}>
