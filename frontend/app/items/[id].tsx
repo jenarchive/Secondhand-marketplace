@@ -59,7 +59,9 @@ export default function HomeScreen() {
       headerImage={<View style={{ height: 0 }} />}
       headerBackgroundColor={{ light: '#fff', dark: '#191C1F' }}>
       <ThemedView style={styles.listingContainer}>
-    <Pressable onPress={handleUserPress}>
+
+    
+    <Pressable onPress={handleUserPress}> 
     <ThemedView style={styles.userProfileContainer}>
       <ThemedView style={styles.userProfileImage}>
         <ThemedText type="defaultSemiBold">U</ThemedText>
@@ -85,12 +87,14 @@ export default function HomeScreen() {
       </ThemedView>
     </ThemedView>
     </Pressable>
+
+    
     <Image
-                        alt={MyData.title}
-                        style={styles.image}
-                        placeholder={{ blurhash }}
-                        contentFit="cover"
-                        source={{ uri: MyData.image }}
+        alt={MyData.title}
+        style={styles.image}
+        placeholder={{ blurhash }}
+        contentFit="cover"
+        source={{ uri: MyData.image }}
     />
   <ThemedView style={styles.listingTitle}>
     <ThemedText type="defaultSemiBold">{MyData.title}</ThemedText>
