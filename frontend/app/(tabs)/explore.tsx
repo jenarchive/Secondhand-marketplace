@@ -4,21 +4,35 @@ import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
+import { useState } from 'react';
 
 
 export default function TabTwoScreen() {
+  const [visibleItems, setVisibleItems] = useState(TestData.items);
 
   const item = TestData.items[0];
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+  
+  const handleCardDismiss = () => {
+    setVisibleItems(prev => prev.slice(0, -1));
+  };
+
   return (
     <ThemedView>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image/>
-        }>
-        <ThemedView style={styles.cardContainer}>
+        }
+        onCardDismiss={handleCardDismiss}
+      >
+        {visibleItems.map((item, index) => (
+        <ThemedView 
+          style={[styles.cardContainer, { zIndex: index }]} 
+          key={item.id}
+          pointerEvents={index === visibleItems.length - 1 ? 'auto' : 'none'}
+        >
           <Image 
             placeholder={{ blurhash }}
             alt={item.title}
@@ -35,6 +49,7 @@ export default function TabTwoScreen() {
             </ThemedText>
           </ThemedView>
         </ThemedView>
+        ))}
     </ParallaxScrollView>
     </ThemedView>
   );
@@ -46,6 +61,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   cardContainer: {
+    position: 'absolute',
     marginTop: 32,
     borderRadius: 32,
     height: '100%',
