@@ -1,10 +1,10 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, TouchableOpacity, View, TextInput, ScrollView, Dimensions } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View, TextInput, ScrollView, Dimensions, Modal, FlatList, Animated } from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ThemedText } from '@/components/themed-text';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 
 // dimension variables
@@ -14,14 +14,27 @@ const gapSize = 8;
 const columns = 3;
 
 const gapSpace = gapSize * (columns - 1);
-const availableSpace = screenWidth - padding - gapSpace;
-const photoSize = availableSpace / columns;
+const availableSpace = screenWidth - padding - gapSpace - 64;
+const photoSize = Math.floor(availableSpace / columns);
+
+// list of options for the category input
+const categories = [
+  { id: '1', name: 'Clothing' },
+  { id: '2', name: 'Electronics' },
+  { id: '3', name: 'Home' },
+  { id: '4', name: 'Entertainment' },
+  { id: '5', name: 'Sports' },
+  { id: '6', name: 'Collectables' },
+  { id: '7', name: 'Other' },
+]
 
 export default function HomeScreen() {
   // form variables
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [category, setCategory] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
   const [images, setImages] = useState<string[]>([]);
   
@@ -45,9 +58,46 @@ export default function HomeScreen() {
     }
   };
 
-  const removeImage = (index: number) => {
-    setImages(images.filter((_, index) => index !== index));
-  }; 
+  const removeImage = (removeIndex: number) => {
+    setImages(images.filter((_, index) => index !== removeIndex));
+  };
+
+  // category animation
+  
+  const slideAnimation = useRef(new Animated.Value(Dimensions.get('window').height)).current;
+  const fadeAnimation = useRef(new Animated.Value(0)).current;
+
+  const openModal = () => {
+    setModalVisible(true);
+    Animated.parallel([
+      Animated.timing(fadeAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.spring(slideAnimation, {
+        toValue: 0,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const closeModal = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnimation, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnimation, {
+        toValue: Dimensions.get('window').height,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setModalVisible(false);
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -69,6 +119,7 @@ export default function HomeScreen() {
             onBlur={() => setFocusedInput(null)}
             value={title}
             onChangeText={setTitle}
+            placeholder="What is your item"
           />
 
           <ThemedText type="subtitle" style={styles.label}>Description</ThemedText>
@@ -84,6 +135,7 @@ export default function HomeScreen() {
             multiline={true}
             numberOfLines={4}
             textAlignVertical="top"
+            placeholder="Describe more about your item"
           />
 
           <ThemedText type="subtitle" style={styles.label}>Price (£)</ThemedText>
@@ -104,7 +156,19 @@ export default function HomeScreen() {
             multiline={true}
             numberOfLines={4}
             textAlignVertical="top"
+            placeholder="0.00"
+            keyboardType="numeric"
           />
+
+          <ThemedText type="subtitle" style={styles.label}>Category</ThemedText>
+          <TouchableOpacity
+            style={[styles.input, styles.selectorButton]}
+            onPress={openModal}
+          >
+            <ThemedText style={category ? styles.selectorText : styles.placeholderText}>
+              {category || "Select a Category"}
+            </ThemedText>
+          </TouchableOpacity>
 
           <View style={{ gap: 12 }}>
             <ThemedText type="subtitle">Photos ({images.length}/5)</ThemedText>
@@ -152,6 +216,48 @@ export default function HomeScreen() {
         {/* title */}
         <ThemedText type="title" style={styles.pageTitle}>Sell an item</ThemedText>
       </View>
+
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+
+        <View style={styles.modalOverlay}>
+          <Animated.View style={[styles.modalBackdrop, { opacity: fadeAnimation }]}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={closeModal} />
+          </Animated.View>
+          
+          <Animated.View style={[styles.modalContent, { transform: [{ translateY: slideAnimation }] }]}>
+            <View style={styles.modalHeader}>
+              <ThemedText type="subtitle">Select Category</ThemedText>
+              <TouchableOpacity onPress={closeModal}>
+                <Ionicons name="close" size={24} color="#fff" />
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              data={categories}
+              keyExtractor={(item) => item.id}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.categoryOption}
+                  onPress={() => {
+                    setCategory(item.name);
+                    closeModal();
+                  }}
+                >
+                  <ThemedText style={styles.categoryText}>{item.name}</ThemedText>
+                  {category === item.name && (
+                    <Ionicons name="checkmark" size={20} color="#0A84FF" />
+                  )}
+                </TouchableOpacity>
+              )}
+            />
+          </Animated.View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -169,7 +275,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     zIndex: 100,
-    paddingBottom: 10,
   },
   backButton: {
     position: 'absolute',
@@ -187,10 +292,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 4,
   },
+  // form styles
   formContainer: {
     padding: 16,
     gap: 16,
-    marginTop: 110,
+    marginTop: 100,
   },
   input: {
     backgroundColor: '#333333',
@@ -201,6 +307,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#444',
   },
+  // photo upload
   imageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -240,6 +347,55 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderWidth: 1,
     borderColor: 'white',
+  },
+  // category selector
+  selectorButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  selectorText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  placeholderText: {
+    color: '#888',
+    fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 0,
+  },
+  modalContent: {
+    backgroundColor: '#1E1E1E',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: '50%',
+    marginTop: 'auto',
+    zIndex: 1,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  categoryOption: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  categoryText: {
+    fontSize: 16,
+    color: 'white',
   },
   stepContainer: {
     gap: 8,
