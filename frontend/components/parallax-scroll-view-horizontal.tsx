@@ -62,13 +62,10 @@ export default function ParallaxScrollView({
         const x = event.nativeEvent.contentOffset.x;
 
         if (x > 50 && !hasLoggedRef.current) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           console.log('Scrolled more than 50px horizontally');
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
         }else if (x < -50 && !hasLoggedRef.current) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          
           console.log('Scrolled less than -50px horizontally');
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
@@ -82,11 +79,13 @@ export default function ParallaxScrollView({
         }
         
       }}
-      onScrollEndDrag={(event) => {
+      onScrollEndDrag={async (event) => {
         const x = event.nativeEvent.contentOffset.x;
+        
         
         if (Math.abs(x) > 50) {
           console.log('Touch ended after scrolling more than 50px horizontally');
+          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           
           onCardDismiss?.();
         }

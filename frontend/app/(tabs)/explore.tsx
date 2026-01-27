@@ -1,23 +1,36 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Animated} from 'react-native';
+import { Platform, StyleSheet, Animated, Button} from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { useState } from 'react';
+import { Butterfly } from '@/components/butterfly';
 
 
 export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState(TestData.items);
-
-  const item = TestData.items[0];
+  const [butterflies, setButterflies] = useState<number[]>([]);
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
   
+  const spawnButterfly = () => {
+    const id = Date.now();
+    setButterflies((prev) => [...prev, id]);
+  };
+
+  const removeButterfly = (id: number) => {
+    setButterflies((prev) => prev.filter((b) => b !== id));
+  };
+
   const handleCardDismiss = () => {
     setVisibleItems(prev => prev.slice(0, -1));
   };
+
+  const resetCards = () => {
+    setVisibleItems(TestData.items);
+  }
 
   return (
     <ThemedView>
@@ -50,7 +63,27 @@ export default function TabTwoScreen() {
           </ThemedView>
         </ThemedView>
         ))}
+        <ThemedView>
+          <Button title='soiejf' onPress={spawnButterfly} />
+            {butterflies.map((id) => (
+            <Butterfly
+              key={id}
+              onFinish={() => removeButterfly(id)}
+            />
+      ))}
+        </ThemedView>
     </ParallaxScrollView>
+    {visibleItems.length === 0 && (
+      <Animated.View style={{ alignItems: 'center', marginTop: 0}}>
+        <ThemedText style={{ fontSize: 18, marginBottom: 12 }}>No more items!</ThemedText>
+        <ThemedText 
+          style={{ fontSize: 16, color: 'blue' }}
+          onPress={resetCards}
+        >
+          Reset Items
+        </ThemedText>
+      </Animated.View>
+    )}
     </ThemedView>
   );
 }
