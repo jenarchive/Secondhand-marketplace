@@ -4,71 +4,65 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { moderateScale, vertialscale } from "../../styles/scaling";
-
-
-const { height } = Dimensions.get('window');
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={styles.mainContainer}>
+    <View style={styles.screen}>
+      <View style={styles.mainContainer}>
 
-    {/* avatar, name and email (with link to change) */}
-    <View style={styles.profileFrame}>
-      <View style ={styles.profileView}> 
-        <Image 
-        style = {styles.profilePhoto}
-        source={require('../../assets/images/avatar.png')} />
-        <View style={styles.profileUsername}>
+        {/* avatar, name and email (with link to change) */}
+        <View style={styles.profileFrame}>
+          {/* <View style ={styles.profileView}>  */}
+            <Image style = {styles.profilePhoto}
+            source={require('../../assets/images/avatar.png')} />
+            <View style={styles.profileTextContainer}>
+              {/* <View style={styles.profileUsername}> */}
+                <ThemedText style={styles.profileUsername}> Username</ThemedText>
+              {/* </View> */}
+              {/* <View style={styles.profileEmail}> */}
+                <ThemedText style={styles.profileEmail}> Email </ThemedText>
+              {/* </View> */}
+            </View>
+        </View>
+        
+        {/* purchase history  */}
+        <View style={styles.options}>
           <ThemedText>
-            Username
+            purchase history
           </ThemedText>
         </View>
-        <View style={styles.profileEmail}>
-          <ThemedText>
-            Email
+
+        {/* liked items */}
+        <View style={styles.options}>
+          <ThemedText >
+            liked items
           </ThemedText>
         </View>
+
+        {/* reviews */}
+        <View style={styles.options}>
+          <ThemedText>
+            reviews
+          </ThemedText>
+        </View>
+
+        {/* current listing (selling list)  */}
+        <View style={styles.options}>
+          <ThemedText>
+            current listing
+          </ThemedText>
+        </View>
+
+        {/* settings */}
+        <View style={styles.options}>
+          <ThemedText>
+            settings
+          </ThemedText>
+        </View>
+
+      
       </View>
     </View>
-    
-    {/* purchase history  */}
-    <View style={styles.options}>
-      <ThemedText>
-        purchase history
-      </ThemedText>
-    </View>
-
-    {/* liked items */}
-    <View style={styles.options}>
-      <ThemedText >
-        liked items
-      </ThemedText>
-    </View>
-
-    {/* reviews */}
-    <View style={styles.options}>
-      <ThemedText>
-        reviews
-      </ThemedText>
-    </View>
-
-    {/* current listing (selling list)  */}
-    <View style={styles.options}>
-      <ThemedText>
-        current listing
-      </ThemedText>
-    </View>
-
-    {/* settings */}
-    <View style={styles.options}>
-      <ThemedText>
-        settings
-      </ThemedText>
-    </View>
-
-    </SafeAreaView>
   );
 }
 
@@ -77,50 +71,66 @@ const colours = {
 };
 
 const styles = StyleSheet.create({
+  screen:{
+    flex:1,
+    backgroundColor: '#191C1F',
+    paddingLeft: '7%',
+    paddingRight: '7%',
+    paddingTop: '15.4%',
+    paddingBottom: '24%',
+  },
   mainContainer:{
     flex:1, 
-    paddingLeft: moderateScale(51),
-    paddingRight: moderateScale(51),
-    backgroundColor: colours.container,
+    alignContent: 'center',
+    borderWidth: 1,
+    borderColor: '#f60606',
+    paddingTop: '11.4%',
   },
   profileFrame:{
-    height: moderateScale(170),
-    width: moderateScale(300),
-    backgroundColor: '#FFFFFF',
-    paddingTop: moderateScale(100),
-    // paddingLeft: moderateScale(51),
-  },
-  profilePhoto:{
-    height: moderateScale(110),
-    width: moderateScale(110),
-    borderRadius:  moderateScale(110),
-    // paddingTop: moderateScale(30),
-    // paddingLeft: moderateScale(30),
+    flexDirection: "row",
+    flexWrap: 'wrap',
+    alignItems: "center",
+    height: 170,
+    width: 300, 
+    borderWidth: 1, 
+    borderColor: '#FFFFFF',
+    padding: 30,
   },
   profileView:{
-    height: moderateScale(110),
-    width: moderateScale(110),
-    paddingTop: moderateScale(30),
-    paddingLeft: moderateScale(30),
-    borderRadius:  moderateScale(110),
+    // flex:1,
+    // borderRadius:  110,
+    borderWidth: 1,
+    borderColor: '#17a150',
+  },
+  profilePhoto:{
+    height:110,
+    width:110,
+    borderRadius: 90,
+  },
+  profileTextContainer:{
+    flex:1,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
   },
   profileUsername:{
-    height: moderateScale(44),
-    width: moderateScale(100),
-    paddingTop: moderateScale(50),
-    paddingLeft: moderateScale(170),
+    fontSize: 16,
+    fontWeight: "500",
+    height: 44,
+    width: 100,
+    // paddingTop: 50,
+    // paddingLeft: 170,
     backgroundColor: '#a29191'
   },
   profileEmail:{
-    height: moderateScale(44),
-    width: moderateScale(100),
-    paddingTop: moderateScale(70),
-    paddingLeft: moderateScale(170),
+    height: 44,
+    width: 100,
+    // paddingTop: 70,
+    // paddingLeft: 170,
     backgroundColor: '#a29191'
   },
   options:{
-    height: moderateScale(70),
-    width: moderateScale(130), 
+    height: 70,
+    width: 130, 
     // color: '#a29191',
     backgroundColor: '#a29191'
   },
