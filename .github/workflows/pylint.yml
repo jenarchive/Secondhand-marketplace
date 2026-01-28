@@ -33,6 +33,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        cd backend
-        . .venv/bin/activate
         pylint $(git ls-files '*.py')
