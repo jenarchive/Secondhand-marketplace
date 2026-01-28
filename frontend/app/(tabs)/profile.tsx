@@ -7,6 +7,7 @@ import { Link } from 'expo-router';
 
 export default function HomeScreen() {
 
+  // list of buttons below profile card
   const Data = [
     { id: 1, icon: require('../../assets/images/history.png'), label: "Purchase History", next: require('../../assets/images/chevron.png') },
     { id: 2, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/chevron.png') },
@@ -16,55 +17,61 @@ export default function HomeScreen() {
     { id: 6, icon: require('../../assets/images/out.png'), label: "Log Out", next: require('../../assets/images/chevron.png') },
   ];
 
+  // handle press on profilecard
+  const pressReviews = async () => {
+
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.mainContainer}>
 
         {/* avatar, name and email (with link to change) */}
-        <View style={styles.profileFrame}>
-          {/* <Pressable onPress={handleUserPress}> */}
-          <ThemedView style={styles.userProfileContainer}>
-            <View style={styles.profileLeftHalf}>
-              <ThemedView style={styles.userProfileImage}>
-                <ThemedText type="defaultSemiBold">U</ThemedText>
-              </ThemedView>
-              <ThemedView style={styles.userMeta}>
-                <ThemedText type="defaultSemiBold">Username</ThemedText>
-                <ThemedText type="defaultSemiBold">Email</ThemedText>
-              </ThemedView>
-            </View>
+        <Link href="../items/review" asChild>
+          <Pressable style={styles.profileFrame}>
+              <ThemedView style={styles.userProfileContainer}>
+                <View style={styles.profileLeftHalf}>
+                  <ThemedView style={styles.userProfileImage}>
+                    <ThemedText type="defaultSemiBold">U</ThemedText>
+                  </ThemedView>
+                  <ThemedView style={styles.userMeta}>
+                    <ThemedText type="defaultSemiBold">Username</ThemedText>
+                    <ThemedText type="defaultSemiBold">Email</ThemedText>
+                  </ThemedView>
+                </View>
 
-            <View>
-              <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${4} out of 5`}>
-                {Array.from({ length: 5 }).map((_, i) => {
-                  const starIndex = i + 1;
-                  const filled = starIndex <= Math.round(4);
-                  return (
-                    <ThemedText
-                      key={starIndex}
-                      type="defaultSemiBold"
-                      style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 2 }}
-                    >
-                      {filled ? '★' : '☆'}
+                <View>
+                  <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${4} out of 5`}>
+                    {Array.from({ length: 5 }).map((_, i) => {
+                      const starIndex = i + 1;
+                      const filled = starIndex <= Math.round(4);
+                      return (
+                        <ThemedText
+                          key={starIndex}
+                          type="defaultSemiBold"
+                          style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 2 }}
+                        >
+                          {filled ? '★' : '☆'}
+                        </ThemedText>
+                      );
+                    })}
+                  </ThemedView>
+                  <View style={{ alignContent: 'center', alignItems: 'center' }}>
+                    <ThemedText>
+                      8 Reviews
                     </ThemedText>
-                  );
-                })}
+                  </View>
+                </View>
               </ThemedView>
-              <View style={{ alignContent: 'center', alignItems: 'center' }}>
-                <ThemedText>
-                  8 Reviews
-                </ThemedText>
-              </View>
-            </View>
-          </ThemedView>
-          {/* </Pressable> */}
-        </View>
+          </Pressable>
+        </Link>
 
+        {/* list of buttons that link to other tabs */}
         <FlatList
           data={Data}
           contentContainerStyle={styles.listContainer}
-          ItemSeparatorComponent={()=><View style={{height: 30}}/>}
-          keyExtractor={(item) => item.id.toString()} 
+          ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
             return (
               <View style={{ flexDirection: "row", alignItems: "center", }}>
@@ -86,45 +93,6 @@ export default function HomeScreen() {
           }}
         />
 
-
-        {/* buttons below that link to different areas
-        <View style={styles.rowsBelow}>
-          <View style={styles.options}>
-            <ThemedText>
-              Purchase History
-            </ThemedText>
-          </View>
-
-          <View style={styles.options}>
-            <ThemedText >
-              Liked Items
-            </ThemedText>
-          </View>
-
-          <View style={styles.options}>
-            <ThemedText>
-              Current Listing
-            </ThemedText>
-          </View>
-
-        </View>
-        
-        <View>
-          
-          <View style={styles.options}>
-            <ThemedText>
-              Notification
-            </ThemedText>
-          </View>
-
-          <View style={styles.options}>
-            <ThemedText>
-              Settings
-            </ThemedText>
-          </View>
-        </View> */}
-
-
       </View>
     </View>
   );
@@ -141,7 +109,7 @@ const styles = StyleSheet.create({
     paddingLeft: '7%',
     paddingRight: '7%',
     paddingTop: '15.4%',
-    paddingBottom: '24%',
+    paddingBottom: '21%',
   },
 
   mainContainer: {
@@ -149,6 +117,13 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     paddingTop: '11.4%',
     alignItems: 'center',
+    rowGap: '2%',
+  },
+
+  button:{
+    width: '100%',
+    borderColor: '#FFF',
+    borderWidth: 1,
   },
 
   profileFrame: {
@@ -156,8 +131,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: "center",
     alignContent: 'center',
-    borderWidth: 1,
-    borderColor: '#FFFFFF',
     height: 200,
   },
 
@@ -168,32 +141,19 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
 
-  rowsBelow: {
-    paddingTop: "10%",
-    // flexDirection: "row",
-  },
-
-  options: {
-    height: 70,
-    backgroundColor: '#a29191',
-    borderWidth: 1,
-    alignItems: 'center',
-    alignContent: 'center',
-    flexWrap: 'wrap',
-  },
-
   userProfileContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    alignContent: 'center',
     gap: 63,
     marginTop: 0,
     backgroundColor: colours.container,
     padding: 35,
     paddingLeft: 50,
-    borderRadius: 16,
-    // borderColor: '#cc1111',
-    // borderWidth: 1,
+    borderRadius: 50,
+    borderColor: '#cc1111',
+    borderWidth: 1,
   },
 
   userProfileImage: {
@@ -223,16 +183,19 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
   },
 
-  listContainer:{
-    paddingTop: 40,
+  listContainer: {
+    paddingTop: 25,
+    // paddingBottom: 40,
     flex: 1,
     borderColor: '#cc1111',
     borderWidth: 1,
     alignContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
   },
 
   listSide: {
-    height: 40, 
+    height: 40,
     width: 40,
     backgroundColor: '#aeabab',
     borderRadius: 100,
@@ -247,7 +210,8 @@ const styles = StyleSheet.create({
 
   listText: {
     width: '60%',
-    marginHorizontal: 20
+    marginHorizontal: 20,
+    borderWidth: 1
   },
 });
 
