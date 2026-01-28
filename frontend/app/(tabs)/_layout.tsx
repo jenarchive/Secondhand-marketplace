@@ -71,6 +71,7 @@ export default function TabLayout() {
         options={{
           title: 'Sell',
           tabBarIcon: ({ color }) => <Ionicons name="add-circle" size={28} color={color} />,
+          tabBarStyle: { display: 'none' },
         }}
       />
       <Tabs.Screen
