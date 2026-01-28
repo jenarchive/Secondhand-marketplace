@@ -46,7 +46,7 @@ export default function HomeScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
       selectionLimit: 5 - images.length,
       // preferredAssetRepresentationMode: ImagePicker.AssetRepresentationMode.Compatible,
