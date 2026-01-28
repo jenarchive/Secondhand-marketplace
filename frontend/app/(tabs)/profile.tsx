@@ -4,25 +4,25 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 export default function HomeScreen() {
 
   // list of buttons below profile card
   const Data = [
-    { id: 1, icon: require('../../assets/images/history.png'), label: "Purchase History", next: require('../../assets/images/chevron.png') },
-    { id: 2, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/chevron.png') },
-    { id: 3, icon: require('../../assets/images/list.png'), label: "Current Listing", next: require('../../assets/images/chevron.png') },
-    { id: 4, icon: require('../../assets/images/notification.png'), label: "Notification", next: require('../../assets/images/chevron.png') },
-    { id: 5, icon: require('../../assets/images/settings.png'), label: "Setting", next: require('../../assets/images/chevron.png') },
-    { id: 6, icon: require('../../assets/images/out.png'), label: "Log Out", next: require('../../assets/images/chevron.png') },
+    { id: 1, icon: require('../../assets/images/history.png'), label: "Purchase History", next: require('../../assets/images/next.png'), link: "/items/purchase-history" },
+    { id: 2, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/next.png'), link: "/items/liked-items" },
+    { id: 3, icon: require('../../assets/images/list.png'), label: "Current Listing", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
+    { id: 4, icon: require('../../assets/images/notification.png'), label: "Notification", next: require('../../assets/images/next.png'), link: "/items/notification" },
+    { id: 5, icon: require('../../assets/images/settings.png'), label: "Setting", next: require('../../assets/images/next.png'), link: "/items/setting" },
+    { id: 6, icon: require('../../assets/images/out.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
-  // handle press on profilecard
-  const pressReviews = async () => {
-
-  };
-
   return (
+    // <ParallaxScrollView 
+    //   headerBackgroundColor={{ light: '#A1CEDC', dark: '#191C1F' }}
+    //   headerImage={<Image />}>
     <ThemedView style={styles.screen}>
       <View style={styles.mainContainer}>
 
@@ -70,11 +70,12 @@ export default function HomeScreen() {
         <FlatList
           data={Data}
           contentContainerStyle={styles.listContainer}
-          ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
+          ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
             return (
-              <ThemedView style={styles.listRow}>
+              // <Link href={item.link} asChild>
+                <ThemedView style={styles.listRow}>
                 <View style={{ flexDirection: "row", alignItems: "center", }}>
                   <View style={styles.listSide}>
                     <Image style={styles.listIcon}
@@ -91,12 +92,15 @@ export default function HomeScreen() {
                   </View>
                 </View>
               </ThemedView>
+              // </Link>
             )
           }}
         />
 
       </View>
     </ThemedView>
+    // </ParallaxScrollView>
+
   );
 }
 
@@ -122,15 +126,9 @@ const styles = StyleSheet.create({
     rowGap: '2%',
   },
 
-  button: {
-    width: '100%',
-    borderColor: '#FFF',
-    borderWidth: 1,
-  },
-
   profileFrame: {
     flexDirection: "row",
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
     alignItems: "center",
     alignContent: 'center',
     height: 200,
@@ -192,47 +190,50 @@ const styles = StyleSheet.create({
   },
 
   listContainer: {
-    paddingTop: 30,
+    paddingBottom: 30,
     flex: 1,
-    borderColor: '#cc1111',
-    borderWidth: 1,
+    width: 300,
+    // borderColor: '#e70000',
+    // borderWidth: 1,
     alignContent: 'center',
     alignItems: 'center',
+    justifyContent: 'flex-end',
     borderRadius: 50,
   },
 
   listRow: {
-    height: 40,
-    borderColor: '#cc1111',
-    borderWidth: 1,
-    backgroundColor: colours.container,
+    // height: 40,
+    width: 300,
+    // flexDirection: 'row',
+    // borderColor: '#cc1111',
+    // borderWidth: 1,
+    // backgroundColor: colours.container,
     borderRadius: 25,
     // paddingHorizontal: 10,
   },
 
   listSide: {
-    height: 40,
+    height: 30,
     // width: 40,
     flex: 1,
-    backgroundColor: '#aeabab',
-    borderRadius: 100,
+    // borderRadius: 100,
     alignItems: 'center',
+    alignContent: 'center',
     justifyContent: 'center',
   },
 
   listIcon: {
     height: 30,
     width: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // backgroundColor: '#bbbbbbdc',
+    // borderRadius: 100,
   },
 
   listText: {
     // width: '60%',
-    flex: 3,
-    marginHorizontal: 20,
+    flex: 4,
+    marginHorizontal: 25,
     alignContent: 'center',
-    // alignItems: 'center',
     // borderWidth: 1
   },
 });
