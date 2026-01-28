@@ -23,46 +23,46 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.screen}>
+    <ThemedView style={styles.screen}>
       <View style={styles.mainContainer}>
 
         {/* avatar, name and email (with link to change) */}
         <Link href="../items/review" asChild>
           <Pressable style={styles.profileFrame}>
-              <ThemedView style={styles.userProfileContainer}>
-                <View style={styles.profileLeftHalf}>
-                  <ThemedView style={styles.userProfileImage}>
-                    <ThemedText type="defaultSemiBold">U</ThemedText>
-                  </ThemedView>
-                  <ThemedView style={styles.userMeta}>
-                    <ThemedText type="defaultSemiBold">Username</ThemedText>
-                    <ThemedText type="defaultSemiBold">Email</ThemedText>
-                  </ThemedView>
-                </View>
+            <ThemedView style={styles.userProfileContainer}>
+              <View style={styles.profileLeftHalf}>
+                <ThemedView style={styles.userProfileImage}>
+                  <ThemedText type="defaultSemiBold">U</ThemedText>
+                </ThemedView>
+                <ThemedView style={styles.userMeta}>
+                  <ThemedText type="defaultSemiBold">Username</ThemedText>
+                  <ThemedText type="defaultSemiBold">Email</ThemedText>
+                </ThemedView>
+              </View>
 
-                <View>
-                  <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${4} out of 5`}>
-                    {Array.from({ length: 5 }).map((_, i) => {
-                      const starIndex = i + 1;
-                      const filled = starIndex <= Math.round(4);
-                      return (
-                        <ThemedText
-                          key={starIndex}
-                          type="defaultSemiBold"
-                          style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 2 }}
-                        >
-                          {filled ? '★' : '☆'}
-                        </ThemedText>
-                      );
-                    })}
-                  </ThemedView>
-                  <View style={{ alignContent: 'center', alignItems: 'center' }}>
-                    <ThemedText>
-                      8 Reviews
-                    </ThemedText>
-                  </View>
+              <View>
+                <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${4} out of 5`}>
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const starIndex = i + 1;
+                    const filled = starIndex <= Math.round(4);
+                    return (
+                      <ThemedText
+                        key={starIndex}
+                        type="defaultSemiBold"
+                        style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 2 }}
+                      >
+                        {filled ? '★' : '☆'}
+                      </ThemedText>
+                    );
+                  })}
+                </ThemedView>
+                <View style={{ alignContent: 'center', alignItems: 'center' }}>
+                  <ThemedText>
+                    8 Reviews
+                  </ThemedText>
                 </View>
-              </ThemedView>
+              </View>
+            </ThemedView>
           </Pressable>
         </Link>
 
@@ -74,27 +74,29 @@ export default function HomeScreen() {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
             return (
-              <View style={{ flexDirection: "row", alignItems: "center", }}>
-                <View style={styles.listSide}>
-                  <Image style={styles.listIcon}
-                    source={item.icon} />
+              <ThemedView style={styles.listRow}>
+                <View style={{ flexDirection: "row", alignItems: "center", }}>
+                  <View style={styles.listSide}>
+                    <Image style={styles.listIcon}
+                      source={item.icon} />
+                  </View>
+                  <View style={styles.listText}>
+                    <ThemedText>
+                      {item.label}
+                    </ThemedText>
+                  </View>
+                  <View style={styles.listSide}>
+                    <Image style={styles.listIcon}
+                      source={item.next} />
+                  </View>
                 </View>
-                <View style={styles.listText}>
-                  <ThemedText>
-                    {item.label}
-                  </ThemedText>
-                </View>
-                <View style={styles.listSide}>
-                  <Image style={styles.listIcon}
-                    source={item.next} />
-                </View>
-              </View>
+              </ThemedView>
             )
           }}
         />
 
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -105,9 +107,9 @@ const colours = {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#191C1F',
-    paddingLeft: '7%',
-    paddingRight: '7%',
+    // backgroundColor: '#191C1F',
+    paddingLeft: '5%',
+    paddingRight: '5%',
     paddingTop: '15.4%',
     paddingBottom: '21%',
   },
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     rowGap: '2%',
   },
 
-  button:{
+  button: {
     width: '100%',
     borderColor: '#FFF',
     borderWidth: 1,
@@ -152,8 +154,15 @@ const styles = StyleSheet.create({
     padding: 35,
     paddingLeft: 50,
     borderRadius: 50,
-    borderColor: '#cc1111',
-    borderWidth: 1,
+
+    // shadow for IOS
+    shadowColor: '#e6e6e6',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+
+    // shadow for android
+    elevation: 8,
   },
 
   userProfileImage: {
@@ -167,7 +176,6 @@ const styles = StyleSheet.create({
 
   userMeta: {
     backgroundColor: 'transparent',
-    // marginLeft: 12,
     flex: 1,
     alignContent: 'center',
     alignItems: 'center',
@@ -184,8 +192,7 @@ const styles = StyleSheet.create({
   },
 
   listContainer: {
-    paddingTop: 25,
-    // paddingBottom: 40,
+    paddingTop: 30,
     flex: 1,
     borderColor: '#cc1111',
     borderWidth: 1,
@@ -194,9 +201,19 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
 
+  listRow: {
+    height: 40,
+    borderColor: '#cc1111',
+    borderWidth: 1,
+    backgroundColor: colours.container,
+    borderRadius: 25,
+    // paddingHorizontal: 10,
+  },
+
   listSide: {
     height: 40,
-    width: 40,
+    // width: 40,
+    flex: 1,
     backgroundColor: '#aeabab',
     borderRadius: 100,
     alignItems: 'center',
@@ -206,12 +223,17 @@ const styles = StyleSheet.create({
   listIcon: {
     height: 30,
     width: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   listText: {
-    width: '60%',
+    // width: '60%',
+    flex: 3,
     marginHorizontal: 20,
-    borderWidth: 1
+    alignContent: 'center',
+    // alignItems: 'center',
+    // borderWidth: 1
   },
 });
 
