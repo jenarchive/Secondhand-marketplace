@@ -70,7 +70,7 @@ export default function HomeScreen() {
                   {/* seller small profile (avatar, name, rating) */}
                   <ThemedView style={styles.sellerRow}>
                     <ThemedView style={styles.sellerAvatar}>
-                      <ThemedText type="defaultSemiBold">U</ThemedText>
+                      <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>U</ThemedText>
                     </ThemedView>
                     <ThemedView style={styles.sellerRating}>
                       {Array.from({ length: 5 }).map((_, i) => {
@@ -90,12 +90,12 @@ export default function HomeScreen() {
                     contentFit="cover"
                     source={{ uri: item.image }}
                   />
-                    <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1 }}>{item.title}</ThemedText>
-                  
-                    <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1 }}>
+                    <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
+                      
+                    <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
                       {item.description}
                     </ThemedText>
-                  <ThemedText type="defaultSemiBold">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
+                  <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </ThemedView>
               </Pressable>
             ))}
@@ -112,11 +112,10 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
     backgroundColor: "#25282B",
-    overflow: 'hidden'
-
+    
   },
 
-  //each item is 48% width → 2 items per row
+  //each item is 48% width 2 items per row
   listingLink: {
     flexBasis: '48%',
     maxWidth: '48%',
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    
+    marginBottom: 64
   },
 
   descriptionText: {
@@ -150,35 +149,39 @@ const styles = StyleSheet.create({
   }
   ,
   searchContainer: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 0,
+    paddingVertical: 16,
     backgroundColor: 'transparent'
   },
+  
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: Platform.OS === 'ios' ? 10 : 10,
-    borderWidth: 1,
+    backgroundColor: DarkTheme.colors.text,
+    opacity: 0.95,
+    borderRadius: 99,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderWidth: 6,
     borderColor: DarkTheme.colors.border,
-    // subtle iOS-like shadow
+    //iOS-like shadow
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
       android: { elevation: 2 }
     })
   },
+
   searchIcon: {
     marginRight: 8
   },
+
   searchInput: {
     flex: 1,
     padding: 0,
     margin: 0,
     color: '#111'
-  }
-  ,
+  },
+
   sellerRow: {
     backgroundColor: 'transparent',
     flexDirection: 'row',
@@ -186,6 +189,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     justifyContent: 'space-between'
   },
+
   sellerAvatar: {
     width: 32,
     height: 32,
@@ -194,12 +198,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+
   sellerMeta: {
     flex: 1,
     minWidth: 0
     ,
     marginRight: 8
   },
+
   sellerRating: {
     backgroundColor: 'transparent',
     flexDirection: 'row',
