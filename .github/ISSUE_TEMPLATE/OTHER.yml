@@ -1,6 +1,6 @@
-name: "📂 Other"
+name: "Other"
 description: Create a new general issue
-title: "📂 [OTHER] - <title>"
+title: "[OTHER] - <title>"
 labels: [
   ""
 ]
