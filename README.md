@@ -66,7 +66,104 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 
 ## Project Structure
-
+```bash
+├── README.md
+├── ai-tools
+│   └── README.md
+├── code
+│   ├── backend
+│   │   ├── README.md
+│   │   ├── app
+│   │   │   ├── __init__.py
+│   │   │   ├── config.py
+│   │   │   ├── extensions.py
+│   │   │   └── routes
+│   │   │       ├── __init__.py
+│   │   │       ├── auth.py
+│   │   │       ├── home.py
+│   │   │       └── item_listing.py
+│   │   ├── requirements.txt
+│   │   └── run.py
+│   ├── database
+│   │   ├── __pycache__
+│   │   │   └── config.cpython-310.pyc
+│   │   ├── config.py
+│   │   ├── create.sql
+│   │   ├── insert.sql
+│   │   ├── main.py
+│   │   └── operations.sql
+│   └── frontend
+│       ├── README.md
+│       ├── app
+│       │   ├── (tabs)
+│       │   │   ├── _layout.tsx
+│       │   │   ├── explore.tsx
+│       │   │   ├── index.tsx
+│       │   │   ├── marketplace.tsx
+│       │   │   ├── profile.tsx
+│       │   │   └── sell.tsx
+│       │   ├── _layout.tsx
+│       │   ├── auth
+│       │   │   ├── login.tsx
+│       │   │   └── signup.tsx
+│       │   └── items
+│       │       ├── [id].tsx
+│       │       └── _layout.tsx
+│       ├── app.json
+│       ├── assets
+│       │   └── images
+│       │       ├── android-icon-background.png
+│       │       ├── android-icon-foreground.png
+│       │       ├── android-icon-monochrome.png
+│       │       ├── butterfly.png
+│       │       ├── favicon.png
+│       │       ├── icon.png
+│       │       ├── partial-react-logo.png
+│       │       ├── react-logo.png
+│       │       ├── react-logo@2x.png
+│       │       ├── react-logo@3x.png
+│       │       └── splash-icon.png
+│       ├── components
+│       │   ├── butterfly.tsx
+│       │   ├── external-link.tsx
+│       │   ├── haptic-tab.tsx
+│       │   ├── hello-wave.tsx
+│       │   ├── parallax-scroll-view-horizontal.tsx
+│       │   ├── parallax-scroll-view.tsx
+│       │   ├── themed-text.tsx
+│       │   ├── themed-view.tsx
+│       │   ├── ui
+│       │   │   ├── collapsible.tsx
+│       │   │   ├── icon-symbol.ios.tsx
+│       │   │   └── icon-symbol.tsx
+│       │   └── user-header.tsx
+│       ├── constants
+│       │   └── theme.ts
+│       ├── eas.json
+│       ├── eslint.config.js
+│       ├── hooks
+│       │   ├── use-color-scheme.ts
+│       │   ├── use-color-scheme.web.ts
+│       │   └── use-theme-color.ts
+│       ├── package-lock.json
+│       ├── package.json
+│       ├── scripts
+│       │   └── reset-project.js
+│       ├── test-data.json
+│       └── tsconfig.json
+├── doc
+│   ├── Database ER Diagram.jpg
+│   ├── Roadmap for SEP.docx
+│   ├── Secondhand Marketplace2 MVP.pptx
+│   ├── architecture diagram.jpg
+│   ├── meetings
+│   │   └── agendas
+│   │       └── GreenCheckAI Meeting Agenda 8th Oct.docx
+│   └── meetings.md
+├── package-lock.json
+├── package.json
+└── test
+```
 
 ## Dev Instructions
 ## Get started: Frontend
