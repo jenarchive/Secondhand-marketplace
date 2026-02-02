@@ -181,3 +181,35 @@
     * Should be dismantled into smaller issues and put in dependency
 * Concerned about not enough going on
 * Aim for more than 1 issue per person per week
+
+## Mentor 27th Jan: 
+* Email Sarah about focusing on backend later (general plan) - do it before testing day
+* Priorities: 
+    * AI Tools folder: really need to put in more details 
+    * Dev and User instructions
+    * Project structure: tree map with comments
+    * A lot more commits: split commits and PR into smaller piece 
+* Good, should keep up: 
+    * PR description 
+    * Issue: can have more details 
+    * Templates 
+
+## Client 28th Jan (MVP Release): 
+* Complimented:
+    * Having a time plan with actual dates and actual features
+    * Gamification: Swiping is responsive and dynamic
+    * Butterfly appearing 
+    * General simple UI 
+* Concerned about: 
+    * Profile page overloading: Need to simplify
+    * Frontend backend Connection not done
+    * User Journey: what do we expect user to go through when they use the app 
+        * First time using
+        * When do they need to register
+        * What they should do after register / after finish swiping or scrolling
+    * Testing day: what feedback to collect and how to collect
+* Suggestion till week 19 (beta release): 
+    * Consider about what is really necessary and simplify into streamline (keep it minimal and functional) 
+    * Focus on gamification, animamtion and UI (simplistic) 
+    * Start connecting frontend and backend now 
+* Will meet us and test our app in person on Feb 19 (Beta release)
