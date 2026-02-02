@@ -31,9 +31,9 @@ jobs:
         cd backend
         python3 -m venv .venv
         . .venv/bin/activate
-        pip install -r requirements.txt
         python -m pip install --upgrade pip
-        pip install pylint
+        python -m pip install -r requirements.txt 
+        python -m pip install pylint
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
