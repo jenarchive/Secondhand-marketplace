@@ -89,8 +89,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 │   ├── architecture diagram.jpg
 │   ├── Database ER Diagram.jpg
 │   └── meetings
-├── package.json
-└── yarn.lock
+└── package.json
 ```
 
 ## Dev Instructions
