@@ -6,8 +6,9 @@ import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useNavigation, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
+import { useState, useRef, useLayoutEffect } from 'react';
 
 export default function HomeScreen() {
 
