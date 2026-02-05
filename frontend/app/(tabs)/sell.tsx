@@ -123,7 +123,7 @@ export default function HomeScreen() {
               styles.input,
               focusedInput === 'title' && { borderColor: '#007AFF80', borderWidth: 2 }
             ]}
-            onFocus={() => setFocusedInput('title')}
+            
             onBlur={() => setFocusedInput(null)}
             value={title}
             onChangeText={setTitle}
@@ -136,7 +136,7 @@ export default function HomeScreen() {
               styles.input,
               focusedInput === 'description' && { borderColor: '#007AFF80', borderWidth: 2 }
             ]}
-            onFocus={() => setFocusedInput('description')}
+            
             onBlur={() => setFocusedInput(null)}
             value={description}
             onChangeText={setDescription}
@@ -152,7 +152,7 @@ export default function HomeScreen() {
               styles.input,
               focusedInput === 'price' && { borderColor: '#007AFF80', borderWidth: 2 }
             ]}
-            onFocus={() => setFocusedInput('price')}
+            
             onBlur={() => setFocusedInput(null)}
             value={price}
             onChangeText={(text) => {
@@ -439,5 +439,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  label:{
+
   }
 });
