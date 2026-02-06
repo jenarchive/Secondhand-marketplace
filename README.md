@@ -70,14 +70,14 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 ├── README.md                          # Main project overview
 ├── ai-tools                           # Overview of AI tools
 │   └── README.md
-├── backend                            # Backend-related services and scripts
-│   ├── app                            
-│   ├── requirements.txt               
-│   └── run.py                         
-├── database                           # Database configuration and scripts
-│   ├── config.py                      
-│   ├── main.py                        
-│   └── *.sql                          
+├── backend                            # Flask API: Handles business logic and data processing
+│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings)
+│   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
+│   └── run.py                         # Server entry point: Starts the Flask development server
+├── database                           # Data Layer: PostgreSQL configuration and scripts
+│   ├── config.py                      # DB connection strings and environment settings
+│   ├── main.py                        # Management script for DB init and migrations
+│   └── *.sql                          # SQL scripts: Schema(Create), Seed(Insert), Ops(Queries)
 ├── frontend                           # Frontend React Native (Expo) application
 │   ├── app                            # File-based Routing (Crucial for UI)
 │   │   ├── (tabs)                     # Main navigation tab screens
@@ -93,7 +93,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 │   │   └── _layout.tsx                # Root layout and theme providers
 │   ├── assets                         # Images, icons, and animations
 │   ├── components                     # Reusable UI components (Headers, Buttons)
-│   ├── constants                      # Design tokens (Colors, Spacing)
+│   ├── constants                      # Design tokens (Colours, Spacing)
 │   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
 │   ├── test-data.json                 # Mock data for frontend testing
 │   └── package.json                   # Frontend dependencies and scripts
