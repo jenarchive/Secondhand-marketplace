@@ -208,8 +208,11 @@ export default function HomeScreen() {
 
           <ThemedText type="subtitle" style={styles.label}>Category</ThemedText>
           <TouchableOpacity
-            style={[styles.input, styles.selectorButton]}
-            onPress={openModal}
+            style={[styles.input, styles.selectorButton, { borderColor: decideBorderColour('category') }]}
+            onPress={() => {
+              if (errors.category) setErrors({...errors, category: false});
+              openModal();
+            }}
           >
             <ThemedText style={category ? styles.selectorText : styles.placeholderText}>
               {category || "Select a Category"}
@@ -222,7 +225,18 @@ export default function HomeScreen() {
             <View style={styles.imageGrid}>
 
               {images.length < 5 && (
-                <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
+                <TouchableOpacity onPress={pickImage} style={[
+                  styles.imagePickerButton,
+                  errors.images ? {
+                    borderColor: '#FF000080',
+                    borderStyle: 'solid',
+                    borderWidth: 2
+                  } : {
+                    borderColor: '#444',
+                    borderStyle: 'dashed',
+                    borderWidth: 1
+                  }
+                ]}>
                   <Ionicons name="camera-outline" size={30} color="#888" />
                   <ThemedText style={{ color: '#888', fontSize: 12 }}>Add</ThemedText>
                 </TouchableOpacity>
@@ -376,7 +390,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#444',
-    borderStyle: 'dashed',
   },
   imageWrapper: {
     width: photoSize,
