@@ -118,7 +118,7 @@ export default function HomeScreen() {
     return '#444';
   }
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     let newErrors = {};
     let valid = true;
 
@@ -127,11 +127,47 @@ export default function HomeScreen() {
     if (!price.trim()) { newErrors.price = true; valid = false; }
     if (!category) { newErrors.category = true; valid = false; }
     if (images.length === 0) { newErrors.images = true; valid = false; }
-
+    
     setErrors(newErrors);
 
     if (valid) {
-      // add upload logic
+      try {
+        const formData = new FormData();
+
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('price', price);
+        formData.append('category', category);
+
+        images.forEach((uri, index) => {
+          formData.append('images', {
+            uri: uri,
+            name: `${index}.jpg`,
+            type: 'image/jpeg'
+          } as any);
+        });
+
+        const response = await fetch('http://192.168.0.43:5000/api/items', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log("successfully uploaded item: ", result.item_id);
+
+          router.back();
+        } else {
+          alert("upload failed: " + result.error);
+        }
+
+      } catch (error) {
+        alert("error: " + error);
+      }
     }
   }
 
