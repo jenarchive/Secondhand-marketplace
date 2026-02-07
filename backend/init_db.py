@@ -1,19 +1,15 @@
+from app.config import Config
 import os
 import psycop2
 from app import create_app
 
-HOST = "localhost"
-NAME = "db"
-USER = "username"
-PASS = "password"
-
 def init_db():
     conn = psycopg2.connect(
-        host=HOST,
-        database=NAME,
-        user=USER,
-        password=PASS
-    )
+        host=Config.DB_HOST,
+        database=Config.DB_NAME,
+        user=Config.DB_USER,
+        password=Config.DB_PASS
+        )
 
     cur = conn.cusor()
 
