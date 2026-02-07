@@ -1,6 +1,6 @@
 from app.config import Config
 import os
-import psycop2
+import psycopg2
 from app import create_app
 
 def init_db():
@@ -9,21 +9,23 @@ def init_db():
         database=Config.DB_NAME,
         user=Config.DB_USER,
         password=Config.DB_PASS
-        )
+    )
 
-    cur = conn.cusor()
+    cur = conn.cursor()
 
-    sql_file_path = os.path.join(os.path.dirname(__file__), 'database', 'create.sql')
+    backend_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(backend_dir)
+    create_path = os.path.join(project_root, 'database', 'create.sql')
+    insert_script = os.path.join(project_root, 'databas', 'insert.sql')
 
     try:
-        with open(sql_file_path, 'r') as f:
-            schema = f.read()
+        with open(create_path, 'r') as f:
+            cur.execute(f.read())
 
-        cur.execute(schema)
         conn.commit()
         print("database initialised successfully")
 
-    except Exeption as e:
+    except Exception as e:
         print(f"error: {e}")
         conn.rollback()
 

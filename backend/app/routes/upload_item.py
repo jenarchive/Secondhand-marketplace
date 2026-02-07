@@ -14,7 +14,7 @@ def connect_db():
     )
     return conn
 
-@upload_bp.route('/api/items', methods=['POST'])
+@upload_bp.route('/items', methods=['POST'])
 def create_item():
     conn = None
     try:
@@ -48,7 +48,7 @@ def create_item():
 
         if 'images' in request.files:
             files = request.files.getlist('images')
-            image_folder = current_app.config['UPLOAD_FOLDER']
+            image_folder = current_app.config['IMAGE_FOLDER']
 
             for file in files:
                 if file.filename == '':

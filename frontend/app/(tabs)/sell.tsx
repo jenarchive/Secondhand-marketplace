@@ -137,7 +137,7 @@ export default function HomeScreen() {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('price', price);
-        formData.append('category', category);
+        formData.append('category', categories.find(c => c.name === category));
 
         images.forEach((uri, index) => {
           formData.append('images', {

@@ -7,9 +7,9 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev")
 
-    IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
+    IMAGE_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'images')
 
     DB_HOST = "localhost"
-    DB_NAME = "name"
-    DB_USER = "username"
+    DB_NAME = "test_db"
+    DB_USER = "alex"
     DB_PASS = "passowrd"

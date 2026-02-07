@@ -8,7 +8,7 @@ CREATE TABLE users (
 
 CREATE TABLE category (
     category_id SERIAL PRIMARY KEY, 
-    category_name VARCHAR(30) NOT NULL, 
+    category_name VARCHAR(30) NOT NULL
 ) ;
 
 CREATE TABLE products (
@@ -17,7 +17,7 @@ CREATE TABLE products (
     product_description VARCHAR(300) NULL,
     seller_id INT REFERENCES users(user_id), 
     price MONEY NOT NULL, 
-    category_id INT REFERENCES category(category_id)
+    category_id INT REFERENCES category(category_id),
     time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ; 
 
