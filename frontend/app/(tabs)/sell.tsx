@@ -37,6 +37,7 @@ export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
   const [images, setImages] = useState<string[]>([]);
+  const [errors, setErrors] = useState({});
   
   // image functions
   const pickImage = async () => {
@@ -63,6 +64,8 @@ export default function HomeScreen() {
       }
 
       setImages([...images, ...newUris]);
+
+      if (errors.images) setErrors({...errors, images: false});
     }
   };
 
@@ -107,6 +110,31 @@ export default function HomeScreen() {
     });
   };
 
+  // handle upload functions
+  
+  const decideBorderColour = (field) => {
+    if (focusedInput === field) return '#007AFF80';
+    if (errors[field]) return '#FF000080';
+    return '#444';
+  }
+
+  const handleUpload = () => {
+    let newErrors = {};
+    let valid = true;
+
+    if (!title.trim()) { newErrors.title = true; valid = false; }
+    if (!description.trim()) { newErrors.description = true; valid = false; }
+    if (!price.trim()) { newErrors.price = true; valid = false; }
+    if (!category) { newErrors.category = true; valid = false; }
+    if (images.length === 0) { newErrors.images = true; valid = false; }
+
+    setErrors(newErrors);
+
+    if (valid) {
+      // add upload logic
+    }
+  }
+
   return (
     <View style={styles.container}>
 
@@ -121,9 +149,13 @@ export default function HomeScreen() {
           <TextInput
             style={[
               styles.input,
-              focusedInput === 'title' && { borderColor: '#007AFF80', borderWidth: 2 }
+              { borderColor: decideBorderColour('title') }
+              // focusedInput === 'title' && { borderColor: '#007AFF80', borderWidth: 2 }
             ]}
-            onFocus={() => setFocusedInput('title')}
+            onFocus={() => {
+              setFocusedInput('title');
+              if (errors.title) setErrors({...errors, title: false});
+            }}
             onBlur={() => setFocusedInput(null)}
             value={title}
             onChangeText={setTitle}
@@ -134,9 +166,12 @@ export default function HomeScreen() {
           <TextInput
             style={[
               styles.input,
-              focusedInput === 'description' && { borderColor: '#007AFF80', borderWidth: 2 }
+              { borderColor: decideBorderColour('description') }
             ]}
-            onFocus={() => setFocusedInput('description')}
+            onFocus={() => {
+              setFocusedInput('description')
+              if (errors.description) setErrors({...errors, description: false});
+            }}
             onBlur={() => setFocusedInput(null)}
             value={description}
             onChangeText={setDescription}
@@ -150,14 +185,17 @@ export default function HomeScreen() {
           <TextInput
             style={[
               styles.input,
-              focusedInput === 'price' && { borderColor: '#007AFF80', borderWidth: 2 }
+              { borderColor: decideBorderColour('price') }
             ]}
-            onFocus={() => setFocusedInput('price')}
+            onFocus={() => {
+              setFocusedInput('price')
+              if (errors.price) setErrors({...errors, price: false});
+            }}
             onBlur={() => setFocusedInput(null)}
             value={price}
             onChangeText={(text) => {
               // only allow numbers and 2 decimal points
-              if (/^\d*\.?d{0,2}$/.test(text)) {
+              if (/^\d*\.?\d{0,2}$/.test(text)) {
                 setPrice(text);
               }
             }}
@@ -209,10 +247,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={styles.uploadButton}
-            onPress={() => {
-              // implement upload handling later when integrating backend and db
-              console.log("item uploaded")
-            }}
+            onPress={handleUpload}
           >
             <ThemedText style={styles.uploadButtonText}>Upload</ThemedText>
           </TouchableOpacity>
@@ -263,6 +298,7 @@ export default function HomeScreen() {
                   style={styles.categoryOption}
                   onPress={() => {
                     setCategory(item.name);
+                    if (errors.category) setErrors({...errors, category: false});
                     closeModal();
                   }}
                 >
