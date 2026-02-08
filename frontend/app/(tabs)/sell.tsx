@@ -121,7 +121,8 @@ export default function HomeScreen() {
   const handleUpload = async () => {
     let newErrors = {};
     let valid = true;
-
+  
+    // check if any fields are empty
     if (!title.trim()) { newErrors.title = true; valid = false; }
     if (!description.trim()) { newErrors.description = true; valid = false; }
     if (!price.trim()) { newErrors.price = true; valid = false; }
@@ -146,7 +147,8 @@ export default function HomeScreen() {
             type: 'image/jpeg'
           } as any);
         });
-
+        
+        // send POST request
         const response = await fetch('http://192.168.0.43:5000/api/items', {
           method: 'POST',
           body: formData,

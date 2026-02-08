@@ -14,10 +14,12 @@ def connect_db():
     )
     return conn
 
+# handle POST request to sell items
 @upload_bp.route('/items', methods=['POST'])
 def create_item():
     conn = None
     try:
+        # insert item to db
         item_name = request.form.get('title')
         item_description = request.form.get('description')
         price = request.form.get('price')
@@ -46,6 +48,7 @@ def create_item():
 
         new_item_id = cur.fetchone()[0]
 
+        # insert images to db
         if 'images' in request.files:
             files = request.files.getlist('images')
             image_folder = current_app.config['IMAGE_FOLDER']
@@ -71,7 +74,8 @@ def create_item():
 
         conn.commit()
         cur.close()
-
+        
+        # POST response
         return jsonify({
             "message": "product uploaded successfully",
             "item_id": new_item_id
