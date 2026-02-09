@@ -1,6 +1,6 @@
-name: "🔍 Research"
+name: "Research"
 description: Create an issue for new research
-title: "🔍 [RESEARCH] - <title>"
+title: "[RESEARCH] - <title>"
 labels: [
   "research"
 ]

@@ -10,7 +10,7 @@ const { height } = Dimensions.get('window');
 export default function HomeScreen() {
   return (
     <ThemedView style={styles.contentContainer}>
-      
+
       {/* welcome header */}
       <ThemedView style={styles.headerContainer}>
         <ThemedText type="title">Welcome</ThemedText>

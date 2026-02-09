@@ -1,6 +1,6 @@
-name: "🐛 Bugfix"
+name: "Bugfix"
 description: Create an issue for a new feature
-title: "🐛 [BUGFIX] - <title>"
+title: "[BUGFIX] - <title>"
 labels: [
   "bug"
 ]
