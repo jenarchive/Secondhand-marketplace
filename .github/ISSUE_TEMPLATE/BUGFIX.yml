@@ -48,4 +48,14 @@ body:
       placeholder: "Identify the dependencies of this issue (what needs to be completed before this issue can be achieved)."
     validations:
       required: false
-
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I have added a detailed description that includes all prerequisite knowledge about the issue"
+          required: true
+        - label: "I have added all relevant labels, reference issues, the milestone, and assignee if known"
+          required: true
+        - label: "I have removed sections that are unnecessary for this issue"
+          required: true
