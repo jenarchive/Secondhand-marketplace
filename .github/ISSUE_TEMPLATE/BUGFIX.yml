@@ -33,17 +33,9 @@ body:
     validations:
       required: false
   - type: textarea
-    id: reference_issues
+    id: description
     attributes:
-      label: "Reference Issues"
-      description: "Common issues"
-      placeholder: "#Issues' IDs"
-    validations:
-      required: false
-  - type: textarea
-    id: summary
-    attributes:
-      label: "Summary"
+      label: "Description"
       description: "Provide a brief explanation of the bug"
       placeholder: "Summarise in a few lines what and where the bug is."
     validations:
