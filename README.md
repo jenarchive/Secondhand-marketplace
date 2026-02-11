@@ -98,9 +98,9 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 │   ├── test-data.json                 # Mock data for frontend testing
 │   └── package.json                   # Frontend dependencies and scripts
 ├── doc                                # Project documentation and diagrams
-│   ├── architecture diagram.jpg
-│   ├── Database ER Diagram.jpg
-│   └── meetings
+│   ├── previous project               # Files related to previous project
+│   ├── others                         # Diagrams and files for explain / plan
+│   └── meetings and feedbacks         # Meeting notes and feedbacks for review
 └── package.json                       # Root workspace configuration
 ```
 
