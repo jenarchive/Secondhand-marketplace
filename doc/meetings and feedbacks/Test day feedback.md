@@ -1,3 +1,27 @@
+# General trend: 
+* Users liked: 
+    * UI and interface: It looks clean, modern, minimalistic and easy to access. 
+    * Swiping feature: allow users to discover, interactive and unique in online market
+    * Easy to list things
+* Users pointed out areas that can be improved / implemented: 
+    * Marketplace: 
+        - Labels for items 
+        - Tapping on seller doesn't give details
+        - Searching can find related items 
+        - Contact seller 
+        - Sort by categories
+    * Swiping 
+        - small description area
+        - buy or not buy feature 
+    * Others
+        - When exiting page, on the top left is (tabs) not back
+        - Liked items page
+        - Chat section 
+        - Prefer webpage 
+        - Color Scheme
+* Average Score of 2.67/5 on "How different do you think this app is compare to other online market" 
+
+# Data collected: 
 ## Participant 1
 ### Transcript: 
 So generally, what do you think, what is good for this project? So I actually really love the interface. especially each of the items, right? It looks very clear, especially it mentioned the title and also the price. And I really love that the user can break the product. You can see you have... And especially to export age. I think is very creative. Okay. Sure. Then what do you think that can be improved? I think the 1st thing you can improve is probably a landing page because right now we don't have a landing page, right? So we have a homepage. Maybe showing the users' profile, I guess. Oh, okay. And also, maybe we can implement a page for each of the items because when I press on the item, right, and then show a page. Yeah, I think it's just some bugs happening for, I don't know why, but yeah. Overall, is impressive. Okay, thank you.
