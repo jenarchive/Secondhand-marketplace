@@ -1,21 +1,41 @@
 # Roadmap for SEP TB2: 
-## Sprint 1: MVP Release
+## Sprint 1: MVP Release and Testing day
 ### Week 13 - 14 (19th - 30th Jan), Project Manager: Freddie
 ### Features planned to be finish: 
-* 
+* Butterfly character at item listing page 
+    * click buy and flying around 
+    * not too invasive 
+* Log-in page interaction 
+* Pop-up when something is achieved 
+* Basic UI for all pages in frontend
+* Get ready for what to test (ethics and information form) 
 
-### Achieved: 
-* 
+### Fully Achieved: 
+* Log-in page interaction 
+    * has login and sign in page that links to 2 other pages
+    * backend authorization has not been done
+* Basic UI for all pages in frontend
+    * Has marketplace, sell, explore and profile page. 
+* Get ready for what to test (ethics and information form) 
+
+### partially Achieved: 
+* Butterfly character 
+    * it is accessible at explore page after all items have been swiped
+    * It is supposed to interact when users swipe left or right (possible idea)
 
 ### Postponed / Cancelled: 
-* 
+* Pop-up when something is achieved 
+    * A bit out of stretch, did not have enough time
 
 ## Sprint 2: Beta Release
 ### Week 15 - 17 (2nd - 19th Feb), Project Manager: Euan
 ### Features planned to be finish: 
 * 
 
-### Achieved: 
+### Fully Achieved: 
+* 
+
+### partially Achieved: 
 * 
 
 ### Postponed / Cancelled: 
@@ -26,7 +46,10 @@
 ### Features planned to be finish: 
 * 
 
-### Achieved: 
+### Fully Achieved: 
+* 
+
+### partially Achieved: 
 * 
 
 ### Postponed / Cancelled: 
@@ -38,7 +61,10 @@
 ### Features planned to be finish: 
 * 
 
-### Achieved: 
+### Fully Achieved: 
+* 
+
+### partially Achieved: 
 * 
 
 ### Postponed / Cancelled: 
@@ -51,7 +77,10 @@
 ### Features planned to be finish: 
 * 
 
-### Achieved: 
+### Fully Achieved: 
+* 
+
+### partially Achieved: 
 * 
 
 ### Postponed / Cancelled: 
