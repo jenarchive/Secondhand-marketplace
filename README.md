@@ -33,7 +33,7 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 * Github Actions
 
 <p align="left">
-  <img width="918" alt="architecture image" src="doc/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="architecture image" src="doc/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
 ## Client Information 
@@ -98,9 +98,9 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 │   ├── test-data.json                 # Mock data for frontend testing
 │   └── package.json                   # Frontend dependencies and scripts
 ├── doc                                # Project documentation and diagrams
-│   ├── architecture diagram.jpg
-│   ├── Database ER Diagram.jpg
-│   └── meetings
+│   ├── previous project               # Files related to previous project
+│   ├── others                         # Diagrams and files for explain / plan
+│   └── meetings and feedbacks         # Meeting notes and feedbacks for review
 └── package.json                       # Root workspace configuration
 ```
 
