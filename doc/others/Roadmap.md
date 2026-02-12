@@ -27,13 +27,30 @@
 * Pop-up when something is achieved 
     * A bit out of stretch, did not have enough time
 
-## Sprint 2: Beta Release
+## Sprint 2: Beta Release & Client In-person Meeting
 ### Week 15 - 17 (2nd - 19th Feb), Project Manager: Euan
 ### Features planned to be finish: 
-* 
+* Swiping feature fully done
+* Log in page with backend auth 
+* Connecting frontend and backend 
+* Liked-items page 
+* Dev and User instruction 
+* Project structure 
+* AI Tools folder 
+* Profile page simplify
+* Unit tests for CI 
+* Compatible to android
+* User flow
+* Issues description change
+* Connect to AWS
+* Light Mode Frontend
+* Research and explain why UI and gamification designs are chosen 
+* Delete home and merge log-in to profile page
+* Beta Viva slides (rough) 
 
 ### Fully Achieved: 
-* 
+* Project structure
+* Issues description change
 
 ### partially Achieved: 
 * 
@@ -44,7 +61,7 @@
 ## Sprint 3: Beta Viva
 ### Reading week - Week 19 (23rd Feb - 6th Mar), Project Manager: TBC
 ### Features planned to be finish: 
-* 
+* Beta Viva slides (full)
 
 ### Fully Achieved: 
 * 
