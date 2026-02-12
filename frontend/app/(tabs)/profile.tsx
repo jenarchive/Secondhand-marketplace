@@ -11,12 +11,12 @@ export default function HomeScreen() {
 
   // list of buttons below profile card
   const Data = [
-    { id: 1, icon: require('../../assets/images/history.png'), label: "Purchase History", next: require('../../assets/images/next.png'), link: "/items/purchase-history" },
+    // { id: 1, icon: require('../../assets/images/history.png'), label: "Purchase History", next: require('../../assets/images/next.png'), link: "/items/purchase-history" },
     { id: 2, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/next.png'), link: "/items/liked-items" },
-    { id: 3, icon: require('../../assets/images/list.png'), label: "Current Listing", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
-    { id: 4, icon: require('../../assets/images/notification.png'), label: "Notification", next: require('../../assets/images/next.png'), link: "/items/notification" },
+    // { id: 3, icon: require('../../assets/images/list.png'), label: "Current Listing", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
+    // { id: 4, icon: require('../../assets/images/notification.png'), label: "Notification", next: require('../../assets/images/next.png'), link: "/items/notification" },
     { id: 5, icon: require('../../assets/images/settings.png'), label: "Setting", next: require('../../assets/images/next.png'), link: "/items/setting" },
-    { id: 6, icon: require('../../assets/images/out.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
+    { id: 6, icon: require('../../assets/images/door.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
   return (
@@ -67,7 +67,7 @@ export default function HomeScreen() {
         </Link>
 
         {/* list of buttons that link to other tabs */}
-        {/* <FlatList
+        <FlatList
           data={Data}
           contentContainerStyle={styles.listContainer}
           ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
@@ -87,7 +87,7 @@ export default function HomeScreen() {
                     </ThemedText>
                   </View>
                   <View style={styles.listSide}>
-                    <Image style={styles.listIcon}
+                    <Image style={styles.listArrow}
                       source={item.next} />
                   </View>
                 </View>
@@ -95,7 +95,7 @@ export default function HomeScreen() {
               // </Link>
             )
           }}
-        /> */}
+        />
 
       </View>
     </ThemedView>
@@ -194,11 +194,11 @@ const styles = StyleSheet.create({
   },
 
   listContainer: {
-    paddingBottom: 30,
+    paddingBottom: 60,
     flex: 1,
     width: 300,
-    borderColor: '#e70000',
-    borderWidth: 1,
+    // borderColor: '#e70000',
+    // borderWidth: 1,
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -237,6 +237,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 25,
     alignContent: 'center',
     // borderWidth: 1
+  },
+
+  listArrow: {
+    height: 12,
+    width: 12,
   },
 });
 
