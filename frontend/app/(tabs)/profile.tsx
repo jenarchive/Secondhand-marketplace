@@ -27,10 +27,10 @@ export default function HomeScreen() {
       <View style={styles.mainContainer}>
 
         {/* avatar, name and email (with link to change) */}
-        <Link href="../items/review" asChild>
+        <Link href="../items/edit-profile" asChild>
           <Pressable style={styles.profileFrame}>
             <ThemedView style={styles.userProfileContainer}>
-              <View style={styles.profileLeftHalf}>
+              {/* <View style={styles.profileLeftHalf}> */}
                 <ThemedView style={styles.userProfileImage}>
                   <ThemedText type="defaultSemiBold">U</ThemedText>
                 </ThemedView>
@@ -38,9 +38,9 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold">Username</ThemedText>
                   <ThemedText type="defaultSemiBold">Email</ThemedText>
                 </ThemedView>
-              </View>
+              {/* </View> */}
 
-              <View>
+              {/* <View>
                 <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${4} out of 5`}>
                   {Array.from({ length: 5 }).map((_, i) => {
                     const starIndex = i + 1;
@@ -61,13 +61,13 @@ export default function HomeScreen() {
                     8 Reviews
                   </ThemedText>
                 </View>
-              </View>
+              </View> */}
             </ThemedView>
           </Pressable>
         </Link>
 
         {/* list of buttons that link to other tabs */}
-        <FlatList
+        {/* <FlatList
           data={Data}
           contentContainerStyle={styles.listContainer}
           ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
@@ -95,7 +95,7 @@ export default function HomeScreen() {
               // </Link>
             )
           }}
-        />
+        /> */}
 
       </View>
     </ThemedView>
@@ -128,10 +128,12 @@ const styles = StyleSheet.create({
 
   profileFrame: {
     flexDirection: "row",
-    // flexWrap: 'wrap',
     alignItems: "center",
     alignContent: 'center',
+    paddingHorizontal: '5%',
     height: 200,
+    // borderColor: '#FFF',
+    // borderWidth: 1,
   },
 
   profileLeftHalf: {
@@ -146,12 +148,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignContent: 'center',
-    gap: 63,
+    gap: 40,
     marginTop: 0,
     backgroundColor: colours.container,
     padding: 35,
     paddingLeft: 50,
     borderRadius: 50,
+    // borderColor: '#FFF',
+    // borderWidth: 1,
 
     // shadow for IOS
     shadowColor: '#e6e6e6',
@@ -193,8 +197,8 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     flex: 1,
     width: 300,
-    // borderColor: '#e70000',
-    // borderWidth: 1,
+    borderColor: '#e70000',
+    borderWidth: 1,
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -225,8 +229,6 @@ const styles = StyleSheet.create({
   listIcon: {
     height: 30,
     width: 30,
-    // backgroundColor: '#bbbbbbdc',
-    // borderRadius: 100,
   },
 
   listText: {
