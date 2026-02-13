@@ -20,9 +20,6 @@ export default function HomeScreen() {
   ];
 
   return (
-    // <ParallaxScrollView 
-    //   headerBackgroundColor={{ light: '#A1CEDC', dark: '#191C1F' }}
-    //   headerImage={<Image />}>
     <ThemedView style={styles.screen}>
       <View style={styles.mainContainer}>
 
@@ -72,34 +69,29 @@ export default function HomeScreen() {
           contentContainerStyle={styles.listContainer}
           ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
-            return (
-              // <Link href={item.link} asChild>
+           renderItem={({ item }) => (
+            <Link href={item.link} asChild>
+              <Pressable>
                 <ThemedView style={styles.listRow}>
-                <View style={{ flexDirection: "row", alignItems: "center", }}>
-                  <View style={styles.listSide}>
-                    <Image style={styles.listIcon}
-                      source={item.icon} />
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={styles.listSide}>
+                      <Image style={styles.listIcon} source={item.icon} />
+                    </View>
+                    <View style={styles.listText}>
+                      <ThemedText>{item.label}</ThemedText>
+                    </View>
+                    <View style={styles.listSide}>
+                      <Image style={styles.listArrow} source={item.next} />
+                    </View>
                   </View>
-                  <View style={styles.listText}>
-                    <ThemedText>
-                      {item.label}
-                    </ThemedText>
-                  </View>
-                  <View style={styles.listSide}>
-                    <Image style={styles.listArrow}
-                      source={item.next} />
-                  </View>
-                </View>
-              </ThemedView>
-              // </Link>
-            )
-          }}
+                </ThemedView>
+              </Pressable>
+            </Link>
+          )}
         />
 
       </View>
     </ThemedView>
-    // </ParallaxScrollView>
 
   );
 }
@@ -224,6 +216,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
+    // borderColor: '#ffffff',
+    // borderWidth: 1,
   },
 
   listIcon: {
@@ -240,8 +234,8 @@ const styles = StyleSheet.create({
   },
 
   listArrow: {
-    height: 12,
-    width: 12,
+    height: 15,
+    width: 15,
   },
 });
 
