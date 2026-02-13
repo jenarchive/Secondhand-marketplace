@@ -1,0 +1,41 @@
+name: Pylint
+
+on: 
+  push: 
+    paths:
+      - 'backend/**'
+      - 'database/**'
+  pull_request: 
+    types: [open, reopened] 
+    branches: 
+      - 'dev'
+      - 'main'
+    paths: 
+      - 'backend/**'
+      - 'database/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        cd backend
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt 
+        python -m pip install pylint
+    - name: Analysing the code with pylint
+      run: |
+        cd backend
+        . .venv/bin/activate
+        pylint $(git ls-files '*.py')

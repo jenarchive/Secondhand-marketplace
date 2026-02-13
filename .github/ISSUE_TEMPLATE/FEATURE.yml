@@ -1,6 +1,6 @@
-name: "💡 Feature"
+name: "Feature"
 description: Create an issue for a new feature
-title: "💡 [FEATURE] - <title>"
+title: "[FEATURE] - <title>"
 labels: [
   "feature"
 ]

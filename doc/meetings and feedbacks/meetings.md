@@ -132,3 +132,84 @@
     * Remove emojis in templates 
 * AI-docs: update for slides and sample data 
 * For recommendation engine - consider about word-mapping, use ai to do semantic analysis - expensive on big scale - need to discuss with client about this
+
+## Mentor 2nd Dec:
+* AI folders update
+* For database, 2 options to pass user and password for others to use:
+    * directly to AWS 
+    * encrypt / hash 
+* Issues description need to be more detailed
+* Need more coding commits, aim for around 300 commits at the end 
+* Apply for aws instance and check for client needs 
+
+## Client 3rd Dec: 
+* Need to consider about deploying to andriod env, as client uses andriod phone
+* Liked items listing - possible table for database
+* Should focus on the features we want and ignore others for now (include recommendation)
+* Consider about: 
+    * Part of marketplace is going to be gamified
+    * Elements including scrolling, finding, buy button and notification
+    * Butterfly mascot and animation 
+    * Full user journey of swiping: 
+        * swipe between pages? 
+        * When to stop? 
+        * How it is convincing the users that it is useful and fun
+* Fork for release 
+    * Aim for client to test and not too many bugs
+    * Basic UI 
+    * 28th Jan MVP release
+* Looking for actual time and events 
+    * Achieve what by when 
+* Happy with the progress now 
+
+
+## Mentor 22nd Jan:
+* Issues description really need to improve
+    * Why, what problem, how it is going to be implemented or fixed
+* Update new member about:
+    * Branch names, PR and Issue templates etc.
+    * Current progress, code and repo
+    * Make issue about it
+* User instruction readme
+* PR and issues link to milestones
+    * Check if milestones and labels are assigned
+* CI - unit tests:
+    * Write tests before writing code
+    * Frontend tests: does element load? achieve required effect? 
+    * Backend tests: does it update when some operations is executed by users? 
+    * For CI - every PR - does backend launch
+    * Should be dismantled into smaller issues and put in dependency
+* Concerned about not enough going on
+* Aim for more than 1 issue per person per week
+
+## Mentor 27th Jan: 
+* Email Sarah about focusing on backend later (general plan) - do it before testing day
+* Priorities: 
+    * AI Tools folder: really need to put in more details 
+    * Dev and User instructions
+    * Project structure: tree map with comments
+    * A lot more commits: split commits and PR into smaller piece 
+* Good, should keep up: 
+    * PR description 
+    * Issue: can have more details 
+    * Templates 
+
+## Client 28th Jan (MVP Release): 
+* Complimented:
+    * Having a time plan with actual dates and actual features
+    * Gamification: Swiping is responsive and dynamic
+    * Butterfly appearing 
+    * General simple UI 
+* Concerned about: 
+    * Profile page overloading: Need to simplify
+    * Frontend backend Connection not done
+    * User Journey: what do we expect user to go through when they use the app 
+        * First time using
+        * When do they need to register
+        * What they should do after register / after finish swiping or scrolling
+    * Testing day: what feedback to collect and how to collect
+* Suggestion till week 19 (beta release): 
+    * Consider about what is really necessary and simplify into streamline (keep it minimal and functional) 
+    * Focus on gamification, animamtion and UI (simplistic) 
+    * Start connecting frontend and backend now 
+* Will meet us and test our app in person on Feb 19 (Beta release)
