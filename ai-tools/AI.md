@@ -9,6 +9,8 @@
 ### alexh662 Usage:
 * Use of Gemini to find any extra bugs in code we could've missed when review pull requests. Verify it is an actual bug and try to understand the bug myself, and If I can't then I will use Gemini to explain it for me.
 * Use of Gemini to explain the meaning of error messages that I cannot understand myself.
+### Jen0821 Usage: 
+* Use of Gemini for resolving Git rebase conflicts and squashing redundant commits.
 
 ## Testing
 
@@ -17,6 +19,7 @@
 ### FreddiedeBruyn Usage:
 * Use of ChatGPT to generate test data in JSON format. Used for test images for listings and data for the listings such as names, prices and descriptions. 
 ### alexh662 Usage:
+### Jen0821 Usage: 
 
 ## Other AI Uses:
 
@@ -28,3 +31,5 @@
 ### alexh662 Usage:
 * Use of Gemini to summarise react native documentation so I can learn it more easily.
 * Use of Gemini to help design a skeleton project structure for the backend.
+### Jen0821 Usage: 
+
