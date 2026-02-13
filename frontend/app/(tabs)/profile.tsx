@@ -66,6 +66,7 @@ export default function HomeScreen() {
         {/* list of buttons that link to other tabs */}
         <FlatList
           data={Data}
+          scrollEnabled={false}
           contentContainerStyle={styles.listContainer}
           ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
           keyExtractor={(item) => item.id.toString()}
@@ -89,6 +90,8 @@ export default function HomeScreen() {
             </Link>
           )}
         />
+
+        
 
       </View>
     </ThemedView>
