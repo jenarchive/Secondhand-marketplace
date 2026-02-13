@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { Stack } from 'expo-router';
+import { ThemedText } from '@/components/themed-text';
+import { Colors } from '@/constants/theme';
 
 export default function LikedItemsScreen() {
   const items = [
@@ -9,32 +11,42 @@ export default function LikedItemsScreen() {
     { id: 3, name: 'Product Name 3', price: '48.00', sold: false },
   ];
 
+  // Match React Navigation DarkTheme card/header so one seamless color (light mode later)
+  const screenBg = '#121212';
+  const textColor = Colors.dark.text;
+  const placeholderBg = '#2c2c2e';
+  const soldBg = '#333333';
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen 
         options={{ 
           headerShown: true,
           headerTitle: "",
           headerShadowVisible: false,
+          headerStyle: { backgroundColor: screenBg },
+          headerTintColor: textColor,
         }} 
       />
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.listContent}
         contentInsetAdjustmentBehavior="never"
+        style={{ backgroundColor: screenBg }}
+        showsVerticalScrollIndicator={false}
       >
         {items.map((item, index) => (
           <View key={item.id} style={[styles.card, index === 0 && styles.firstCard]}>
-            <View style={styles.imagePlaceholder} />
+            <View style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]} />
             <View style={styles.infoContainer}>
-              <Text style={styles.productName}>{item.name}</Text>
+              <ThemedText style={[styles.productName, { color: textColor }]}>{item.name}</ThemedText>
               <View style={styles.priceRow}>
                 {item.sold && (
-                  <View style={styles.soldBadge}>
-                    <Text style={styles.soldText}>SOLD</Text>
+                  <View style={[styles.soldBadge, { backgroundColor: soldBg }]}>
+                    <ThemedText style={styles.soldText}>SOLD</ThemedText>
                   </View>
                 )}
-                <Text style={styles.price}>£{item.price}</Text>
+                <ThemedText style={[styles.price, { color: textColor }]}>£{item.price}</ThemedText>
               </View>
             </View>
           </View>
@@ -47,11 +59,11 @@ export default function LikedItemsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingTop: 0,
+    paddingTop: 8,
+    paddingBottom: 24,
   },
   firstCard: {
     marginTop: 0,
@@ -64,7 +76,6 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: 90,
     height: 90,
-    backgroundColor: '#f2f2f2',
     borderRadius: 12,
     marginRight: 16,
   },
@@ -75,7 +86,6 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333333',
     marginBottom: 4,
   },
   priceRow: {
@@ -83,7 +93,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   soldBadge: {
-    backgroundColor: '#333333',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -97,6 +106,5 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000',
   },
 });

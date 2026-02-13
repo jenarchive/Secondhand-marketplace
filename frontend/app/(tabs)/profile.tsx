@@ -51,25 +51,35 @@ export default function HomeScreen() {
           contentContainerStyle={styles.listContainer}
           ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Link href={item.link} asChild>
-              <Pressable>
-                <ThemedView style={styles.listRow}>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View style={styles.listSide}>
-                      <Image style={styles.listIcon} source={item.icon} />
+          renderItem={({ item }) => {
+            return (
+              <Link href={item.link} asChild>
+                <Pressable>
+                  <ThemedView style={styles.listRow}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <View style={styles.listSide}>
+                        <Image
+                          style={styles.listIcon}
+                          source={item.icon}
+                        />
+                      </View>
+                      <View style={styles.listText}>
+                        <ThemedText>
+                          {item.label}
+                        </ThemedText>
+                      </View>
+                      <View style={styles.listSide}>
+                        <Image
+                          style={styles.listIcon}
+                          source={item.next}
+                        />
+                      </View>
                     </View>
-                    <View style={styles.listText}>
-                      <ThemedText>{item.label}</ThemedText>
-                    </View>
-                    <View style={styles.listSide}>
-                      <Image style={styles.listIcon} source={item.next} />
-                    </View>
-                  </View>
-                </ThemedView>
-              </Pressable>
-            </Link>
-          )}
+                  </ThemedView>
+                </Pressable>
+              </Link>
+            );
+          }}
         />
       </View>
     </ThemedView>
@@ -134,6 +144,8 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     width: 300,
     alignItems: 'center',
+    justifyContent: 'flex-end',
+    borderRadius: 50,
   },
   listRow: {
     width: 300,
