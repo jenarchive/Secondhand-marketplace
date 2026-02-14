@@ -10,10 +10,13 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+  // Use dark theme for now to avoid conflict when device is in dark mode (light mode to be implemented later)
   const colorScheme = useColorScheme();
+  const forceDark = true; // set to false when light mode is ready
+  const theme = (forceDark ? 'dark' : colorScheme) === 'dark' ? DarkTheme : DefaultTheme;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={theme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="auth/login" options={{ title: 'Log In' }} />
