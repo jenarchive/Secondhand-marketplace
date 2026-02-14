@@ -33,7 +33,7 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 * Github Actions
 
 <p align="left">
-  <img width="918" alt="architecture image" src="doc/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="architecture image" src="doc/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
 ## Client Information 
@@ -66,7 +66,43 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 
 ## Project Structure
-
+```text
+├── README.md                          # Main project overview
+├── ai-tools                           # Overview of AI tools
+│   └── README.md
+├── backend                            # Flask API: Handles business logic and data processing
+│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings)
+│   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
+│   └── run.py                         # Server entry point: Starts the Flask development server
+├── database                           # Data Layer: PostgreSQL configuration and scripts
+│   ├── config.py                      # DB connection strings and environment settings
+│   ├── main.py                        # Management script for DB init and migrations
+│   └── *.sql                          # SQL scripts: Schema(Create), Seed(Insert), Ops(Queries)
+├── frontend                           # Frontend React Native (Expo) application
+│   ├── app                            # File-based Routing (Crucial for UI)
+│   │   ├── (tabs)                     # Main navigation tab screens
+│   │   │   ├── marketplace.tsx        # Main Marketplace: Item listings (Matches Figma)
+│   │   │   ├── sell.tsx               # Sell Page: Item registration
+│   │   │   ├── profile.tsx            # User Profile: Account and history
+│   │   │   └── index.tsx              # App landing logic
+│   │   ├── auth                       # Authentication flow
+│   │   │   ├── login.tsx              # Sign-in screen
+│   │   │   └── signup.tsx             # New user registration
+│   │   ├── items                      # Item details
+│   │   │   └── [id].tsx               # Dynamic Route: Individual item detail view
+│   │   └── _layout.tsx                # Root layout and theme providers
+│   ├── assets                         # Images, icons, and animations
+│   ├── components                     # Reusable UI components (Headers, Buttons)
+│   ├── constants                      # Design tokens (Colours, Spacing)
+│   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
+│   ├── test-data.json                 # Mock data for frontend testing
+│   └── package.json                   # Frontend dependencies and scripts
+├── doc                                # Project documentation and diagrams
+│   ├── previous project               # Files related to previous project
+│   ├── others                         # Diagrams and files for explain / plan
+│   └── meetings and feedbacks         # Meeting notes and feedbacks for review
+└── package.json                       # Root workspace configuration
+```
 
 ## Dev Instructions
 ## Get started: Frontend
@@ -92,7 +128,7 @@ In the output, you'll find options to open the app in a
 
 For this current iteration you can run the frontend in an Expo Go app on your phone if you scan the QR code that is shown in the terminal. 
 
-Alternatively, if you have a mac you can the frontend in an iOS simulator (docs above)
+Alternatively, if you have a mac you can run the frontend in an iOS simulator (docs above)
 
 If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
 
