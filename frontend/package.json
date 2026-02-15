@@ -12,7 +12,8 @@
     "test": "jest --watchAll"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "testEnvironment": "node"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
