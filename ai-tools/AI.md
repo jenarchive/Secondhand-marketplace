@@ -11,6 +11,7 @@
 * Use of Gemini to explain the meaning of error messages that I cannot understand myself.
 ### Jen0821 Usage: 
 * Use of Gemini for resolving Git rebase conflicts and squashing redundant commits.
+* Use of Gemini to understand error messages in the simulator and fix bugs in the app.
 
 ## Testing
 
