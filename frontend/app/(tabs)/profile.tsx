@@ -31,11 +31,12 @@ export default function HomeScreen() {
           </Pressable>
         </Link>
 
+        {/* bottom list of icons and link */}
         <FlatList
           data={Data}
           scrollEnabled={false}
           contentContainerStyle={styles.listContainer}
-          ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
+          ItemSeparatorComponent={() => <View style={{ height: 60 }} />}
           keyExtractor={(item) => item.id.toString()}
            renderItem={({ item }) => (
             <Link href={item.link as Href} asChild>
@@ -153,7 +154,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 25,
     alignContent: 'center',
   },
-
   listArrow: {
     height: 15,
     width: 15,
