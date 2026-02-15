@@ -36,15 +36,13 @@ body:
     id: description
     attributes:
       label: "Description"
-      description: "Provide a brief explanation of the issue"
-      placeholder: "Summarise in a few lines what the issue is about."
+      placeholder: "Provide a brief explanation of the issue. Include all relavent information needed to resolve it."
     validations:
       required: true
   - type: textarea
     id: dependencies
     attributes:
       label: "Dependencies"
-      description: "What are the dependencies of the issue ?"
       placeholder: "Identify the dependencies of this issue (what needs to be completed before this issue can be achieved)."
     validations:
       required: false
