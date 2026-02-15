@@ -36,15 +36,13 @@ body:
     id: description
     attributes:
       label: "Description"
-      description: "Provide a brief explanation of the bug"
-      placeholder: "Summarise in a few lines what and where the bug is."
+      placeholder: "Provide an explanation of the bug. Include relavent file paths, errors and other areas of code you suspect could be related."
     validations:
       required: true
   - type: textarea
     id: dependencies
     attributes:
       label: "Dependencies"
-      description: "What are the dependencies of your bug ?"
       placeholder: "Identify the dependencies of this issue (what needs to be completed before this issue can be achieved)."
     validations:
       required: false
