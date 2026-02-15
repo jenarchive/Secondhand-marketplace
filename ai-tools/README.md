@@ -40,8 +40,9 @@ AI tools used
 
 
 ### Jen
-
 **Tools used**
+* ChatGPT
+* Google Gemini
 
 
 **Where did you use AI tools and why**
