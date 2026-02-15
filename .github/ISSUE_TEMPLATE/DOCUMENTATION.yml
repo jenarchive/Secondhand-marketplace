@@ -1,0 +1,67 @@
+name: "Documentation"
+description: Create an issue for a new feature
+title: "[DOCUMENTATION] - <title>"
+labels: [
+  "documentation"
+]
+body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "The priority of this issue"
+      options:
+        - "Low"
+        - "Medium"
+        - "High"
+    validations:
+      required: true
+  - type: input
+    id: start_date
+    attributes:
+      label: "Start Date"
+      description: "Start of development"
+      placeholder: "dd/mm/yyyy"
+    validations:
+      required: false
+  - type: input
+    id: end_date
+    attributes:
+      label: "End Date"
+      description: "Estimated end of development"
+      placeholder: "dd/mm/yyyy"
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      placeholder: "Provide a detailed explanation of the documentation update. Include all relavent file paths for making the changes."
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: "Dependencies"
+      placeholder: "Identify the dependencies of this issue (what needs to be completed before this issue can be achieved)."
+    validations:
+      required: false
+  - type: textarea
+    id: feeds_into
+    attributes:
+      label: "Feeds Into"
+      description: "What does this issue feed into ?"
+      placeholder: "Identify anything this issue will be used for in the future/feeds into."
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I have added a detailed description that includes all prerequisite knowledge about the issue"
+          required: true
+        - label: "I have added all relevant labels, reference issues, the milestone, and assignee if known"
+          required: true
+        - label: "I have removed sections that are unnecessary for this issue"
+          required: true
