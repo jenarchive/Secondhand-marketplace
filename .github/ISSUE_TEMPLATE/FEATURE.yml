@@ -36,7 +36,7 @@ body:
     id: description
     attributes:
       label: "Description"
-      placeholder: "Provide a brief explanation of the feature. Include all relavent file paths for implementing it. List all aspects of the feature and how they must be implemented."
+      placeholder: "Provide a detailed explanation of the feature. Include all relavent file paths for implementing it. List all aspects of the feature and how they must be implemented."
     validations:
       required: true
   - type: textarea
