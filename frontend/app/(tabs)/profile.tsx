@@ -8,7 +8,7 @@ export default function HomeScreen() {
   
   const Data = [
     { id: 1, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/next.png'), link: "/items/liked-items" },
-    { id: 2, icon: require('../../assets/images/settings.png'), label: "Setting", next: require('../../assets/images/next.png'), link: "/items/setting" },
+    { id: 2, icon: require('../../assets/images/settings.png'), label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
     { id: 3, icon: require('../../assets/images/door.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
