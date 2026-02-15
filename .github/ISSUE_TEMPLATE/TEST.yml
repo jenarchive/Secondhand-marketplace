@@ -36,15 +36,13 @@ body:
     id: description
     attributes:
       label: "Description"
-      description: "Provide a brief explanation of the testing"
-      placeholder: "Summarise in a few lines what is being tested."
+      placeholder: "Provide a brief explanation of the testing. Include all relavent file paths and how the testing is conducted."
     validations:
       required: true
   - type: textarea
     id: dependencies
     attributes:
       label: "Dependencies"
-      description: "What are the dependencies of the testing ?"
       placeholder: "Identify the dependencies of this testing (what needs to be completed before this testing can be conducted)."
     validations:
       required: false
