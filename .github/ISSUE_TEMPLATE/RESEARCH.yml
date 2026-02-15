@@ -36,8 +36,7 @@ body:
     id: description
     attributes:
       label: "Description"
-      description: "Provide a brief explanation of the research to be carried out"
-      placeholder: "Summarise in a few lines what the research is about."
+      placeholder: "Provide an explanation of the research to be carried out. List all sub-topics and already known places to conduct research."
     validations:
       required: true
   - type: textarea
