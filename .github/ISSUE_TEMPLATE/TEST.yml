@@ -36,7 +36,7 @@ body:
     id: description
     attributes:
       label: "Description"
-      placeholder: "Provide a brief explanation of the testing. Include all relavent file paths and how the testing is conducted."
+      placeholder: "Provide a detailed explanation of the testing. Include all relavent file paths and how the testing is conducted."
     validations:
       required: true
   - type: textarea
