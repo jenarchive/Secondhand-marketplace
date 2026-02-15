@@ -106,7 +106,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 ```
 
 ## Dev Instructions
-## Get started: Frontend
+### Frontend
 
 1. Install dependencies
 
@@ -118,6 +118,11 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
    ```bash
    npx expo start
+   ```
+   For some networks such as eduroam you will need to run the following instead
+   ```bash
+   npx expo install @expo/ngrok
+   npx expo start --tunnel
    ```
 
 In the output, you'll find options to open the app in a
@@ -133,6 +138,42 @@ Alternatively, if you have a mac you can run the frontend in an iOS simulator (d
 
 If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
 
+### Backend
+#### Prerequisites
+
+Ensure you have Python 3.10+ installed.
+
+#### Setup Environment and Install Dependencies
+
+<details>
+<summary><strong> Linux/Mac </strong></summary>
+
+```bash
+cd backend
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
+
+</details>
+
+<details>
+<summary><strong> Windows </strong></summary>
+
+```bash
+cd backend
+py -3 -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+</details>
+
+#### Run Locally
+
+```bash
+flask --app app run
+```
 
 ## Project Management
 - [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
