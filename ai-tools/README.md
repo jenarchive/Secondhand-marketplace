@@ -19,7 +19,7 @@ AI tools used
 * Gemini
 * GitHub Copilot
 
-**Where did you use AI tools and why**
+**Where did you use AI tools and why** <br>
 Frontend - When starting out on the frontend I used Gemini to help me understand react native formatting and syntax by asking it to summarise documentation and explain specific syntax that I couldn't understand. I also used it for debuggy - when running the frontend I used Gemini to help explain why I was getting errors and how they should be fixed, and to explain why my implementation of image uploading wasn't working. In addition, I used Copilot to generate skeleton code for new pages which saves a lot of time.
 
 Backend - I used Gemini to help create a skeleton backend project structure suited for our needs.
