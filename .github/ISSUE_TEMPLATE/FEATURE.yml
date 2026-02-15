@@ -21,7 +21,7 @@ body:
     attributes:
       label: "Start Date"
       description: "Start of development"
-      placeholder: "month/day/year"
+      placeholder: "dd/mm/yyyy"
     validations:
       required: false
   - type: input
@@ -29,22 +29,20 @@ body:
     attributes:
       label: "End Date"
       description: "Estimated end of development"
-      placeholder: "month/day/year"
+      placeholder: "dd/mm/yyyy"
     validations:
       required: false
   - type: textarea
     id: description
     attributes:
       label: "Description"
-      description: "Provide a brief explanation of the feature"
-      placeholder: "Summarise in a few lines your intended feature."
+      placeholder: "Provide a brief explanation of the feature. Include all relavent file paths for implementing it. List all aspects of the feature and how they must be implemented."
     validations:
       required: true
   - type: textarea
     id: dependencies
     attributes:
       label: "Dependencies"
-      description: "What are the dependencies of your feature ?"
       placeholder: "Identify the dependencies of this issue (what needs to be completed before this issue can be achieved)."
     validations:
       required: false
