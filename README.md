@@ -5,12 +5,13 @@
 
 ## Contents
 * [Project overview](#project-overview)
+* [Technology Stack](#technology-stack)
 * [Client Information](#client-information)
 * [Stakeholders](#stakeholders)
 * [User Stories](#user-stories)
-* [Technology Stack](#technology-stack)
+* [User Flow](#user-flow)
 * [Project Structure](#project-structure)
-* [Architecture Diagram](#architecture-diagram)
+* [Dev Instructions](#dev-instructions)
 * [Project Management](#project-management)
 * [Team Members](#team-members)
 
@@ -57,7 +58,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 - As a **Seller**, I want a user-friendly marketplace to conviniently list the items I want to sell, and for them to reach the right audience of potential buyers. This will encourage me to contribute to the community, instead of throwing away items I don't want anymore.
 - As a **Highly rated Seller**, I want a reliable system allowing buyers to trust me, and enabling me to have an impactful and leading role in the community, potentially building a brand/identity.
 
-## User Flow Steps
+## User Flow
 ### Basic Flow
 1. ...
 
@@ -136,6 +137,7 @@ If when starting the frontend, underneath the QR code it says ```Using developme
 ## Project Management
 - [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
 - [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
+- [Project Roadmap](doc/others/Roadmap.md)
 
 ## Team Members
 
