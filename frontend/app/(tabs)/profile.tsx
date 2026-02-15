@@ -2,9 +2,10 @@ import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View, FlatList } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Link, Href } from 'expo-router';
 
 export default function HomeScreen() {
+  
   const Data = [
     { id: 1, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/next.png'), link: "/items/liked-items" },
     { id: 2, icon: require('../../assets/images/settings.png'), label: "Setting", next: require('../../assets/images/next.png'), link: "/items/setting" },
@@ -37,7 +38,7 @@ export default function HomeScreen() {
           ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
           keyExtractor={(item) => item.id.toString()}
            renderItem={({ item }) => (
-            <Link href={item.link} asChild>
+            <Link href={item.link as Href} asChild>
               <Pressable>
                 <ThemedView style={styles.listRow}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -61,6 +62,10 @@ export default function HomeScreen() {
 
   );
 }
+
+const colours = {
+  container: '#191C1F',
+};
 
 const styles = StyleSheet.create({
   screen: {
