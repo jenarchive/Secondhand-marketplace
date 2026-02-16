@@ -1,6 +1,6 @@
-import { render, fireEvent } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import { ThemedView } from '../components/themed-view';
-import { Appearance, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
 
 jest.mock('react-native/Libraries/Utilities/useColorScheme');
 
