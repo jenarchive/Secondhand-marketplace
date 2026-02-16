@@ -5,12 +5,13 @@
 
 ## Contents
 * [Project overview](#project-overview)
+* [Technology Stack](#technology-stack)
 * [Client Information](#client-information)
 * [Stakeholders](#stakeholders)
 * [User Stories](#user-stories)
-* [Technology Stack](#technology-stack)
+* [User Flow](#user-flow)
 * [Project Structure](#project-structure)
-* [Architecture Diagram](#architecture-diagram)
+* [Dev Instructions](#dev-instructions)
 * [Project Management](#project-management)
 * [Team Members](#team-members)
 
@@ -33,7 +34,7 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 * Github Actions
 
 <p align="left">
-  <img width="918" alt="architecture image" src="doc/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="architecture image" src="doc/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
 ## Client Information 
@@ -57,7 +58,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 - As a **Seller**, I want a user-friendly marketplace to conviniently list the items I want to sell, and for them to reach the right audience of potential buyers. This will encourage me to contribute to the community, instead of throwing away items I don't want anymore.
 - As a **Highly rated Seller**, I want a reliable system allowing buyers to trust me, and enabling me to have an impactful and leading role in the community, potentially building a brand/identity.
 
-## User Flow Steps
+## User Flow
 ### Basic Flow
 1. ...
 
@@ -66,10 +67,46 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 
 ## Project Structure
-
+```text
+├── README.md                          # Main project overview
+├── ai-tools                           # Overview of AI tools
+│   └── README.md
+├── backend                            # Flask API: Handles business logic and data processing
+│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings)
+│   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
+│   └── run.py                         # Server entry point: Starts the Flask development server
+├── database                           # Data Layer: PostgreSQL configuration and scripts
+│   ├── config.py                      # DB connection strings and environment settings
+│   ├── main.py                        # Management script for DB init and migrations
+│   └── *.sql                          # SQL scripts: Schema(Create), Seed(Insert), Ops(Queries)
+├── frontend                           # Frontend React Native (Expo) application
+│   ├── app                            # File-based Routing (Crucial for UI)
+│   │   ├── (tabs)                     # Main navigation tab screens
+│   │   │   ├── marketplace.tsx        # Main Marketplace: Item listings (Matches Figma)
+│   │   │   ├── sell.tsx               # Sell Page: Item registration
+│   │   │   ├── profile.tsx            # User Profile: Account and history
+│   │   │   └── index.tsx              # App landing logic
+│   │   ├── auth                       # Authentication flow
+│   │   │   ├── login.tsx              # Sign-in screen
+│   │   │   └── signup.tsx             # New user registration
+│   │   ├── items                      # Item details
+│   │   │   └── [id].tsx               # Dynamic Route: Individual item detail view
+│   │   └── _layout.tsx                # Root layout and theme providers
+│   ├── assets                         # Images, icons, and animations
+│   ├── components                     # Reusable UI components (Headers, Buttons)
+│   ├── constants                      # Design tokens (Colours, Spacing)
+│   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
+│   ├── test-data.json                 # Mock data for frontend testing
+│   └── package.json                   # Frontend dependencies and scripts
+├── doc                                # Project documentation and diagrams
+│   ├── previous project               # Files related to previous project
+│   ├── others                         # Diagrams and files for explain / plan
+│   └── meetings and feedbacks         # Meeting notes and feedbacks for review
+└── package.json                       # Root workspace configuration
+```
 
 ## Dev Instructions
-## Get started: Frontend
+### Frontend
 
 1. Install dependencies
 
@@ -82,6 +119,11 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
    ```bash
    npx expo start
    ```
+   For some networks such as eduroam you will need to run the following instead
+   ```bash
+   npx expo install @expo/ngrok
+   npx expo start --tunnel
+   ```
 
 In the output, you'll find options to open the app in a
 
@@ -92,14 +134,51 @@ In the output, you'll find options to open the app in a
 
 For this current iteration you can run the frontend in an Expo Go app on your phone if you scan the QR code that is shown in the terminal. 
 
-Alternatively, if you have a mac you can the frontend in an iOS simulator (docs above)
+Alternatively, if you have a mac you can run the frontend in an iOS simulator (docs above)
 
 If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
 
+### Backend
+#### Prerequisites
+
+Ensure you have Python 3.10+ installed.
+
+#### Setup Environment and Install Dependencies
+
+<details>
+<summary><strong> Linux/Mac </strong></summary>
+
+```bash
+cd backend
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
+
+</details>
+
+<details>
+<summary><strong> Windows </strong></summary>
+
+```bash
+cd backend
+py -3 -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+</details>
+
+#### Run Locally
+
+```bash
+flask --app app run
+```
 
 ## Project Management
 - [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
 - [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
+- [Project Roadmap](doc/others/Roadmap.md)
 
 ## Team Members
 
