@@ -37,6 +37,7 @@ export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [focusedInput, setFocusedInput] = useState(null);
   const [images, setImages] = useState<string[]>([]);
+  const [errors, setErrors] = useState({});
   
   // image functions
   const pickImage = async () => {
@@ -63,6 +64,8 @@ export default function HomeScreen() {
       }
 
       setImages([...images, ...newUris]);
+
+      if (errors.images) setErrors({...errors, images: false});
     }
   };
 
@@ -107,6 +110,69 @@ export default function HomeScreen() {
     });
   };
 
+  // handle upload functions
+  
+  const decideBorderColour = (field) => {
+    if (focusedInput === field) return '#007AFF80';
+    if (errors[field]) return '#FF000080';
+    return '#444';
+  }
+
+  const handleUpload = async () => {
+    let newErrors = {};
+    let valid = true;
+  
+    // check if any fields are empty
+    if (!title.trim()) { newErrors.title = true; valid = false; }
+    if (!description.trim()) { newErrors.description = true; valid = false; }
+    if (!price.trim()) { newErrors.price = true; valid = false; }
+    if (!category) { newErrors.category = true; valid = false; }
+    if (images.length === 0) { newErrors.images = true; valid = false; }
+    
+    setErrors(newErrors);
+
+    if (valid) {
+      try {
+        const formData = new FormData();
+
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('price', price);
+        formData.append('category', categories.find(c => c.name === category));
+
+        images.forEach((uri, index) => {
+          formData.append('images', {
+            uri: uri,
+            name: `${index}.jpg`,
+            type: 'image/jpeg'
+          } as any);
+        });
+        
+        // send POST request
+        const response = await fetch('http://192.168.0.43:5000/api/items', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          console.log("successfully uploaded item: ", result.item_id);
+
+          router.back();
+        } else {
+          alert("upload failed: " + result.error);
+        }
+
+      } catch (error) {
+        alert("error: " + error);
+      }
+    }
+  }
+
   return (
     <View style={styles.container}>
 
@@ -121,9 +187,13 @@ export default function HomeScreen() {
           <TextInput
             style={[
               styles.input,
-              focusedInput === 'title' && { borderColor: '#007AFF80', borderWidth: 2 }
+              { borderColor: decideBorderColour('title') }
+              // focusedInput === 'title' && { borderColor: '#007AFF80', borderWidth: 2 }
             ]}
-            
+            onFocus={() => {
+              setFocusedInput('title');
+              if (errors.title) setErrors({...errors, title: false});
+            }}
             onBlur={() => setFocusedInput(null)}
             value={title}
             onChangeText={setTitle}
@@ -134,9 +204,12 @@ export default function HomeScreen() {
           <TextInput
             style={[
               styles.input,
-              focusedInput === 'description' && { borderColor: '#007AFF80', borderWidth: 2 }
+              { borderColor: decideBorderColour('description') }
             ]}
-            
+            onFocus={() => {
+              setFocusedInput('description')
+              if (errors.description) setErrors({...errors, description: false});
+            }}
             onBlur={() => setFocusedInput(null)}
             value={description}
             onChangeText={setDescription}
@@ -150,14 +223,17 @@ export default function HomeScreen() {
           <TextInput
             style={[
               styles.input,
-              focusedInput === 'price' && { borderColor: '#007AFF80', borderWidth: 2 }
+              { borderColor: decideBorderColour('price') }
             ]}
-            
+            onFocus={() => {
+              setFocusedInput('price')
+              if (errors.price) setErrors({...errors, price: false});
+            }}
             onBlur={() => setFocusedInput(null)}
             value={price}
             onChangeText={(text) => {
               // only allow numbers and 2 decimal points
-              if (/^\d*\.?d{0,2}$/.test(text)) {
+              if (/^\d*\.?\d{0,2}$/.test(text)) {
                 setPrice(text);
               }
             }}
@@ -170,8 +246,11 @@ export default function HomeScreen() {
 
           <ThemedText type="subtitle" style={styles.label}>Category</ThemedText>
           <TouchableOpacity
-            style={[styles.input, styles.selectorButton]}
-            onPress={openModal}
+            style={[styles.input, styles.selectorButton, { borderColor: decideBorderColour('category') }]}
+            onPress={() => {
+              if (errors.category) setErrors({...errors, category: false});
+              openModal();
+            }}
           >
             <ThemedText style={category ? styles.selectorText : styles.placeholderText}>
               {category || "Select a Category"}
@@ -184,7 +263,18 @@ export default function HomeScreen() {
             <View style={styles.imageGrid}>
 
               {images.length < 5 && (
-                <TouchableOpacity onPress={pickImage} style={styles.imagePickerButton}>
+                <TouchableOpacity onPress={pickImage} style={[
+                  styles.imagePickerButton,
+                  errors.images ? {
+                    borderColor: '#FF000080',
+                    borderStyle: 'solid',
+                    borderWidth: 2
+                  } : {
+                    borderColor: '#444',
+                    borderStyle: 'dashed',
+                    borderWidth: 1
+                  }
+                ]}>
                   <Ionicons name="camera-outline" size={30} color="#888" />
                   <ThemedText style={{ color: '#888', fontSize: 12 }}>Add</ThemedText>
                 </TouchableOpacity>
@@ -209,10 +299,7 @@ export default function HomeScreen() {
 
           <TouchableOpacity
             style={styles.uploadButton}
-            onPress={() => {
-              // implement upload handling later when integrating backend and db
-              console.log("item uploaded")
-            }}
+            onPress={handleUpload}
           >
             <ThemedText style={styles.uploadButtonText}>Upload</ThemedText>
           </TouchableOpacity>
@@ -263,6 +350,7 @@ export default function HomeScreen() {
                   style={styles.categoryOption}
                   onPress={() => {
                     setCategory(item.name);
+                    if (errors.category) setErrors({...errors, category: false});
                     closeModal();
                   }}
                 >
@@ -340,7 +428,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#444',
-    borderStyle: 'dashed',
   },
   imageWrapper: {
     width: photoSize,
@@ -439,8 +526,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
-  },
-  label:{
-
   }
 });
