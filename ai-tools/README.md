@@ -58,11 +58,14 @@ I have used Microsoft Powerpoint Designer AI once for getting MVP slides templat
 ### Freddie
 
 **Tools used**
-
+* ChatGPT
 
 **Where did you use AI tools and why**
-
-
+- Frontend: 
+I have used ChatGPT to generate test data for our frontend prototype in `frontend/test-data.json`. I asked for data in JSON format. It generated an id, title, description, price, image, category and location. 
+Prompt Example:  
+"Can you give me test data in a JSON format for 10 items in a second hand marketplace with ids, titles, descriptions, prices, images, categories and locations."
+I have used 
 ### Jen
 **Tools used**
 * ChatGPT
