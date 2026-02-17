@@ -25,7 +25,9 @@ jobs:
       - name: Install dependencies and run test
         run: |
           cd frontend
-          npm ci
+          npx expo install react-test-renderer
+          npm install --save-dev @testing-library/react-native@12.5.0 @testing-library/jest-native@5.4.3
+          npm ci 
           npm run test
         
 
