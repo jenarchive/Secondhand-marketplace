@@ -3,6 +3,7 @@ import { useColorScheme } from 'react-native';
 import { ThemedText } from '../components/themed-text'; 
 import { StyleSheet } from 'react-native';
 
+// mocks
 jest.mock('react-native/Libraries/Utilities/Appearance', () => ({
   useColorScheme: jest.fn(),
 }));

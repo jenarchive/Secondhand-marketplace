@@ -2,6 +2,7 @@ import { render } from '@testing-library/react-native';
 import { ThemedView } from '../components/themed-view';
 import { useColorScheme } from 'react-native';
 
+// mocks
 jest.mock('react-native/Libraries/Utilities/useColorScheme');
 
 describe('ThemedView', () => {
