@@ -28,6 +28,8 @@ AI tools used
 
 - Pull Requests - To ensure I haven't missed any bugs when reviewing code in pull requests I ask Gemini to find any potential bugs, then explore them myself to identify if they are an issue. If I can't do this myself then I ask the AI to explain it for me. An example would be Database update with ER diagram & ai-tools #85 where Gemini found several bugs that I missed.
 
+- AWS - I used Gemini to help me setup EC2, RDS and S3 AWS instances. To save time researching the best configurations for our use case, I screenshotted the configuration options and sent them to Gemini to ask which were the best for us.
+
 - Other - I used Gemini to add a checklist to each of the issue templates in `.github/ISSUE_TEMPLATE` to save me time from adding them manually myself.
 
 ### Euan
