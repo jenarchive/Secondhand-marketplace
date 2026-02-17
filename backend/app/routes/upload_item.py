@@ -75,7 +75,6 @@ def create_item():
         # insert images to db
         if 'images' in request.files:
             files = request.files.getlist('images')
-            image_folder = current_app.config['IMAGE_FOLDER']
 
             for file in files:
                 if file.filename == '':
