@@ -12,10 +12,12 @@ export default function LikedItemsScreen() {
     { id: 3, name: 'Product Name 3', price: '48.00', sold: false },
   ];
 
-  const [likedMap, setLikedMap] = useState<Record<string, boolean>>({
-    '1': true,
-    '2': true,
-    '3': true,
+  const [likedMap, setLikedMap] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    for (const item of items) {
+      initial[String(item.id)] = true;
+    }
+    return initial;
   });
 
   const toggleLike = (id: string | number) => {
@@ -52,6 +54,10 @@ export default function LikedItemsScreen() {
       >
         {items.map((item, index) => (
           <View key={item.id} style={[styles.card, index === 0 && styles.firstCard]}>
+            {(() => {
+              const key = String(item.id);
+              const isLiked = likedMap[key];
+              return (
             <View style={styles.imageWrapper}>
               <View style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]} />
               <Pressable
@@ -60,12 +66,14 @@ export default function LikedItemsScreen() {
                 hitSlop={8}
               >
                 <Ionicons
-                  name={likedMap[String(item.id)] ? 'heart' : 'heart-outline'}
+                  name={isLiked ? 'heart' : 'heart-outline'}
                   size={20}
-                  color={likedMap[String(item.id)] ? '#FF3B30' : '#FFFFFF'}
+                  color={isLiked ? '#FF3B30' : '#FFFFFF'}
                 />
               </Pressable>
             </View>
+              );
+            })()}
             <View style={styles.infoContainer}>
               <ThemedText style={[styles.productName, { color: textColor }]}>{item.name}</ThemedText>
               <View style={styles.priceRow}>
