@@ -73,6 +73,9 @@ I have used
 
 
 **Where did you use AI tools and why**
+- Frontend: I use ChatGPT to generate basic skeleton code when starting new frontend pages. For example, when creating pages like login or signup screens, I ask ChatGPT to generate the initial layout and component structure. I then adapt and extend this code to meet the project’s specific requirements.
+- Debugging: I use Google Gemini for debugging. When errors occur while running the frontend, I ask Gemini to explain the error messages, why they are happening, and suggest how they can be fixed. I also use it to diagnose issues such as when a specific feature (e.g., image uploading) is not working as expected.
+- Other: I use Google Gemini to better understand what specific files or pieces of code are doing. When I encounter unfamiliar code, I ask Gemini to explain its functionality and how different parts interact with each other before making changes.
 
 
 
