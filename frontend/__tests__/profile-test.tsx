@@ -25,11 +25,11 @@ jest.mock('expo-router', () => {
 
 describe('ProfileLink', () => {
   it('navigates to edit-profile when pressed', async () => {
-    // const { getByRole  } = render(<HomeScreen />);
-    // const user = userEvent.setup();
+    const { getByRole  } = render(<HomeScreen />);
+    const user = userEvent.setup();
 
-    // await user.press(getByRole('link', { name: 'Username' }));
+    await user.press(getByRole('link', { name: 'Username' }));
 
-    // expect(router.push).toHaveBeenCalledWith('../items/edit-profile');
+    expect(router.push).toHaveBeenCalledWith('../items/edit-profile');
   });
 });
