@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 
@@ -10,6 +11,20 @@ export default function LikedItemsScreen() {
     { id: 2, name: 'Product Name 2', price: '12.00', sold: false },
     { id: 3, name: 'Product Name 3', price: '48.00', sold: false },
   ];
+
+  const [likedMap, setLikedMap] = useState<Record<string, boolean>>({
+    '1': true,
+    '2': true,
+    '3': true,
+  });
+
+  const toggleLike = (id: string | number) => {
+    const key = String(id);
+    setLikedMap((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   // Match React Navigation DarkTheme card/header so one seamless color (light mode later)
   const screenBg = '#121212';
@@ -37,7 +52,20 @@ export default function LikedItemsScreen() {
       >
         {items.map((item, index) => (
           <View key={item.id} style={[styles.card, index === 0 && styles.firstCard]}>
-            <View style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]} />
+            <View style={styles.imageWrapper}>
+              <View style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]} />
+              <Pressable
+                style={styles.likeButton}
+                onPress={() => toggleLike(item.id)}
+                hitSlop={8}
+              >
+                <Ionicons
+                  name={likedMap[String(item.id)] ? 'heart' : 'heart-outline'}
+                  size={20}
+                  color={likedMap[String(item.id)] ? '#FF3B30' : '#FFFFFF'}
+                />
+              </Pressable>
+            </View>
             <View style={styles.infoContainer}>
               <ThemedText style={[styles.productName, { color: textColor }]}>{item.name}</ThemedText>
               <View style={styles.priceRow}>
@@ -73,11 +101,25 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: 'center',
   },
+  imageWrapper: {
+    position: 'relative',
+    marginRight: 16,
+  },
   imagePlaceholder: {
     width: 90,
     height: 90,
     borderRadius: 12,
-    marginRight: 16,
+  },
+  likeButton: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   infoContainer: {
     flex: 1,
