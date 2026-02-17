@@ -5,12 +5,13 @@
 
 ## Contents
 * [Project overview](#project-overview)
+* [Technology Stack](#technology-stack)
 * [Client Information](#client-information)
 * [Stakeholders](#stakeholders)
 * [User Stories](#user-stories)
-* [Technology Stack](#technology-stack)
+* [User Flow](#user-flow)
 * [Project Structure](#project-structure)
-* [Architecture Diagram](#architecture-diagram)
+* [Dev Instructions](#dev-instructions)
 * [Project Management](#project-management)
 * [Team Members](#team-members)
 
@@ -57,7 +58,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 - As a **Seller**, I want a user-friendly marketplace to conviniently list the items I want to sell, and for them to reach the right audience of potential buyers. This will encourage me to contribute to the community, instead of throwing away items I don't want anymore.
 - As a **Highly rated Seller**, I want a reliable system allowing buyers to trust me, and enabling me to have an impactful and leading role in the community, potentially building a brand/identity.
 
-## User Flow Steps
+## User Flow
 ### Basic Flow
 1. ...
 
@@ -105,7 +106,7 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 ```
 
 ## Dev Instructions
-## Get started: Frontend
+### Frontend
 
 1. Install dependencies
 
@@ -117,6 +118,11 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
    ```bash
    npx expo start
+   ```
+   For some networks such as eduroam you will need to run the following instead
+   ```bash
+   npx expo install @expo/ngrok
+   npx expo start --tunnel
    ```
 
 In the output, you'll find options to open the app in a
@@ -132,10 +138,47 @@ Alternatively, if you have a mac you can run the frontend in an iOS simulator (d
 
 If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
 
+### Backend
+#### Prerequisites
+
+Ensure you have Python 3.10+ installed.
+
+#### Setup Environment and Install Dependencies
+
+<details>
+<summary><strong> Linux/Mac </strong></summary>
+
+```bash
+cd backend
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
+
+</details>
+
+<details>
+<summary><strong> Windows </strong></summary>
+
+```bash
+cd backend
+py -3 -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+</details>
+
+#### Run Locally
+
+```bash
+flask --app app run
+```
 
 ## Project Management
 - [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
 - [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
+- [Project Roadmap](doc/others/Roadmap.md)
 
 ## Team Members
 
