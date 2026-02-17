@@ -2,25 +2,24 @@ import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View, FlatList } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { Link, Href } from 'expo-router';
 
 export default function HomeScreen() {
+  
   const Data = [
-    { id: 1, icon: require('../../assets/images/history.png'), label: "Purchase History", next: require('../../assets/images/next.png'), link: "/items/purchase-history" },
-    { id: 2, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/next.png'), link: "/items/liked-items" },
-    { id: 3, icon: require('../../assets/images/list.png'), label: "Current Listing", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
-    { id: 4, icon: require('../../assets/images/notification.png'), label: "Notification", next: require('../../assets/images/next.png'), link: "/items/notification" },
-    { id: 5, icon: require('../../assets/images/settings.png'), label: "Setting", next: require('../../assets/images/next.png'), link: "/items/setting" },
-    { id: 6, icon: require('../../assets/images/out.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
+    { id: 1, icon: require('../../assets/images/heart.png'), label: "Liked Items", next: require('../../assets/images/next.png'), link: "/items/liked-items" },
+    { id: 2, icon: require('../../assets/images/settings.png'), label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
+    { id: 3, icon: require('../../assets/images/door.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
   return (
     <ThemedView style={styles.screen}>
       <View style={styles.mainContainer}>
-        <Link href="/items/review" asChild>
+
+        {/* avatar, name and email (with link to change) */}
+        <Link href="../items/edit-profile" asChild>
           <Pressable style={styles.profileFrame}>
             <ThemedView style={styles.userProfileContainer}>
-              <View style={styles.profileLeftHalf}>
                 <ThemedView style={styles.userProfileImage}>
                   <ThemedText type="defaultSemiBold">U</ThemedText>
                 </ThemedView>
@@ -28,63 +27,46 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold">Username</ThemedText>
                   <ThemedText type="defaultSemiBold">Email</ThemedText>
                 </ThemedView>
-              </View>
-
-              <View>
-                <ThemedView style={styles.userRating}>
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <ThemedText key={i} type="defaultSemiBold" style={{ color: i < 4 ? '#FFD700' : '#666', marginHorizontal: 2 }}>
-                      {i < 4 ? '★' : '☆'}
-                    </ThemedText>
-                  ))}
-                </ThemedView>
-                <View style={{ alignItems: 'center' }}>
-                  <ThemedText>8 Reviews</ThemedText>
-                </View>
-              </View>
             </ThemedView>
           </Pressable>
         </Link>
 
+        {/* bottom list of icons and link */}
         <FlatList
           data={Data}
+          scrollEnabled={false}
           contentContainerStyle={styles.listContainer}
-          ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
+          ItemSeparatorComponent={() => <View style={{ height: 60 }} />}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
-            return (
-              <Link href={item.link} asChild>
-                <Pressable>
-                  <ThemedView style={styles.listRow}>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                      <View style={styles.listSide}>
-                        <Image
-                          style={styles.listIcon}
-                          source={item.icon}
-                        />
-                      </View>
-                      <View style={styles.listText}>
-                        <ThemedText>
-                          {item.label}
-                        </ThemedText>
-                      </View>
-                      <View style={styles.listSide}>
-                        <Image
-                          style={styles.listIcon}
-                          source={item.next}
-                        />
-                      </View>
+           renderItem={({ item }) => (
+            <Link href={item.link as Href} asChild>
+              <Pressable>
+                <ThemedView style={styles.listRow}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={styles.listSide}>
+                      <Image style={styles.listIcon} source={item.icon} />
                     </View>
-                  </ThemedView>
-                </Pressable>
-              </Link>
-            );
-          }}
+                    <View style={styles.listText}>
+                      <ThemedText>{item.label}</ThemedText>
+                    </View>
+                    <View style={styles.listSide}>
+                      <Image style={styles.listArrow} source={item.next} />
+                    </View>
+                  </View>
+                </ThemedView>
+              </Pressable>
+            </Link>
+          )}
         />
       </View>
     </ThemedView>
+
   );
 }
+
+const colours = {
+  container: '#191C1F',
+};
 
 const styles = StyleSheet.create({
   screen: {
@@ -101,6 +83,8 @@ const styles = StyleSheet.create({
   profileFrame: {
     flexDirection: "row",
     alignItems: "center",
+    alignContent: 'center',
+    paddingHorizontal: '5%',
     height: 200,
   },
   profileLeftHalf: {
@@ -110,8 +94,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 63,
-    backgroundColor: '#191C1F',
+    alignContent: 'center',
+    gap: 40,
+    marginTop: 0,
+    backgroundColor: colours.container,
     padding: 35,
     paddingLeft: 50,
     borderRadius: 50,
@@ -141,8 +127,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContainer: {
-    paddingBottom: 30,
+    paddingBottom: 60,
+    flex: 1,
     width: 300,
+    alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
     borderRadius: 50,
@@ -164,5 +152,10 @@ const styles = StyleSheet.create({
   listText: {
     flex: 4,
     marginHorizontal: 25,
+    alignContent: 'center',
+  },
+  listArrow: {
+    height: 15,
+    width: 15,
   },
 });
