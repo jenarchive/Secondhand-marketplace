@@ -22,8 +22,11 @@ jobs:
         with:
           node-version: 18 
           cache: npm 
-        run: npm ci 
-      - run: npm run test
+      - name: Install dependencies and run test
+        run: |
+          cd frontend
+          npm install
+          npm run test
         
 
 
