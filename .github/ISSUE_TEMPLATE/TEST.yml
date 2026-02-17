@@ -33,26 +33,16 @@ body:
     validations:
       required: false
   - type: textarea
-    id: reference_issues
+    id: description
     attributes:
-      label: "Reference Issues"
-      description: "Common issues"
-      placeholder: "#Issues' IDs"
-    validations:
-      required: false
-  - type: textarea
-    id: summary
-    attributes:
-      label: "Summary"
-      description: "Provide a brief explanation of the testing"
-      placeholder: "Summarise in a few lines what is being tested."
+      label: "Description"
+      placeholder: "Provide a detailed explanation of the testing. Include all relavent file paths and how the testing is conducted."
     validations:
       required: true
   - type: textarea
     id: dependencies
     attributes:
       label: "Dependencies"
-      description: "What are the dependencies of the testing ?"
       placeholder: "Identify the dependencies of this testing (what needs to be completed before this testing can be conducted)."
     validations:
       required: false
@@ -64,4 +54,14 @@ body:
       placeholder: "Identify anything this testing will be used for in the future/feeds into."
     validations:
       required: false
-
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I have added a detailed description that includes all prerequisite knowledge about the issue"
+          required: true
+        - label: "I have added all relevant labels, reference issues, the milestone, and assignee if known"
+          required: true
+        - label: "I have removed sections that are unnecessary for this issue"
+          required: true

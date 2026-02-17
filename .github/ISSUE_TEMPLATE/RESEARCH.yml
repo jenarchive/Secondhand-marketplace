@@ -33,19 +33,10 @@ body:
     validations:
       required: false
   - type: textarea
-    id: reference_issues
+    id: description
     attributes:
-      label: "Reference Issues"
-      description: "Common issues"
-      placeholder: "#Issues' IDs"
-    validations:
-      required: false
-  - type: textarea
-    id: summary
-    attributes:
-      label: "Summary"
-      description: "Provide a brief explanation of the research to be carried out"
-      placeholder: "Summarise in a few lines what the research is about."
+      label: "Description"
+      placeholder: "Provide an explanation of the research to be carried out. List all sub-topics and already known places to conduct research."
     validations:
       required: true
   - type: textarea
@@ -64,3 +55,14 @@ body:
       placeholder: "Identify anything this issue will be used for in the future/feeds into."
     validations:
       required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I have added a detailed description that includes all prerequisite knowledge about the issue"
+          required: true
+        - label: "I have added all relevant labels, reference issues, the milestone, and assignee if known"
+          required: true
+        - label: "I have removed sections that are unnecessary for this issue"
+          required: true

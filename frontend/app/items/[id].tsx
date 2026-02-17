@@ -6,7 +6,7 @@ import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, Stack, useNavigation } from 'expo-router';
 import UserHeader from '@/components/user-header';
 
 export default function HomeScreen() {
@@ -14,6 +14,7 @@ export default function HomeScreen() {
   const params = useLocalSearchParams();
   const id = Number(params.id);
   const itemData = TestData.items[id - 1];
+  // const navigation = useNavigation();
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -45,8 +46,23 @@ export default function HomeScreen() {
     // TODO: make-offer modal
     console.log('Make offer', MyData.id);
   };
+
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     title: MyData.title,
+  //     headerBackTitleVisible: false,
+  //   });
+  // }, [navigation, MyData]);
+
   return (
     <>
+    
+    <Stack.Screen
+      options={{
+        title: MyData.title,
+        headerBackTitleVisible: false,
+      }}
+    />
 
     <ParallaxScrollView
       headerImage={<View style={{ height: 0 }} />}

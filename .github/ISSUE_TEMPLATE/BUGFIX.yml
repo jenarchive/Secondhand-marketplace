@@ -33,27 +33,27 @@ body:
     validations:
       required: false
   - type: textarea
-    id: reference_issues
+    id: description
     attributes:
-      label: "Reference Issues"
-      description: "Common issues"
-      placeholder: "#Issues' IDs"
-    validations:
-      required: false
-  - type: textarea
-    id: summary
-    attributes:
-      label: "Summary"
-      description: "Provide a brief explanation of the bug"
-      placeholder: "Summarise in a few lines what and where the bug is."
+      label: "Description"
+      placeholder: "Provide an explanation of the bug. Include relavent file paths, errors and other areas of code you suspect could be related."
     validations:
       required: true
   - type: textarea
     id: dependencies
     attributes:
       label: "Dependencies"
-      description: "What are the dependencies of your bug ?"
       placeholder: "Identify the dependencies of this issue (what needs to be completed before this issue can be achieved)."
     validations:
       required: false
-
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I have added a detailed description that includes all prerequisite knowledge about the issue"
+          required: true
+        - label: "I have added all relevant labels, reference issues, the milestone, and assignee if known"
+          required: true
+        - label: "I have removed sections that are unnecessary for this issue"
+          required: true
