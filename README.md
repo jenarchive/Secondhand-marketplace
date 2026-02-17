@@ -1,64 +1,191 @@
-# 2025-GreenCheckAI 
+# 2025-Secondhand Marketplace2
+[![Static Badge](https://img.shields.io/badge/React-61DBFB?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev/)
+[![Static Badge](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Static Badge](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
 ## Contents
 * [Project overview](#project-overview)
+* [Technology Stack](#technology-stack)
 * [Client Information](#client-information)
 * [Stakeholders](#stakeholders)
 * [User Stories](#user-stories)
-* [Technology Stack](#technology-stack)
+* [User Flow](#user-flow)
 * [Project Structure](#project-structure)
-* [Architecture Diagram](#architecture-diagram)
+* [Dev Instructions](#dev-instructions)
+* [Project Management](#project-management)
 * [Team Members](#team-members)
 
 ## Project overview
 
-GreenCheck AI is an innovative web prototype focused on Explainable AI (XAI) for sustainability fraud (greenwashing) 
-detection. This project directly addresses the "black box" problem of traditional AI by providing clear, plain-language explanations for every flagged sustainability claim in corporate reports and public data. Users will be provided with visualisations explaining why a claim is suspicious with factual environmental data in English, German and Spanish.
+Secondhand Marketplace is a online platform for selling, browsing and purchasing secondhand items, that emphasize on user engagement and efficiency, through polished features and an interactive user interface. This includes advanced user reputation system and smart recommnedation engine under a wrapper of gamification system.
 
 ## Technology Stack
 
-Backend:
-* ...
-* 
-Frontend:
-* ...
-* 
-Development tools:
-* ...
-* 
 
-^^(include picture diagram like in previous projects)
+### Backend:
+* Python
+* PostgreSQL
+### Frontend:
+* React native
+*  expo (react-native framework) 
+### Development tools:
+* Git
+* Github 
+* Github Actions
 
+<p align="left">
+  <img width="918" alt="architecture image" src="doc/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+</p>
 
-## Client Information
-
-### Client: Legal Pythia
-
-Legal Pythia is a legal tech startup that strives to help legal, finance and government organisations to manage large volumes of documents and data more efficiently using Explainable Artificial Intelligence (XAI). Their tools aim to allow clients to increase the efficiency of identifying fraud, detecting greenwashing and managing administrative/legal workflows.
+## Client Information 
+### Client: 
+Marius Jurt has a strong passion for an online second-hand marketplace platform that masters engagement, user-friendlyness and gamification. He loves working with students and has tasked us with building this online experience.
 
 ## Stakeholders
-
-
+* Buyers
+     - Buyers are the users looking to purchase items. They will be able to find specific items they are looking for that fit their requirements, or discover items recommended by the platform. Many buyers will care about the reliability of sellers so will be able to view reviews of individual sellers and the platform's top rated sellers. They will also want a user-friendly system for contacting the seller for queries related to an item or purchase.
+* Viewers
+     - Viewers are the users that browse the platform to see what items are available or to help curate their taste in aesthetic items such as clothes, without the original intent of buying anything. They will want a fun and interactive system for finding items that match the style they're looking for, and to easily find sellers they might be interested in.
+* Sellers: 
+     - Sellers are the users the list items for sale. They want to list and manage items with ease and to be recognised for delivering what they promised and on time with a review and rating system used by potential buyers.
+* Postal Service Providers:
+     - Postal service providers are the external service responsible for delivering items from sellers to buyers. They require accurate address information and effective integration into the app to operate efficiently. It is critical they have reliable delivery speed and conditions as this will impact the reputation of sellers and trustworthness of the marketplace.
+* Payment Service Providers:
+     - Payment service providers are the external partners that facilitate secure financial transactions between buyers and sellers. They require reliable security protocols to handle payments and manage refunds, which is essential for users' trust in purchasing from marketplace.
 
 ## User Stories
+- As a **Buyer**, I want my experience of online second-hand shopping to feel playful and exciting, unlike other online stores. I want an enganging and interactive marketplace to easily find the items I'm looking for, and to explore reviews and ratings of sellers. I would also like to browse or be recommended items that would interest me, with the option to filter by specific requirements.
+- As a **Seller**, I want a user-friendly marketplace to conviniently list the items I want to sell, and for them to reach the right audience of potential buyers. This will encourage me to contribute to the community, instead of throwing away items I don't want anymore.
+- As a **Highly rated Seller**, I want a reliable system allowing buyers to trust me, and enabling me to have an impactful and leading role in the community, potentially building a brand/identity.
 
-End users
-Organisation and system managers
-Organisation and system owners
-General public who are effected by the system - this can be directly (e.g. people who want to use Community Transport) and indirectly (businesses/services people are using the Community Transport to use)
-Legislators (for example, with an interest in GDPR and data privacy) 
+## User Flow
+### Basic Flow
+1. ...
+
+### Alternative Flow
+1. ...
+
 
 ## Project Structure
+```text
+├── README.md                          # Main project overview
+├── ai-tools                           # Overview of AI tools
+│   └── README.md
+├── backend                            # Flask API: Handles business logic and data processing
+│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings)
+│   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
+│   └── run.py                         # Server entry point: Starts the Flask development server
+├── database                           # Data Layer: PostgreSQL configuration and scripts
+│   ├── config.py                      # DB connection strings and environment settings
+│   ├── main.py                        # Management script for DB init and migrations
+│   └── *.sql                          # SQL scripts: Schema(Create), Seed(Insert), Ops(Queries)
+├── frontend                           # Frontend React Native (Expo) application
+│   ├── app                            # File-based Routing (Crucial for UI)
+│   │   ├── (tabs)                     # Main navigation tab screens
+│   │   │   ├── marketplace.tsx        # Main Marketplace: Item listings (Matches Figma)
+│   │   │   ├── sell.tsx               # Sell Page: Item registration
+│   │   │   ├── profile.tsx            # User Profile: Account and history
+│   │   │   └── index.tsx              # App landing logic
+│   │   ├── auth                       # Authentication flow
+│   │   │   ├── login.tsx              # Sign-in screen
+│   │   │   └── signup.tsx             # New user registration
+│   │   ├── items                      # Item details
+│   │   │   └── [id].tsx               # Dynamic Route: Individual item detail view
+│   │   └── _layout.tsx                # Root layout and theme providers
+│   ├── assets                         # Images, icons, and animations
+│   ├── components                     # Reusable UI components (Headers, Buttons)
+│   ├── constants                      # Design tokens (Colours, Spacing)
+│   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
+│   ├── test-data.json                 # Mock data for frontend testing
+│   └── package.json                   # Frontend dependencies and scripts
+├── doc                                # Project documentation and diagrams
+│   ├── previous project               # Files related to previous project
+│   ├── others                         # Diagrams and files for explain / plan
+│   └── meetings and feedbacks         # Meeting notes and feedbacks for review
+└── package.json                       # Root workspace configuration
+```
 
+## Dev Instructions
+### Frontend
 
-## Architecture Diagram
+1. Install dependencies
 
+   ```bash
+   npm install
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+   For some networks such as eduroam you will need to run the following instead
+   ```bash
+   npx expo install @expo/ngrok
+   npx expo start --tunnel
+   ```
+
+In the output, you'll find options to open the app in a
+
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+
+For this current iteration you can run the frontend in an Expo Go app on your phone if you scan the QR code that is shown in the terminal. 
+
+Alternatively, if you have a mac you can run the frontend in an iOS simulator (docs above)
+
+If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ```Using Expo Go``` which is what we want. 
+
+### Backend
+#### Prerequisites
+
+Ensure you have Python 3.10+ installed.
+
+#### Setup Environment and Install Dependencies
+
+<details>
+<summary><strong> Linux/Mac </strong></summary>
+
+```bash
+cd backend
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
+
+</details>
+
+<details>
+<summary><strong> Windows </strong></summary>
+
+```bash
+cd backend
+py -3 -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+</details>
+
+#### Run Locally
+
+```bash
+flask --app app run
+```
+
+## Project Management
+- [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
+- [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
+- [Project Roadmap](doc/others/Roadmap.md)
 
 ## Team Members
 
 Name | Email 
 --- | ---
 Alex Hetherington | ss24495@bristol.ac.uk
-Morgan Parry | vi24348@bristol.ac.uk
 Freddie De Bruyn | ii24783@bristol.ac.uk
 Euan Chan | AH24354@bristol.ac.uk
+Jen Lee | dm24602@bristol.ac.uk
+

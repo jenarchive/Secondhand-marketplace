@@ -1,0 +1,8 @@
+__pycache__/
+.venv/
+*/node_modules
+.env
+database.ini 
+package-lock.json
+node_modules/*
+*.Identifier 

@@ -1,0 +1,67 @@
+name: "Test"
+description: Create a new general issue
+title: "[TEST] - <title>"
+labels: [
+  "test"
+]
+body:
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "The priority of this issue"
+      options:
+        - "Low"
+        - "Medium"
+        - "High"
+    validations:
+      required: true
+  - type: input
+    id: start_date
+    attributes:
+      label: "Start Date"
+      description: "Start of testing"
+      placeholder: "dd/mm/yyyy"
+    validations:
+      required: false
+  - type: input
+    id: end_date
+    attributes:
+      label: "End Date"
+      description: "Estimated end of testing"
+      placeholder: "dd/mm/yyyy"
+    validations:
+      required: false
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      placeholder: "Provide a detailed explanation of the testing. Include all relavent file paths and how the testing is conducted."
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: "Dependencies"
+      placeholder: "Identify the dependencies of this testing (what needs to be completed before this testing can be conducted)."
+    validations:
+      required: false
+  - type: textarea
+    id: feeds_into
+    attributes:
+      label: "Feeds Into"
+      description: "What does this testing feed into ?"
+      placeholder: "Identify anything this testing will be used for in the future/feeds into."
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I have added a detailed description that includes all prerequisite knowledge about the issue"
+          required: true
+        - label: "I have added all relevant labels, reference issues, the milestone, and assignee if known"
+          required: true
+        - label: "I have removed sections that are unnecessary for this issue"
+          required: true
