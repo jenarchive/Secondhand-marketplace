@@ -2,3 +2,7 @@ Flask
 Flask-Cors
 Flask-JWT-Extended
 python-dotenv
+boto3
+gunicorn
+psycop2-binary
+
