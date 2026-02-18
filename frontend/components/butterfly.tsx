@@ -4,8 +4,8 @@ import { Animated, Dimensions, Image, StyleSheet } from "react-native";
 const { width, height } = Dimensions.get("window");
 
 const BOTTOM_Y_BASE = height - 240;
-const Y_OFFSETS = [0, 72, -56];
-const X_OFFSETS = [-52, 48, -20];
+const Y_OFFSETS = [0, 72, -56, 36];
+const X_OFFSETS = [-52, 48, -20, 28];
 
 type ButterflyProps = {
   onFinish: () => void;
@@ -19,7 +19,7 @@ type ButterflyProps = {
 export function Butterfly({ onFinish, direction, startX, startY, duration = 7500, clusterIndex = 0 }: ButterflyProps) {
   const fromX = direction === "right" ? -80 : width + 80;
   const toX = direction === "right" ? width + 80 : -80;
-  const i = clusterIndex % 3;
+  const i = clusterIndex % Y_OFFSETS.length;
   const initialY = startY ?? BOTTOM_Y_BASE + (Y_OFFSETS[i] ?? 0);
   const initialX = startX ?? fromX + (X_OFFSETS[i] ?? 0);
   const durationMs = duration + (i * 400) - 400;

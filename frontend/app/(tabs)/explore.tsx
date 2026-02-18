@@ -37,12 +37,12 @@ export default function TabTwoScreen() {
 
   const spawnButterflies = (direction: 'left' | 'right') => {
     const baseId = Date.now();
-    setButterflies((prev) => [
-      ...prev,
-      { id: baseId, direction },
-      { id: baseId + 1, direction },
-      { id: baseId + 2, direction },
-    ]);
+    const count = 3 + Math.floor(Math.random() * 2);
+    const newOnes: ButterflyInstance[] = Array.from({ length: count }, (_, i) => ({
+      id: baseId + i,
+      direction,
+    }));
+    setButterflies((prev) => [...prev, ...newOnes]);
   };
 
   const removeButterfly = (id: number) => {
@@ -110,7 +110,7 @@ export default function TabTwoScreen() {
             key={b.id}
             direction={b.direction}
             onFinish={() => removeButterfly(b.id)}
-            clusterIndex={i % 3}
+            clusterIndex={i}
             duration={4200}
           />
         ))}
