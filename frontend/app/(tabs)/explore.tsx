@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
-import { View, StyleSheet, Animated, Button, Dimensions } from 'react-native';
+import { View, StyleSheet, Animated, Button, Dimensions, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -19,6 +20,12 @@ type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState(TestData.items);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
+  const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
+
+  const toggleLike = (id: string | number) => {
+    const key = String(id);
+    setLikedMap((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -64,13 +71,26 @@ export default function TabTwoScreen() {
             key={item.id}
             pointerEvents={index === visibleItems.length - 1 ? 'auto' : 'none'}
           >
-            <Image
-              placeholder={{ blurhash }}
-              alt={item.title}
-              style={styles.cardImage}
-              contentFit="cover"
-              source={{ uri: item.image }}
-            />
+            <View style={styles.imageWrapper}>
+              <Image
+                placeholder={{ blurhash }}
+                alt={item.title}
+                style={styles.cardImage}
+                contentFit="cover"
+                source={{ uri: item.image }}
+              />
+              <Pressable
+                style={styles.likeButton}
+                onPress={() => toggleLike(item.id)}
+                hitSlop={8}
+              >
+                <Ionicons
+                  name={likedMap[String(item.id)] ? 'heart' : 'heart-outline'}
+                  size={28}
+                  color={likedMap[String(item.id)] ? '#FF3B30' : '#FFFFFF'}
+                />
+              </Pressable>
+            </View>
             <ThemedView style={styles.cardTextWrapper}>
               <ThemedText style={styles.cardText}>{item.title}</ThemedText>
               <ThemedText style={styles.cardTextPrice}>
@@ -126,11 +146,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
+  imageWrapper: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
   cardImage: {
     borderRadius: 16,
     position: 'absolute',
     width: '100%',
     height: '100%',
+  },
+  likeButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardText: {
     fontSize: 24,
