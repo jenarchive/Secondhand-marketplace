@@ -22,7 +22,7 @@ export function Butterfly({ onFinish, direction, startX, startY, duration = 7500
   const i = clusterIndex % 3;
   const initialY = startY ?? BOTTOM_Y_BASE + (Y_OFFSETS[i] ?? 0);
   const initialX = startX ?? fromX + (X_OFFSETS[i] ?? 0);
-  const durationMs = duration + (i * 600) - 600;
+  const durationMs = duration + (i * 400) - 400;
 
   const translateX = useRef(new Animated.Value(initialX)).current;
   const translateY = useRef(new Animated.Value(initialY)).current;

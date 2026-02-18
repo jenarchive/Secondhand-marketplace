@@ -111,6 +111,7 @@ export default function TabTwoScreen() {
             direction={b.direction}
             onFinish={() => removeButterfly(b.id)}
             clusterIndex={i % 3}
+            duration={4200}
           />
         ))}
       </View>

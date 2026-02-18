@@ -61,29 +61,27 @@ export default function ParallaxScrollView({
       decelerationRate="normal"
       showsHorizontalScrollIndicator={false}
       style={[styles.scrollView, { backgroundColor }]}
-      scrollEventThrottle={16}
+      scrollEventThrottle={8}
       onScroll={async (event) => {
         const x = event.nativeEvent.contentOffset.x;
+        const swipeTrigger = 5;
 
-        if (x > 50 && !hasLoggedRef.current) {
+        if (x > swipeTrigger && !hasLoggedRef.current) {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
           onSwipeDirection?.('left');
-        } else if (x < -50 && !hasLoggedRef.current) {
+        } else if (x < -swipeTrigger && !hasLoggedRef.current) {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
           onSwipeDirection?.('right');
         }
         //reset if user scrolls back
-        if (x <= 50 && hasLoggedRef.current && x >= -50) {
-          
-          
+        if (x <= swipeTrigger && hasLoggedRef.current && x >= -swipeTrigger) {
           hasLoggedRef.current = false;
           hasExceededRef.current = false;
         }
-        
       }}
       onScrollEndDrag={async (event) => {
         const x = event.nativeEvent.contentOffset.x;
