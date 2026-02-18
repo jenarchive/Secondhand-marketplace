@@ -31,11 +31,12 @@ export default function TabTwoScreen() {
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   const spawnButterflies = (direction: 'left' | 'right') => {
+    if (direction !== 'right') return;
     const baseId = Date.now();
     const count = 3 + Math.floor(Math.random() * 2);
     const newOnes: ButterflyInstance[] = Array.from({ length: count }, (_, i) => ({
       id: baseId + i,
-      direction,
+      direction: direction,
     }));
     setButterflies((prev) => [...prev, ...newOnes]);
   };
