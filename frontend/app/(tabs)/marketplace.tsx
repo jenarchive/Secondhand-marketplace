@@ -9,11 +9,9 @@ import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 
 export default function HomeScreen() {
-  const colourScheme = useColorScheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
@@ -118,7 +116,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
     backgroundColor: "#25282B",
-    
   },
 
   //each item is 48% width 2 items per row
@@ -160,22 +157,14 @@ const styles = StyleSheet.create({
     marginBottom: 64
   },
 
-  descriptionText: {
-    height: '25%',
-    textOverflow: "ellipsis",
-    overflow: "hidden"
-  }
-  ,
   pressed: {
     opacity: 0.85
-  }
-  ,
+  },
   searchContainer: {
     paddingHorizontal: 0,
     paddingVertical: 16,
     backgroundColor: 'transparent'
   },
-  
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -202,35 +191,5 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     color: '#111'
-  },
-
-  sellerRow: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    justifyContent: 'space-between'
-  },
-
-  sellerAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  sellerMeta: {
-    flex: 1,
-    minWidth: 0
-    ,
-    marginRight: 8
-  },
-
-  sellerRating: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    alignItems: 'center'
   }
 });

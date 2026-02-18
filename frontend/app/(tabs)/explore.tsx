@@ -1,6 +1,11 @@
 import { Image } from 'expo-image';
 import { View, StyleSheet, Animated, Button, Dimensions } from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import TestData from '@/test-data.json'
+import { useState } from 'react';
+import { Butterfly } from '@/components/butterfly';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -8,11 +13,6 @@ const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
 const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 const CARD_TOP = Math.max(48, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 24);
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
-import { useState } from 'react';
-import { Butterfly } from '@/components/butterfly';
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
@@ -48,7 +48,7 @@ export default function TabTwoScreen() {
 
   const resetCards = () => {
     setVisibleItems(TestData.items);
-  }
+  };
 
   return (
     <View style={styles.screen}>
