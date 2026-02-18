@@ -67,22 +67,6 @@ export default function HomeScreen() {
                 }}
               >
                 <ThemedView style={styles.listingContainer}>
-                  {/* seller small profile (avatar, name, rating) */}
-                  <ThemedView style={styles.sellerRow}>
-                    <ThemedView style={styles.sellerAvatar}>
-                      <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>U</ThemedText>
-                    </ThemedView>
-                    <ThemedView style={styles.sellerRating}>
-                      {Array.from({ length: 5 }).map((_, i) => {
-                        const filled = i + 1 <= 4; // default 4-star on listings
-                        return (
-                          <ThemedText key={i} type="defaultSemiBold" style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 1 }}>
-                            {filled ? '★' : '☆'}
-                          </ThemedText>
-                        );
-                      })}
-                    </ThemedView>
-                  </ThemedView>
                   <Image
                     alt={item.title}
                     style={styles.image}
