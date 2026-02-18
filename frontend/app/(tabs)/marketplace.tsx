@@ -63,12 +63,10 @@ export default function HomeScreen() {
                 key={item.id}
                 style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
                 onPress={async () => {
-                  // light selection haptic and navigate
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   router.push(`/items/${item.id}`);
                 }}
                 onLongPress={async () => {
-                  // stronger feedback on long press
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                   router.push(`/items/${item.id}`);
                 }}
@@ -94,11 +92,15 @@ export default function HomeScreen() {
                       />
                     </Pressable>
                   </ThemedView>
-                  <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
-                  <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
-                    {item.description}
+                  <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>
+                    {item.title}
                   </ThemedText>
-                  <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
+                  
+                  {/* description 부분이 삭제되었습니다 */}
+
+                  <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>
+                    {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
+                  </ThemedText>
                 </ThemedView>
               </Pressable>
             ))}
@@ -115,28 +117,21 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
     backgroundColor: "#25282B",
-    
   },
-
-  //each item is 48% width 2 items per row
   listingLink: {
     flexBasis: '48%',
     maxWidth: '48%',
-    textDecorationLine: 'none',
     marginBottom: 16,
     overflow: 'hidden'
   },
-
   image: {
     width: '100%',
     borderRadius: 8,
     aspectRatio: 1
   },
-
   imageWrapper: {
     position: 'relative',
   },
-
   likeButton: {
     position: 'absolute',
     right: 8,
@@ -148,25 +143,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-  //wraps children into two columns
   flexbox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginBottom: 64
   },
-
   pressed: {
     opacity: 0.85
-  }
-  ,
+  },
   searchContainer: {
     paddingHorizontal: 0,
     paddingVertical: 16,
     backgroundColor: 'transparent'
   },
-  
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -177,17 +167,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderWidth: 6,
     borderColor: DarkTheme.colors.border,
-    //iOS-like shadow
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
       android: { elevation: 2 }
     })
   },
-
   searchIcon: {
     marginRight: 8
   },
-
   searchInput: {
     flex: 1,
     padding: 0,
