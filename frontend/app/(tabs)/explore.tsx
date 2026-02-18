@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { View, StyleSheet, Animated, Button, Dimensions, Pressable } from 'react-native';
+import { View, StyleSheet, Dimensions, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
@@ -29,11 +29,6 @@ export default function TabTwoScreen() {
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
-
-  const spawnButterfly = () => {
-    const id = Date.now();
-    setButterflies((prev) => [...prev, { id, direction: 'right' as const }]);
-  };
 
   const spawnButterflies = (direction: 'left' | 'right') => {
     const baseId = Date.now();
@@ -99,9 +94,6 @@ export default function TabTwoScreen() {
             </ThemedView>
           </ThemedView>
         ))}
-        <View style={styles.buttonRow}>
-          <Button title="generate butterfly" onPress={spawnButterfly} />
-        </View>
       </ParallaxScrollView>
 
       <View style={styles.butterflyOverlay} pointerEvents="none">
@@ -117,15 +109,12 @@ export default function TabTwoScreen() {
       </View>
 
       {visibleItems.length === 0 && (
-        <Animated.View style={{ alignItems: 'center', marginTop: 0 }}>
-          <ThemedText style={{ fontSize: 18, marginBottom: 12 }}>No more items!</ThemedText>
-          <ThemedText
-            style={{ fontSize: 16, color: 'blue' }}
-            onPress={resetCards}
-          >
+        <View style={styles.emptyState}>
+          <ThemedText style={styles.emptyStateTitle}>No more items!</ThemedText>
+          <ThemedText style={styles.emptyStateReset} onPress={resetCards}>
             Reset Items
           </ThemedText>
-        </Animated.View>
+        </View>
       )}
     </View>
   );
@@ -187,9 +176,20 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 8,
   },
-  buttonRow: {
-    paddingVertical: 8,
-    zIndex: 0,
+  emptyState: {
+    position: 'absolute',
+    alignSelf: 'center',
+    alignItems: 'center',
+    marginTop: 48,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    marginBottom: 12,
+    color: '#fff',
+  },
+  emptyStateReset: {
+    fontSize: 16,
+    color: '#0a84ff',
   },
   butterflyOverlay: {
     position: 'absolute',
