@@ -28,7 +28,7 @@ export default function TabTwoScreen() {
   };
 
   const blurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   const spawnButterfly = () => {
     const id = Date.now();
@@ -61,7 +61,7 @@ export default function TabTwoScreen() {
     <View style={styles.screen}>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-        headerImage={<Image/>}
+        headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
         onSwipeDirection={spawnButterflies}
       >
@@ -116,15 +116,15 @@ export default function TabTwoScreen() {
       </View>
 
       {visibleItems.length === 0 && (
-      <Animated.View style={{ alignItems: 'center', marginTop: 0}}>
-        <ThemedText style={{ fontSize: 18, marginBottom: 12 }}>No more items!</ThemedText>
-        <ThemedText 
-          style={{ fontSize: 16, color: 'blue' }}
-          onPress={resetCards}
-        >
-          Reset Items
-        </ThemedText>
-      </Animated.View>
+        <Animated.View style={{ alignItems: 'center', marginTop: 0 }}>
+          <ThemedText style={{ fontSize: 18, marginBottom: 12 }}>No more items!</ThemedText>
+          <ThemedText
+            style={{ fontSize: 16, color: 'blue' }}
+            onPress={resetCards}
+          >
+            Reset Items
+          </ThemedText>
+        </Animated.View>
       )}
     </View>
   );
