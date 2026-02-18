@@ -15,18 +15,21 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from './themed-text';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const HEADER_WIDTH = SCREEN_WIDTH;
+const CONTENT_HEIGHT = Math.min(SCREEN_WIDTH * (16 / 9), SCREEN_HEIGHT * 0.82);
 
 type Props = PropsWithChildren<{
   headerImage: ReactElement;
   headerBackgroundColor: { dark: string; light: string };
   onCardDismiss?: () => void;
+  onSwipeDirection?: (direction: 'left' | 'right') => void;
 }>;
 
 export default function ParallaxScrollView({
   children,
   onCardDismiss,
+  onSwipeDirection,
 }: Props) {
   const backgroundColor = useThemeColor({}, 'background');
   const colorScheme = useColorScheme() ?? 'light';
@@ -57,21 +60,21 @@ export default function ParallaxScrollView({
       horizontal
       decelerationRate="normal"
       showsHorizontalScrollIndicator={false}
-      style={{ backgroundColor }}
+      style={[styles.scrollView, { backgroundColor }]}
       scrollEventThrottle={16}
       onScroll={async (event) => {
         const x = event.nativeEvent.contentOffset.x;
 
         if (x > 50 && !hasLoggedRef.current) {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          console.log('Scrolled more than 50px horizontally');
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
-        }else if (x < -50 && !hasLoggedRef.current) {
+          onSwipeDirection?.('left');
+        } else if (x < -50 && !hasLoggedRef.current) {
           await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          console.log('Scrolled less than -50px horizontally');
           hasLoggedRef.current = true;
           hasExceededRef.current = true;
+          onSwipeDirection?.('right');
         }
         //reset if user scrolls back
         if (x <= 50 && hasLoggedRef.current && x >= -50) {
@@ -108,13 +111,16 @@ export default function ParallaxScrollView({
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
   content: {
     width: HEADER_WIDTH,
+    height: CONTENT_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 64,
-    paddingBottom: 32,
-    aspectRatio: 9 / 16,
+    paddingTop: 48,
+    paddingBottom: 24,
     gap: 16,
   },
 });

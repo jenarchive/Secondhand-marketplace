@@ -1,27 +1,45 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Animated, Button} from 'react-native';
+import { View, StyleSheet, Animated, Button, Dimensions } from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const CARD_MARGIN = 32;
+const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
+const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
+const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
+const CARD_TOP = Math.max(48, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 24);
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { useState } from 'react';
 import { Butterfly } from '@/components/butterfly';
 
+type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
 export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState(TestData.items);
-  const [butterflies, setButterflies] = useState<number[]>([]);
+  const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
-  
+
   const spawnButterfly = () => {
     const id = Date.now();
-    setButterflies((prev) => [...prev, id]);
+    setButterflies((prev) => [...prev, { id, direction: 'right' as const }]);
+  };
+
+  const spawnButterflies = (direction: 'left' | 'right') => {
+    const baseId = Date.now();
+    setButterflies((prev) => [
+      ...prev,
+      { id: baseId, direction },
+      { id: baseId + 1, direction },
+      { id: baseId + 2, direction },
+    ]);
   };
 
   const removeButterfly = (id: number) => {
-    setButterflies((prev) => prev.filter((b) => b !== id));
+    setButterflies((prev) => prev.filter((b) => b.id !== id));
   };
 
   const handleCardDismiss = () => {
@@ -33,47 +51,51 @@ export default function TabTwoScreen() {
   }
 
   return (
-    <ThemedView>
+    <View style={styles.screen}>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-        headerImage={<Image/>
-        }
+        headerImage={<Image/>}
         onCardDismiss={handleCardDismiss}
+        onSwipeDirection={spawnButterflies}
       >
         {visibleItems.map((item, index) => (
-        <ThemedView 
-          style={[styles.cardContainer, { zIndex: index+1 }]} 
-          key={item.id}
-          pointerEvents={index === visibleItems.length - 1 ? 'auto' : 'none'}
-        >
-          <Image 
-            placeholder={{ blurhash }}
-            alt={item.title}
-            style={styles.cardImage}
-            contentFit="cover"
-            source={{ uri: item.image }}
-            ></Image>
-          <ThemedView style={styles.cardTextWrapper}>
-            <ThemedText style={styles.cardText}>
-              {item.title}
-            </ThemedText>
-            <ThemedText style={styles.cardTextPrice}>
-              {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
-            </ThemedText>
-          </ThemedView>
-        </ThemedView>
-        ))}
-        <ThemedView style={{ zIndex: 0 }}>
-          <Button title='generate butterfly' onPress={spawnButterfly} />
-            {butterflies.map((id) => (
-            <Butterfly
-              key={id}
-              onFinish={() => removeButterfly(id)}
+          <ThemedView
+            style={[styles.cardContainer, { zIndex: index + 1 }]}
+            key={item.id}
+            pointerEvents={index === visibleItems.length - 1 ? 'auto' : 'none'}
+          >
+            <Image
+              placeholder={{ blurhash }}
+              alt={item.title}
+              style={styles.cardImage}
+              contentFit="cover"
+              source={{ uri: item.image }}
             />
-      ))}
-        </ThemedView>
-    </ParallaxScrollView>
-    {visibleItems.length === 0 && (
+            <ThemedView style={styles.cardTextWrapper}>
+              <ThemedText style={styles.cardText}>{item.title}</ThemedText>
+              <ThemedText style={styles.cardTextPrice}>
+                {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
+              </ThemedText>
+            </ThemedView>
+          </ThemedView>
+        ))}
+        <View style={styles.buttonRow}>
+          <Button title="generate butterfly" onPress={spawnButterfly} />
+        </View>
+      </ParallaxScrollView>
+
+      <View style={styles.butterflyOverlay} pointerEvents="none">
+        {butterflies.map((b, i) => (
+          <Butterfly
+            key={b.id}
+            direction={b.direction}
+            onFinish={() => removeButterfly(b.id)}
+            clusterIndex={i % 3}
+          />
+        ))}
+      </View>
+
+      {visibleItems.length === 0 && (
       <Animated.View style={{ alignItems: 'center', marginTop: 0}}>
         <ThemedText style={{ fontSize: 18, marginBottom: 12 }}>No more items!</ThemedText>
         <ThemedText 
@@ -83,45 +105,59 @@ export default function TabTwoScreen() {
           Reset Items
         </ThemedText>
       </Animated.View>
-    )}
-    </ThemedView>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  screen: {
+    flex: 1,
+    backgroundColor: '#353636',
   },
   cardContainer: {
     position: 'absolute',
-    marginTop: 32,
+    left: CARD_LEFT,
+    top: CARD_TOP,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
     borderRadius: 32,
-    height: '100%',
     alignItems: 'center',
-    aspectRatio: 9/16,
     justifyContent: 'center',
+    overflow: 'hidden',
   },
-  cardImage:{ 
+  cardImage: {
     borderRadius: 16,
     position: 'absolute',
+    width: '100%',
     height: '100%',
-    aspectRatio: 9/16,
   },
-  cardText:{
+  cardText: {
     fontSize: 24,
     fontWeight: '600',
     color: '#fff',
   },
-  cardTextPrice:{
+  cardTextPrice: {
     fontSize: 18,
     fontWeight: '600',
     color: '#fff',
-    textAlign: 'center'
+    textAlign: 'center',
   },
-  cardTextWrapper:{
+  cardTextWrapper: {
     backgroundColor: 'rgba(0,0,0,0.15)',
     padding: 6,
     borderRadius: 8,
-  }
+  },
+  buttonRow: {
+    paddingVertical: 8,
+    zIndex: 0,
+  },
+  butterflyOverlay: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+  },
 });

@@ -3,34 +3,50 @@ import { Animated, Dimensions, Image, StyleSheet } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
-export function Butterfly({ onFinish }: { onFinish: () => void }) {
-  const translateX = useRef(new Animated.Value(-100)).current;
-  const translateY = useRef(
-    200
-  ).current;
+const BOTTOM_Y_BASE = height - 240;
+const Y_OFFSETS = [0, 72, -56];
+const X_OFFSETS = [-52, 48, -20];
+
+type ButterflyProps = {
+  onFinish: () => void;
+  direction: "left" | "right";
+  startX?: number;
+  startY?: number;
+  duration?: number;
+  clusterIndex?: number;
+};
+
+export function Butterfly({ onFinish, direction, startX, startY, duration = 7500, clusterIndex = 0 }: ButterflyProps) {
+  const fromX = direction === "right" ? -80 : width + 80;
+  const toX = direction === "right" ? width + 80 : -80;
+  const i = clusterIndex % 3;
+  const initialY = startY ?? BOTTOM_Y_BASE + (Y_OFFSETS[i] ?? 0);
+  const initialX = startX ?? fromX + (X_OFFSETS[i] ?? 0);
+  const durationMs = duration + (i * 600) - 600;
+
+  const translateX = useRef(new Animated.Value(initialX)).current;
+  const translateY = useRef(new Animated.Value(initialY)).current;
   const flutter = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Wing flutter (rotation)
     Animated.loop(
       Animated.sequence([
         Animated.timing(flutter, {
           toValue: 1,
-          duration: 1500,
+          duration: 120 + Math.random() * 80,
           useNativeDriver: true,
         }),
         Animated.timing(flutter, {
           toValue: -1,
-          duration: 150,
+          duration: 100 + Math.random() * 100,
           useNativeDriver: true,
         }),
       ])
     ).start();
 
-    // Fly across screen
     Animated.timing(translateX, {
-      toValue: width + 100,
-      duration: 10000,
+      toValue: toX,
+      duration: durationMs,
       useNativeDriver: true,
     }).start(() => {
       onFinish();
@@ -39,7 +55,7 @@ export function Butterfly({ onFinish }: { onFinish: () => void }) {
 
   const rotate = flutter.interpolate({
     inputRange: [-1, 1],
-    outputRange: ["-15deg", "15deg"],
+    outputRange: direction === "right" ? ["-18deg", "18deg"] : ["18deg", "-18deg"],
   });
 
   return (
@@ -48,13 +64,17 @@ export function Butterfly({ onFinish }: { onFinish: () => void }) {
       style={[
         styles.butterfly,
         {
-          transform: [{ translateX }, { translateY }, { rotate }],
+          transform: [
+            { translateX },
+            { translateY },
+            { rotate },
+          ],
         },
       ]}
     >
       <Image
         source={require("../assets/images/butterfly.png")}
-        style={styles.image}
+        style={[styles.image, direction === "left" && styles.imageFlipped]}
       />
     </Animated.View>
   );
@@ -64,10 +84,15 @@ const styles = StyleSheet.create({
   butterfly: {
     position: "absolute",
     zIndex: 9999,
+    left: 0,
+    top: 0,
   },
   image: {
-    width: 60,
-    height: 60,
+    width: 56,
+    height: 56,
     resizeMode: "contain",
+  },
+  imageFlipped: {
+    transform: [{ scaleX: -1 }],
   },
 });
