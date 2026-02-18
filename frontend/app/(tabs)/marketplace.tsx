@@ -9,14 +9,21 @@ import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 
 export default function HomeScreen() {
-  const colourScheme = useColorScheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
+  const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
+
+  const toggleLike = (id: string | number) => {
+    const key = String(id);
+    setLikedMap((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -67,18 +74,30 @@ export default function HomeScreen() {
                 }}
               >
                 <ThemedView style={styles.listingContainer}>
-                  <Image
-                    alt={item.title}
-                    style={styles.image}
-                    placeholder={{ blurhash }}
-                    contentFit="cover"
-                    source={{ uri: item.image }}
-                  />
-                    <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
-                      
-                    <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
-                      {item.description}
-                    </ThemedText>
+                  <ThemedView style={styles.imageWrapper}>
+                    <Image
+                      alt={item.title}
+                      style={styles.image}
+                      placeholder={{ blurhash }}
+                      contentFit="cover"
+                      source={{ uri: item.image }}
+                    />
+                    <Pressable
+                      style={styles.likeButton}
+                      onPress={() => toggleLike(item.id)}
+                      hitSlop={8}
+                    >
+                      <Ionicons
+                        name={likedMap[String(item.id)] ? 'heart' : 'heart-outline'}
+                        size={20}
+                        color={likedMap[String(item.id)] ? '#FF3B30' : '#FFFFFF'}
+                      />
+                    </Pressable>
+                  </ThemedView>
+                  <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
+                  <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
+                    {item.description}
+                  </ThemedText>
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </ThemedView>
               </Pressable>
@@ -114,6 +133,22 @@ const styles = StyleSheet.create({
     aspectRatio: 1
   },
 
+  imageWrapper: {
+    position: 'relative',
+  },
+
+  likeButton: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   //wraps children into two columns
   flexbox: {
     flexDirection: 'row',
@@ -122,12 +157,6 @@ const styles = StyleSheet.create({
     marginBottom: 64
   },
 
-  descriptionText: {
-    height: '25%',
-    textOverflow: "ellipsis",
-    overflow: "hidden"
-  }
-  ,
   pressed: {
     opacity: 0.85
   }
@@ -164,35 +193,5 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     color: '#111'
-  },
-
-  sellerRow: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    justifyContent: 'space-between'
-  },
-
-  sellerAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  sellerMeta: {
-    flex: 1,
-    minWidth: 0
-    ,
-    marginRight: 8
-  },
-
-  sellerRating: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    alignItems: 'center'
   }
 });
