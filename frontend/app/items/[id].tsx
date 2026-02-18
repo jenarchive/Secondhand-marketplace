@@ -59,7 +59,6 @@ export default function HomeScreen() {
 
   return (
     <>
-    
     <Stack.Screen
       options={{
         title: MyData.title,
@@ -105,7 +104,6 @@ export default function HomeScreen() {
       <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Description</ThemedText>
       <ThemedText type="default" style={{color: '#fff'}}>{MyData.description}</ThemedText>
     </ThemedView>
-
   </ThemedView>
       </ThemedView>
     </ParallaxScrollView>
@@ -229,8 +227,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
-  }
- ,
+  },
   floatingContainer: {
     position: 'absolute',
     left: 16,
@@ -262,6 +259,5 @@ const styles = StyleSheet.create({
     minWidth: 100,
     alignItems: 'center',
     justifyContent: 'center',
-
   }
 });

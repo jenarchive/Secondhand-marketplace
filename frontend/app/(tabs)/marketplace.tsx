@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 8,
     backgroundColor: "#25282B",
-    
   },
 
   //each item is 48% width 2 items per row
@@ -166,7 +165,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     backgroundColor: 'transparent'
   },
-  
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
