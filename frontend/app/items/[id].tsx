@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
@@ -14,6 +16,7 @@ export default function HomeScreen() {
   const params = useLocalSearchParams();
   const id = Number(params.id);
   const itemData = TestData.items[id - 1];
+  const [liked, setLiked] = useState(false);
   // const navigation = useNavigation();
 
   const blurhash =
@@ -69,13 +72,26 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#fff', dark: '#191C1F' }}>
       <ThemedView style={styles.listingContainer}>
       <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id}/>
-    <Image
-      alt={MyData.title}
-      style={styles.image}
-      placeholder={{ blurhash }}
-      contentFit="cover"
-      source={{ uri: MyData.image }}
-    />
+    <View style={styles.imageWrapper}>
+      <Image
+        alt={MyData.title}
+        style={styles.image}
+        placeholder={{ blurhash }}
+        contentFit="cover"
+        source={{ uri: MyData.image }}
+      />
+      <Pressable
+        style={styles.likeButton}
+        onPress={() => setLiked((prev) => !prev)}
+        hitSlop={8}
+      >
+        <Ionicons
+          name={liked ? 'heart' : 'heart-outline'}
+          size={20}
+          color={liked ? '#FF3B30' : '#FFFFFF'}
+        />
+      </Pressable>
+    </View>
   <ThemedView style={styles.listingTitle}>
     <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{MyData.title}</ThemedText>
     <ThemedText type="default" style={{color: '#fff'}}>Category: {MyData.category}</ThemedText>
@@ -132,10 +148,26 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
 
+  imageWrapper: {
+    position: 'relative',
+  },
+
   image: {
     width: '100%',
     borderRadius: 16,
     aspectRatio: 1
+  },
+
+  likeButton: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   //wraps children into two columns
