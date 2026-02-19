@@ -179,21 +179,22 @@ export default function TabTwoScreen() {
       </View>
 
       {visibleItems.length === 0 && (
-        <View style={styles.emptyState}>
-          <Link href="/(tabs)/liked-items" asChild>
-            <Pressable>
-              <ThemedView style={styles.row}>
-                <ThemedText style={styles.text}>
-                  Check items that you liked
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
-          </Link>
-          <ThemedText style={styles.emptyStateTitle}>No more items!</ThemedText>
-          <ThemedText style={styles.emptyStateReset} onPress={resetCards}>
-            Reset items
-          </ThemedText>
-        </View>
+        <>
+          <View style={styles.emptyStateCenter}>
+            <Link href="/(tabs)/liked-items" asChild>
+              <Pressable>
+                <ThemedView style={styles.row}>
+                  <ThemedText style={styles.text}>
+                    Check items that you liked
+                  </ThemedText>
+                </ThemedView>
+              </Pressable>
+            </Link>
+          </View>
+          <Pressable style={styles.emptyStateReset} onPress={resetCards}>
+            <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
+          </Pressable>
+        </>
       )}
     </View>
   );
@@ -340,18 +341,24 @@ const styles = StyleSheet.create({
   hintTextGreen: {
     color: '#32D74B',
   },
-  emptyState: {
+  emptyStateCenter: {
     position: 'absolute',
-    alignSelf: 'center',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 48,
-  },
-  emptyStateTitle: {
-    fontSize: 18,
-    marginBottom: 12,
-    color: '#fff',
   },
   emptyStateReset: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyStateResetText: {
     fontSize: 16,
     color: '#0a84ff',
   },
