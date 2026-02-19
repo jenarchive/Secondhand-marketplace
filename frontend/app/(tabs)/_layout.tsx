@@ -83,6 +83,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="liked-items"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -94,12 +100,6 @@ export default function TabLayout() {
         options={{
           title: 'log-in',
           tabBarIcon: ({ color }) => <Ionicons name="log-in-outline" size={28} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="liked-items"
-        options={{
-          href: null,
         }}
       />
     </Tabs>
