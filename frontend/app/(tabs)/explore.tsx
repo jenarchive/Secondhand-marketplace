@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: CARD_TOP + CARD_HEIGHT + 24,
+    top: CARD_TOP + CARD_HEIGHT + 16,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
