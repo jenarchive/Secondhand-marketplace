@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 
 export default function LikedItemsScreen() {
-  const router = useRouter();
+  const insets = useSafeAreaInsets();
+
   const items = [
     { id: 1, name: 'Product Name 1', price: '35.00', sold: true },
     { id: 2, name: 'Product Name 2', price: '12.00', sold: false },
@@ -39,22 +41,12 @@ export default function LikedItemsScreen() {
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen 
         options={{ 
-          headerShown: true,
-          headerTitle: "Liked Items",
-          headerBackVisible: true,
-          headerLeft: () => (
-            <Pressable onPress={() => router.back()} style={styles.backButton} hitSlop={8}>
-              <Ionicons name="arrow-back" size={24} color={textColor} />
-            </Pressable>
-          ),
-          headerShadowVisible: false,
-          headerStyle: { backgroundColor: screenBg },
-          headerTintColor: textColor,
+          headerShown: false,
         }} 
       />
 
       <ScrollView
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 32 }]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
@@ -100,16 +92,11 @@ export default function LikedItemsScreen() {
 }
 
 const styles = StyleSheet.create({
-  backButton: {
-    padding: 8,
-    marginLeft: 4,
-  },
   container: {
     flex: 1,
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingTop: 8,
     paddingBottom: 24,
   },
   firstCard: {
