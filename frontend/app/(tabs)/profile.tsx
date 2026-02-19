@@ -3,14 +3,12 @@ import { StyleSheet, Pressable, View, FlatList } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link, Href } from 'expo-router';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function HomeScreen() {
   
   const Data = [
-    { id: 1, iconName: 'heart' as const, label: "Liked Items", next: require('../../assets/images/next.png'), link: "/(tabs)/liked-items" },
-    { id: 2, icon: require('../../assets/images/settings.png'), label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
-    { id: 3, icon: require('../../assets/images/door.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
+    { id: 1, icon: require('../../assets/images/settings.png'), label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
+    { id: 2, icon: require('../../assets/images/door.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
   return (
@@ -45,11 +43,7 @@ export default function HomeScreen() {
                 <ThemedView style={styles.listRow}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View style={styles.listSide}>
-                      {'icon' in item ? (
-                        <Image style={styles.listIcon} source={item.icon} />
-                      ) : (
-                        <Ionicons name={item.iconName} size={24} color="#fff" />
-                      )}
+                      <Image style={styles.listIcon} source={item.icon} />
                     </View>
                     <View style={styles.listText}>
                       <ThemedText>{item.label}</ThemedText>
