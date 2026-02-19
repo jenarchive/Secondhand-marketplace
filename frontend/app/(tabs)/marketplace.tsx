@@ -95,9 +95,6 @@ export default function HomeScreen() {
                     </Pressable>
                   </ThemedView>
                   <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
-                  <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
-                    {item.description}
-                  </ThemedText>
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </ThemedView>
               </Pressable>
