@@ -11,12 +11,14 @@ import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
+import { useLikedItems } from '@/contexts/LikedItemsContext';
 
 export default function HomeScreen() {
   const colourScheme = useColorScheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
+  const { toggleLike, isLiked } = useLikedItems();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -52,48 +54,42 @@ export default function HomeScreen() {
         </View>
         <ThemedView style={styles.flexbox}>
             {filtered.map((item) => (
-              <Pressable
-                key={item.id}
-                style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
-                onPress={async () => {
-                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  router.push(`/items/${item.id}`);
-                }}
-                onLongPress={async () => {
-                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                  router.push(`/items/${item.id}`);
-                }}
-              >
-                <ThemedView style={styles.listingContainer}>
-                  <ThemedView style={styles.sellerRow}>
-                    <ThemedView style={styles.sellerAvatar}>
-                      <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>U</ThemedText>
-                    </ThemedView>
-                    <ThemedView style={styles.sellerRating}>
-                      {Array.from({ length: 5 }).map((_, i) => {
-                        const filled = i + 1 <= 4;
-                        return (
-                          <ThemedText key={i} type="defaultSemiBold" style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 1 }}>
-                            {filled ? '★' : '☆'}
-                          </ThemedText>
-                        );
-                      })}
-                    </ThemedView>
-                  </ThemedView>
-                  <Image
-                    alt={item.title}
-                    style={styles.image}
-                    placeholder={{ blurhash }}
-                    contentFit="cover"
-                    source={{ uri: item.image }}
-                  />
-                    <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
-                    <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
-                      {item.description}
-                    </ThemedText>
+              <View key={item.id} style={styles.listingLink}>
+                <Pressable
+                  style={({ pressed }) => [styles.listingContainer, pressed && styles.pressed]}
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    router.push(`/items/${item.id}`);
+                  }}
+                  onLongPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                    router.push(`/items/${item.id}`);
+                  }}
+                >
+                  <View style={styles.imageWrapper}>
+                    <Image
+                      alt={item.title}
+                      style={styles.image}
+                      placeholder={{ blurhash }}
+                      contentFit="cover"
+                      source={{ uri: item.image }}
+                    />
+                    <Pressable
+                      style={styles.likeButton}
+                      onPress={() => toggleLike(item.id)}
+                      hitSlop={8}
+                    >
+                      <Ionicons
+                        name={isLiked(item.id) ? 'heart' : 'heart-outline'}
+                        size={20}
+                        color={isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
+                      />
+                    </Pressable>
+                  </View>
+                  <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
-                </ThemedView>
-              </Pressable>
+                </Pressable>
+              </View>
             ))}
         </ThemedView>
       </ThemedView>
@@ -120,6 +116,20 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 8,
     aspectRatio: 1
+  },
+  imageWrapper: {
+    position: 'relative',
+  },
+  likeButton: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   flexbox: {
     flexDirection: 'row',
@@ -158,25 +168,5 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     color: '#111'
-  },
-  sellerRow: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    justifyContent: 'space-between'
-  },
-  sellerAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  sellerRating: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    alignItems: 'center'
   }
 });
