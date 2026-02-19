@@ -12,7 +12,7 @@ const CARD_MARGIN = 32;
 const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
 const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
-const CARD_TOP = Math.max(48, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 24);
+const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 80);
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
