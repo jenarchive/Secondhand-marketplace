@@ -56,15 +56,15 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Marketplace',
+          tabBarIcon: ({ color }) => <FontAwesome6 name="bag-shopping" size={28} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="marketplace"
+        name="explore"
         options={{
-          title: 'Marketplace',
-          tabBarIcon: ({ color }) => <FontAwesome6 name="bag-shopping" size={28} color={color} />,
+          title: 'Explore',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -76,16 +76,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="liked-items"
         options={{
-          href: null,
+          title: 'Likes',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="heart.fill" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -96,10 +90,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="marketplace"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="log-in"
         options={{
-          title: 'log-in',
-          tabBarIcon: ({ color }) => <Ionicons name="log-in-outline" size={28} color={color} />,
+          href: null,
         }}
       />
     </Tabs>
