@@ -23,6 +23,7 @@ export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState(TestData.items);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [likedIds, setLikedIds] = useState<Record<string, boolean>>({});
+  const [hintsVisible, setHintsVisible] = useState(true);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -88,6 +89,20 @@ export default function TabTwoScreen() {
               </ThemedText>
             </ThemedView>
             {index === visibleItems.length - 1 && (
+              <>
+                <Pressable
+                  style={({ pressed }) => [styles.hintsToggle, pressed && styles.hintsTogglePressed]}
+                  onPress={() => setHintsVisible(v => !v)}
+                >
+                  <View style={styles.hintsToggleBtn}>
+                    <Ionicons
+                      name={hintsVisible ? 'eye-off-outline' : 'eye-outline'}
+                      size={20}
+                      color={ARROW_COLOR}
+                    />
+                  </View>
+                </Pressable>
+                {hintsVisible && (
               <View style={styles.swipeHints} pointerEvents="none">
                 <View style={styles.hintUp}>
                   <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
@@ -115,6 +130,8 @@ export default function TabTwoScreen() {
                   </View>
                 </View>
               </View>
+                )}
+              </>
             )}
           </ThemedView>
         ))}
@@ -221,6 +238,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.15)',
     padding: 6,
     borderRadius: 8,
+  },
+  hintsToggle: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 10,
+    alignItems: 'center',
+  },
+  hintsToggleBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  hintsTogglePressed: {
+    opacity: 0.7,
   },
   swipeHints: {
     position: 'absolute',
