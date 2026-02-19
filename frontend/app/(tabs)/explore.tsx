@@ -13,7 +13,7 @@ const CARD_MARGIN = 32;
 const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
 const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
-const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 80);
+const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
@@ -142,6 +142,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
   imageWrapper: {
     position: 'absolute',
@@ -211,8 +216,11 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowOpacity: 0,
-    elevation: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 4,
   },
   actionPressed: {
     opacity: 0.7,
