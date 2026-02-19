@@ -10,20 +10,13 @@ import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { useLikedItems } from '@/contexts/LikedItemsContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
-  const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
-
-  const toggleLike = (id: string | number) => {
-    const key = String(id);
-    setLikedMap((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+  const { toggleLike, isLiked } = useLikedItems();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -73,7 +66,6 @@ export default function HomeScreen() {
                 }}
               >
                 <ThemedView style={styles.listingContainer}>
-                  {/* seller small profile (avatar, name, rating) */}
                   <ThemedView style={styles.imageWrapper}>
                     <Image
                       alt={item.title}
@@ -88,16 +80,13 @@ export default function HomeScreen() {
                       hitSlop={8}
                     >
                       <Ionicons
-                        name={likedMap[String(item.id)] ? 'heart' : 'heart-outline'}
+                        name={isLiked(item.id) ? 'heart' : 'heart-outline'}
                         size={20}
-                        color={likedMap[String(item.id)] ? '#FF3B30' : '#FFFFFF'}
+                        color={isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
                       />
                     </Pressable>
                   </ThemedView>
                   <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
-                  <ThemedText type="default" numberOfLines={2} style={{ flexShrink: 1, color: '#fff' }}>
-                    {item.description}
-                  </ThemedText>
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </ThemedView>
               </Pressable>

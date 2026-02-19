@@ -7,6 +7,7 @@ import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { useState } from 'react';
 import { Butterfly } from '@/components/butterfly';
+import { Link } from 'expo-router';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -179,9 +180,18 @@ export default function TabTwoScreen() {
 
       {visibleItems.length === 0 && (
         <View style={styles.emptyState}>
+          <Link href="/(tabs)/liked-items" asChild>
+            <Pressable>
+              <ThemedView style={styles.row}>
+                <ThemedText style={styles.text}>
+                  Check items that you liked
+                </ThemedText>
+              </ThemedView>
+            </Pressable>
+          </Link>
           <ThemedText style={styles.emptyStateTitle}>No more items!</ThemedText>
           <ThemedText style={styles.emptyStateReset} onPress={resetCards}>
-            Reset Items
+            Reset items
           </ThemedText>
         </View>
       )}
@@ -238,6 +248,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.15)',
     padding: 6,
     borderRadius: 8,
+  },
+  row: {
+    width: 300,
+    height: 60,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: 'center',
+    fontSize: 18,
+    backgroundColor: '#28289D',
+    marginBottom: 16,
+  },
+  text: {
+    fontSize: 18,
+    color: '#fff',
   },
   hintsToggle: {
     position: 'absolute',

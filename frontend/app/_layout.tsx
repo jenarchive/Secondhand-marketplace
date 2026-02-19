@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { LikedItemsProvider } from '@/contexts/LikedItemsContext';
 
 export const unstable_settings = {
   anchor: 'tabs',
@@ -18,14 +19,16 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={theme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="auth/login" options={{ title: 'Log In' }} />
-          <Stack.Screen name="auth/signup" options={{ title: 'Sign Up' }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+      <LikedItemsProvider>
+        <ThemeProvider value={theme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="auth/login" options={{ title: 'Log In' }} />
+            <Stack.Screen name="auth/signup" options={{ title: 'Sign Up' }} />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </LikedItemsProvider>
     </GestureHandlerRootView>
   );
 }

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 
 export default function LikedItemsScreen() {
+  const router = useRouter();
   const items = [
     { id: 1, name: 'Product Name 1', price: '35.00', sold: true },
     { id: 2, name: 'Product Name 2', price: '12.00', sold: false },
@@ -39,7 +40,13 @@ export default function LikedItemsScreen() {
       <Stack.Screen 
         options={{ 
           headerShown: true,
-          headerTitle: "",
+          headerTitle: "Liked Items",
+          headerBackVisible: true,
+          headerLeft: () => (
+            <Pressable onPress={() => router.back()} style={styles.backButton} hitSlop={8}>
+              <Ionicons name="arrow-back" size={24} color={textColor} />
+            </Pressable>
+          ),
           headerShadowVisible: false,
           headerStyle: { backgroundColor: screenBg },
           headerTintColor: textColor,
@@ -93,6 +100,10 @@ export default function LikedItemsScreen() {
 }
 
 const styles = StyleSheet.create({
+  backButton: {
+    padding: 8,
+    marginLeft: 4,
+  },
   container: {
     flex: 1,
   },

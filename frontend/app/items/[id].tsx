@@ -1,19 +1,23 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams, Stack, useNavigation } from 'expo-router';
+import { useLocalSearchParams, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
+import { useLikedItems } from '@/contexts/LikedItemsContext';
 
 export default function HomeScreen() {
 
   const params = useLocalSearchParams();
   const id = Number(params.id);
   const itemData = TestData.items[id - 1];
+  const { toggleLike, isLiked } = useLikedItems();
+  const liked = isLiked(itemData.id);
   // const navigation = useNavigation();
 
   const blurhash =
@@ -56,7 +60,6 @@ export default function HomeScreen() {
 
   return (
     <>
-    
     <Stack.Screen
       options={{
         title: MyData.title,
@@ -69,13 +72,26 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#fff', dark: '#191C1F' }}>
       <ThemedView style={styles.listingContainer}>
       <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id}/>
-    <Image
-      alt={MyData.title}
-      style={styles.image}
-      placeholder={{ blurhash }}
-      contentFit="cover"
-      source={{ uri: MyData.image }}
-    />
+    <View style={styles.imageWrapper}>
+      <Image
+        alt={MyData.title}
+        style={styles.image}
+        placeholder={{ blurhash }}
+        contentFit="cover"
+        source={{ uri: MyData.image }}
+      />
+      <Pressable
+        style={styles.likeButton}
+        onPress={() => toggleLike(itemData.id)}
+        hitSlop={8}
+      >
+        <Ionicons
+          name={liked ? 'heart' : 'heart-outline'}
+          size={20}
+          color={liked ? '#FF3B30' : '#FFFFFF'}
+        />
+      </Pressable>
+    </View>
   <ThemedView style={styles.listingTitle}>
     <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{MyData.title}</ThemedText>
     <ThemedText type="default" style={{color: '#fff'}}>Category: {MyData.category}</ThemedText>
@@ -89,7 +105,6 @@ export default function HomeScreen() {
       <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Description</ThemedText>
       <ThemedText type="default" style={{color: '#fff'}}>{MyData.description}</ThemedText>
     </ThemedView>
-
   </ThemedView>
       </ThemedView>
     </ParallaxScrollView>
@@ -132,10 +147,26 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
 
+  imageWrapper: {
+    position: 'relative',
+  },
+
   image: {
     width: '100%',
     borderRadius: 16,
     aspectRatio: 1
+  },
+
+  likeButton: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   //wraps children into two columns
@@ -197,8 +228,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
-  }
- ,
+  },
   floatingContainer: {
     position: 'absolute',
     left: 16,
@@ -230,6 +260,5 @@ const styles = StyleSheet.create({
     minWidth: 100,
     alignItems: 'center',
     justifyContent: 'center',
-
   }
 });
