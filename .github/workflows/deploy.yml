@@ -19,7 +19,7 @@ jobs:
           host: ${{ secrets.HOST_DNS }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          scripts: |
+          script: |
             cd /home/ubuntu/2025-SecondhandMarketplace2/backend
             # pull latest code from dev
             git pull origin dev
