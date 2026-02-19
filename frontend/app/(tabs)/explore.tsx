@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -78,6 +79,29 @@ export default function TabTwoScreen() {
           </ThemedView>
         ))}
       </ParallaxScrollView>
+
+      {visibleItems.length > 0 && (
+        <View style={styles.actionBar}>
+          <Pressable
+            style={({ pressed }) => [styles.actionBtn, styles.actionSkip, pressed && styles.actionPressed]}
+            onPress={handleCardDismiss}
+          >
+            <Ionicons name="close" size={26} color="#FF453A" />
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.actionBtn, styles.actionBtnBuy, styles.actionBuy, pressed && styles.actionPressed]}
+            onPress={() => {}}
+          >
+            <Ionicons name="bag" size={32} color="#fff" />
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
+            onPress={() => {}}
+          >
+            <Ionicons name="heart" size={26} color="#32D74B" />
+          </Pressable>
+        </View>
+      )}
 
       <View style={styles.butterflyOverlay} pointerEvents="none">
         {butterflies.map((b, i) => (
@@ -170,5 +194,45 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 9999,
+  },
+  actionBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: CARD_TOP + CARD_HEIGHT + 24,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 32,
+  },
+  actionBtn: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  actionPressed: {
+    opacity: 0.7,
+  },
+  actionSkip: {
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: 'rgba(255, 69, 58, 0.7)',
+  },
+  actionBtnBuy: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+  },
+  actionBuy: {
+    backgroundColor: '#0A84FF',
+  },
+  actionLike: {
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: 'rgba(50, 215, 75, 0.7)',
   },
 });
