@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { View, StyleSheet, Dimensions, Pressable } from 'react-native';
+import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
@@ -14,6 +14,8 @@ const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
 const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
+
+const ARROW_COLOR = '#5a5a5a';
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
@@ -85,6 +87,35 @@ export default function TabTwoScreen() {
                 {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
               </ThemedText>
             </ThemedView>
+            {index === visibleItems.length - 1 && (
+              <View style={styles.swipeHints} pointerEvents="none">
+                <View style={styles.hintUp}>
+                  <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
+                  <View style={styles.hintTextUp}>
+                    <Text style={styles.hintText}>Swipe up</Text>
+                    <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                  </View>
+                </View>
+                <View style={styles.hintLeft}>
+                  <View style={styles.arrowLeft}>
+                    <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
+                  </View>
+                  <View style={styles.hintTextLeft}>
+                    <Text style={styles.hintText}>Swipe left</Text>
+                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                  </View>
+                </View>
+                <View style={styles.hintRight}>
+                  <View style={styles.arrowRight}>
+                    <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
+                  </View>
+                  <View style={styles.hintTextRight}>
+                    <Text style={styles.hintText}>Swipe right</Text>
+                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                  </View>
+                </View>
+              </View>
+            )}
           </ThemedView>
         ))}
       </ParallaxScrollView>
@@ -190,6 +221,65 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.15)',
     padding: 6,
     borderRadius: 8,
+  },
+  swipeHints: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
+  hintUp: {
+    position: 'absolute',
+    top: 12,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arrowLeft: {
+    marginBottom: 6,
+  },
+  arrowRight: {
+    marginBottom: 6,
+    alignItems: 'flex-end',
+  },
+  hintLeft: {
+    position: 'absolute',
+    left: 8,
+    top: '42%',
+    alignItems: 'flex-start',
+  },
+  hintRight: {
+    position: 'absolute',
+    right: 8,
+    top: '42%',
+    alignItems: 'flex-end',
+  },
+  hintTextUp: {
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  hintTextLeft: {
+    alignItems: 'flex-start',
+  },
+  hintTextRight: {
+    alignItems: 'flex-end',
+  },
+  hintText: {
+    fontSize: 11,
+    color: ARROW_COLOR,
+    fontWeight: '500',
+  },
+  hintTextAccent: {
+    fontWeight: '700',
+    color: '#0A84FF',
+  },
+  hintTextRed: {
+    color: '#FF453A',
+  },
+  hintTextGreen: {
+    color: '#32D74B',
   },
   emptyState: {
     position: 'absolute',
