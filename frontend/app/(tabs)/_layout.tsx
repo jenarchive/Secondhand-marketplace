@@ -7,6 +7,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   return (
@@ -86,6 +87,19 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="log-in"
+        options={{
+          title: 'log-in',
+          tabBarIcon: ({ color }) => <Ionicons name="log-in-outline" size={28} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="liked-items"
+        options={{
+          href: null,
         }}
       />
     </Tabs>

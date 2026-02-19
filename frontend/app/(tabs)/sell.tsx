@@ -149,7 +149,7 @@ export default function HomeScreen() {
         });
         
         // send POST request
-        const response = await fetch('http://192.168.0.43:5000/api/items', {
+        const response = await fetch('http://18.133.255.151/api/items', {
           method: 'POST',
           body: formData,
           headers: {

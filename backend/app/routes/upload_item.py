@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, current_app
 import os
 import psycopg2
+import boto3
 from werkzeug.utils import secure_filename
 
 upload_bp = Blueprint('upload_item', __name__)
@@ -13,6 +14,29 @@ def connect_db():
         password=current_app.config['DB_PASS']
     )
     return conn
+
+def upload_file_to_s3(file, filename):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id = current_app.config['S3_KEY'],
+        aws_secret_access_key=current_app.config['S3_SECRET'],
+        region_name=current_app.config['S3_REGION']
+    )
+
+    try:
+        s3_client.upload_fileobj(
+            file,
+            current_app.config['S3_BUCKET'],
+            filename,
+            ExtraArgs={'ContentType': file.content_type}
+        )
+
+        url = f"https://{current_app.config['S3_BUCKET']}.s3.{current_app.config['S3_REGION']}.amazonaws.com/{filename}"
+        return url
+
+    except Exception as e:
+        print(f"S3 upload error: {e}")
+        return None
 
 # handle POST request to sell items
 @upload_bp.route('/items', methods=['POST'])
@@ -51,7 +75,6 @@ def create_item():
         # insert images to db
         if 'images' in request.files:
             files = request.files.getlist('images')
-            image_folder = current_app.config['IMAGE_FOLDER']
 
             for file in files:
                 if file.filename == '':
@@ -60,17 +83,15 @@ def create_item():
                 filename = secure_filename(file.filename)
                 unique_filename = f"{new_item_id}_{filename}"
                 
-                file_path = os.path.join(image_folder, unique_filename)
-                file.save(file_path)
+                image_url = upload_file_to_s3(file, unique_filename)
 
-                image_url = f"static/images/{unique_filename}"
+                if image_url:
+                    insert_image_query = """
+                        INSERT INTO product_images (product_id, image_url)
+                        VALUES (%s, %s);
+                    """
 
-                insert_image_query = """
-                    INSERT INTO product_images (product_id, image_url)
-                    VALUES (%s, %s);
-                """
-
-                cur.execute(insert_image_query, (new_item_id, image_url))
+                    cur.execute(insert_image_query, (new_item_id, image_url))
 
         conn.commit()
         cur.close()
