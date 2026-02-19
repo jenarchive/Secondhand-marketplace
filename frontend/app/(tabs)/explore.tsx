@@ -108,6 +108,7 @@ export default function TabTwoScreen() {
           <Butterfly
             key={b.id}
             direction={b.direction}
+            startY={CARD_TOP + CARD_HEIGHT - 120}
             onFinish={() => removeButterfly(b.id)}
             clusterIndex={i}
             duration={4200}
