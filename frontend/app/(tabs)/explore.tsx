@@ -20,6 +20,7 @@ type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState(TestData.items);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
+  const [likedIds, setLikedIds] = useState<Record<string, boolean>>({});
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -45,6 +46,14 @@ export default function TabTwoScreen() {
 
   const resetCards = () => {
     setVisibleItems(TestData.items);
+  };
+
+  const currentItemId = visibleItems.length > 0 ? String(visibleItems[visibleItems.length - 1].id) : null;
+  const isLiked = currentItemId ? likedIds[currentItemId] ?? false : false;
+
+  const toggleLike = () => {
+    if (!currentItemId) return;
+    setLikedIds(prev => ({ ...prev, [currentItemId]: !prev[currentItemId] }));
   };
 
   return (
@@ -96,9 +105,13 @@ export default function TabTwoScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={() => {}}
+            onPress={toggleLike}
           >
-            <Ionicons name="heart" size={26} color="#32D74B" />
+            <Ionicons
+              name={isLiked ? 'heart' : 'heart-outline'}
+              size={26}
+              color="#32D74B"
+            />
           </Pressable>
         </View>
       )}
