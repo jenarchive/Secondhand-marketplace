@@ -73,7 +73,7 @@ export default function TabTwoScreen() {
             />
       ))} */}
           {visibleItems.length === 0 && (
-        <Link href="../items/liked-items" asChild>
+        <Link href="/(tabs)/liked-items" asChild>
           <Pressable>
             <ThemedView style={styles.row}>
               <ThemedText style={styles.text}>
