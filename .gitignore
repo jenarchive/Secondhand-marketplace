@@ -5,5 +5,4 @@ __pycache__/
 database.ini 
 package-lock.json
 node_modules/*
-*.Identifier 
-backend/app/config.py
+*.Identifier
