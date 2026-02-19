@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,15 +7,17 @@ import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams, Stack, useNavigation } from 'expo-router';
+import { useLocalSearchParams, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
+import { useLikedItems } from '@/contexts/LikedItemsContext';
 
 export default function HomeScreen() {
 
   const params = useLocalSearchParams();
   const id = Number(params.id);
   const itemData = TestData.items[id - 1];
-  const [liked, setLiked] = useState(false);
+  const { toggleLike, isLiked } = useLikedItems();
+  const liked = isLiked(itemData.id);
   // const navigation = useNavigation();
 
   const blurhash =
@@ -81,7 +82,7 @@ export default function HomeScreen() {
       />
       <Pressable
         style={styles.likeButton}
-        onPress={() => setLiked((prev) => !prev)}
+        onPress={() => toggleLike(itemData.id)}
         hitSlop={8}
       >
         <Ionicons
