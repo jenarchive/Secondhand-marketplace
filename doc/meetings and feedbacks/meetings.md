@@ -226,6 +226,18 @@
     * Beta Viva slides needed too 
 
 ## Client 19th Feb:
+* Feedback: 
+    * Want swiping to be more reactive to the end - can keep it there and not disappear immediately 
+    * Liked about testing day feedback 
+    * Ask about the buy now and make offer button on item page: We need to decide to keep it or delete it, with a good reason and following user journey idea. 
+    * Happy with what we are having now, and think that we know what we are doing 
+* Idea proposal: Swiping creating a match if 2 users liked each other's item (Users who liked your items = User A)
+    * Increase uniqueness: pure exchange of item, can pay difference in value or other ideas 
+    * Smart recommendation: increase users A items chance to appear in explore page 
+    * Up to us to decide if we want to develop on this and how to execute 
+* Butterflies: can use testathon to try different versions of butterfly interaction and see which is better? 
+
+## Mentor 19th Feb: 
 * AI much better, need to include example prompts 
 * CD: fix the issue, consider about what was the mistake that it was pushed to dev 
 * Branches need to clean up after merging PR
@@ -233,4 +245,3 @@
 * PR: keep up last week's standard, ensure every of it is reviewed with comments and pictures, if applicable. 
 * User flow: navigation 
 * Equal workload: need to email Henry about Morgan is not part of our team now 
-    
