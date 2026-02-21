@@ -86,10 +86,27 @@
 ## Sprint 3: Beta Viva
 ### Reading week - Week 19 (23rd Feb - 6th Mar), Project Manager: Alex
 ### Features planned to be finish: 
-* Beta Viva slides (full)
+* High priority:
+    - Features: 
+        * Sketch and discuss about client's idea 
+        * Swiping feature (more intuitive, like/dislike button) 
+        * Butterfly interaction 
+    - Repo: 
+        * Beta Viva slides (full)
+        * Frontend CI and unit tests 
+        * Backend CI and unit tests 
+        * CD for backend 
+        * User flow / user instruction
+* Low priority: 
+    - Features: 
+        * Consider about do we still want light theme
+    - Repo: 
+        * Backend code formating (to pass pylint CI) 
+        * Documentation of meetings, roadmap and research findings 
+        * Github naming conventions 
 
 ### Fully Achieved: 
-* 
+* Documentation of meetings, roadmap and research findings 
 
 ### Partially Achieved: 
 * 
