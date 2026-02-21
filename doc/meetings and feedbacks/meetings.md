@@ -213,3 +213,24 @@
     * Focus on gamification, animamtion and UI (simplistic) 
     * Start connecting frontend and backend now 
 * Will meet us and test our app in person on Feb 19 (Beta release)
+
+## Mentor 12th Feb: 
+* Needs urgent attention:  
+    * AI usage documentation - ASAP needed
+    * CI: Unit tests, integration tests and test coverage
+    * CD: deploy backend and database on AWS 
+    * User flow / instruction
+* Other feedback: 
+    * Include before and after issue summary 
+    * Make agreement of branch / issue naming and document it
+    * Beta Viva slides needed too 
+
+## Client 19th Feb:
+* AI much better, need to include example prompts 
+* CD: fix the issue, consider about what was the mistake that it was pushed to dev 
+* Branches need to clean up after merging PR
+* CI: make sure it is done before next week
+* PR: keep up last week's standard, ensure every of it is reviewed with comments and pictures, if applicable. 
+* User flow: navigation 
+* Equal workload: need to email Henry about Morgan is not part of our team now 
+    
