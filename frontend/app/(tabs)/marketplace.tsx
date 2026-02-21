@@ -82,7 +82,7 @@ export default function HomeScreen() {
                     >
                       <Ionicons
                         name={isLiked(item.id) ? 'heart' : 'heart-outline'}
-                        size={26}
+                        size={20}
                         color={isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
                       />
                     </Pressable>
@@ -131,9 +131,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 8,
     bottom: 8,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
