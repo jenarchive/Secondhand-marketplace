@@ -89,6 +89,18 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="marketplace"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="log-in"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

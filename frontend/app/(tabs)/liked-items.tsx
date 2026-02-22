@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
 
 export default function LikedItemsScreen() {
+  const insets = useSafeAreaInsets();
+
   const items = [
     { id: 1, name: 'Product Name 1', price: '35.00', sold: true },
     { id: 2, name: 'Product Name 2', price: '12.00', sold: false },
@@ -38,16 +41,12 @@ export default function LikedItemsScreen() {
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen 
         options={{ 
-          headerShown: true,
-          headerTitle: "",
-          headerShadowVisible: false,
-          headerStyle: { backgroundColor: screenBg },
-          headerTintColor: textColor,
+          headerShown: false,
         }} 
       />
 
       <ScrollView
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 32 }]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
@@ -98,7 +97,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingTop: 8,
     paddingBottom: 24,
   },
   firstCard: {

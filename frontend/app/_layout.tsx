@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { LikedItemsProvider } from '@/contexts/LikedItemsContext';
 
 export const unstable_settings = {
   anchor: 'tabs',
@@ -16,6 +17,7 @@ export default function RootLayout() {
   const theme = (forceDark ? 'dark' : colorScheme) === 'dark' ? DarkTheme : DefaultTheme;
 
   return (
+    <LikedItemsProvider>
     <ThemeProvider value={theme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -24,5 +26,6 @@ export default function RootLayout() {
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
+    </LikedItemsProvider>
   );
 }

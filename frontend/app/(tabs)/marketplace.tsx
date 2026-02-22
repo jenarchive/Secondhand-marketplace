@@ -9,12 +9,10 @@ import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 
 export default function HomeScreen() {
-  const colourScheme = useColorScheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
@@ -54,19 +52,22 @@ export default function HomeScreen() {
         </View>
         <ThemedView style={styles.flexbox}>
             {filtered.map((item) => (
-              <View key={item.id} style={styles.listingLink}>
-                <Pressable
-                  style={({ pressed }) => [styles.listingContainer, pressed && styles.pressed]}
-                  onPress={async () => {
-                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.push(`/items/${item.id}`);
-                  }}
-                  onLongPress={async () => {
-                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                    router.push(`/items/${item.id}`);
-                  }}
-                >
-                  <View style={styles.imageWrapper}>
+              <Pressable
+                key={item.id}
+                style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
+                onPress={async () => {
+                  // light selection haptic and navigate
+                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                  router.push(`/items/${item.id}`);
+                }}
+                onLongPress={async () => {
+                  // stronger feedback on long press
+                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                  router.push(`/items/${item.id}`);
+                }}
+              >
+                <ThemedView style={styles.listingContainer}>
+                  <ThemedView style={styles.imageWrapper}>
                     <Image
                       alt={item.title}
                       style={styles.image}
@@ -85,11 +86,11 @@ export default function HomeScreen() {
                         color={isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
                       />
                     </Pressable>
-                  </View>
+                  </ThemedView>
                   <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
-                </Pressable>
-              </View>
+                </ThemedView>
+              </Pressable>
             ))}
         </ThemedView>
       </ThemedView>
@@ -105,6 +106,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#25282B",
   },
+
+  //each item is 48% width 2 items per row
   listingLink: {
     flexBasis: '48%',
     maxWidth: '48%',
@@ -112,15 +115,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     overflow: 'hidden'
   },
+
   image: {
     width: '100%',
     borderRadius: 8,
     aspectRatio: 1
   },
+
   imageWrapper: {
     position: 'relative',
     marginBottom: 12,
   },
+
   likeButton: {
     position: 'absolute',
     right: 8,
@@ -132,15 +138,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  //wraps children into two columns
   flexbox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     marginBottom: 64
   },
+
   pressed: {
     opacity: 0.85
-  },
+  }
+  ,
   searchContainer: {
     paddingHorizontal: 0,
     paddingVertical: 16,
@@ -156,14 +166,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderWidth: 6,
     borderColor: DarkTheme.colors.border,
+    //iOS-like shadow
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
       android: { elevation: 2 }
     })
   },
+
   searchIcon: {
     marginRight: 8
   },
+
   searchInput: {
     flex: 1,
     padding: 0,
