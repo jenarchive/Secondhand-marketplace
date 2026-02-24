@@ -1,7 +1,6 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Pressable, View } from 'react-native';
+import { StyleSheet, Pressable, View, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
@@ -10,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
 
@@ -37,6 +37,7 @@ export default function HomeScreen() {
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
 
   const insets = useSafeAreaInsets();
+  const backgroundColor = useThemeColor({}, 'background');
 
   // action handlers for floating buttons
   const handleBuy = async () => {
@@ -67,9 +68,11 @@ export default function HomeScreen() {
       }}
     />
 
-    <ParallaxScrollView
-      headerImage={<View style={{ height: 0 }} />}
-      headerBackgroundColor={{ light: '#fff', dark: '#191C1F' }}>
+    <View style={{ flex: 1 }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor }}
+      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 24 + Math.max(insets.bottom, 12) + 280 }}
+      showsVerticalScrollIndicator={false}>
       <ThemedView style={styles.listingContainer}>
       <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id}/>
     <View style={styles.imageWrapper}>
@@ -107,16 +110,17 @@ export default function HomeScreen() {
     </ThemedView>
   </ThemedView>
       </ThemedView>
-    </ParallaxScrollView>
+    </ScrollView>
 
-    {/* Floating action bar (fixed) */}
-    <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}> 
+    {/* 플로팅 버튼 */}
+    <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
       <Pressable style={styles.buyButton} onPress={handleBuy} accessibilityLabel="Buy now">
         <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Buy Now</ThemedText>
       </Pressable>
       <Pressable style={styles.offerButton} onPress={handleMakeOffer} accessibilityLabel="Make offer">
         <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Make Offer</ThemedText>
       </Pressable>
+    </View>
     </View>
     </>
   );
@@ -129,8 +133,7 @@ const colours = {
 
 const styles = StyleSheet.create({
   listingContainer: {
-    gap: 15, 
-    marginBottom: 80
+    gap: 12,
   },
 
   listingTitle: {
@@ -240,24 +243,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1000,
   },
-
   buyButton: {
     backgroundColor: colours.button,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     borderRadius: 16,
     marginRight: 15,
-    minWidth: 100,
+    minWidth: 120,
     alignItems: 'center',
     justifyContent: 'center'
   },
 
   offerButton: {
     backgroundColor: colours.button,
-    paddingVertical: 12,
-    paddingHorizontal: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
     borderRadius: 16,
-    minWidth: 100,
+    minWidth: 120,
     alignItems: 'center',
     justifyContent: 'center',
   }
