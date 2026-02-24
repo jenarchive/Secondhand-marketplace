@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,12 +13,30 @@ import * as Haptics from 'expo-haptics';
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
+const UNLIKE_DELAY_MS = 100;
+
 export default function LikedItemsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { likedMap, toggleLike, isLiked } = useLikedItems();
+  const [pendingRemovalId, setPendingRemovalId] = useState<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const likedItems = TestData.items.filter((item) => likedMap[String(item.id)]);
+
+  const handleUnlike = (itemId: number) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setPendingRemovalId(itemId);
+    timeoutRef.current = setTimeout(() => {
+      toggleLike(itemId);
+      setPendingRemovalId(null);
+      timeoutRef.current = null;
+    }, UNLIKE_DELAY_MS);
+  };
+
+  useEffect(() => () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  }, []);
 
   const screenBg = '#121212';
   const textColor = Colors.dark.text;
@@ -65,14 +83,14 @@ export default function LikedItemsScreen() {
                   onPress={async (e) => {
                     e.stopPropagation?.();
                     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    toggleLike(item.id);
+                    handleUnlike(item.id);
                   }}
                   hitSlop={8}
                 >
                   <Ionicons
-                    name={isLiked(item.id) ? 'heart' : 'heart-outline'}
+                    name={pendingRemovalId === item.id ? 'heart-outline' : isLiked(item.id) ? 'heart' : 'heart-outline'}
                     size={20}
-                    color={isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
+                    color={pendingRemovalId === item.id ? '#FFFFFF' : isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
                   />
                 </Pressable>
               </View>
