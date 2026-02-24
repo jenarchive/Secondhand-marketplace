@@ -21,7 +21,7 @@ const SWIPE_UP_THRESHOLD = 80;
 type Props = PropsWithChildren<{
   headerImage?: ReactElement;
   headerBackgroundColor?: { dark: string; light: string };
-  onCardDismiss?: () => void;
+  onCardDismiss?: (direction?: 'left' | 'right') => void;
   onSwipeDirection?: (direction: 'left' | 'right') => void;
   onSwipeUp?: () => void;
 }>;
@@ -59,7 +59,8 @@ export default function ParallaxScrollView({
         runOnJS(onSwipeUp)();
       } else if (isSwipeHorizontal) {
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
-        if (onCardDismiss) runOnJS(onCardDismiss)();
+        const direction = event.translationX > 0 ? 'right' : 'left';
+        if (onCardDismiss) runOnJS(onCardDismiss)(direction);
       }
 
       translateX.value = withSpring(0);

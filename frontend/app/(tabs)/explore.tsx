@@ -46,7 +46,11 @@ export default function TabTwoScreen() {
     setButterflies((prev) => prev.filter((b) => b.id !== id));
   };
 
-  const handleCardDismiss = () => {
+  const handleCardDismiss = (direction?: 'left' | 'right') => {
+    const itemToDismiss = visibleItems[visibleItems.length - 1];
+    if (direction === 'right' && itemToDismiss) {
+      toggleLikeContext(itemToDismiss.id);
+    }
     setVisibleItems(prev => prev.slice(0, -1));
   };
 
