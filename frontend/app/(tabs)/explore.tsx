@@ -8,6 +8,7 @@ import TestData from '@/test-data.json'
 import { useState } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
+import { useLikedItems } from '@/contexts/LikedItemsContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -22,9 +23,9 @@ type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
 export default function TabTwoScreen() {
   const router = useRouter();
+  const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const [visibleItems, setVisibleItems] = useState(TestData.items);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
-  const [likedIds, setLikedIds] = useState<Record<string, boolean>>({});
   const [hintsVisible, setHintsVisible] = useState(true);
 
   const blurhash =
@@ -53,12 +54,12 @@ export default function TabTwoScreen() {
     setVisibleItems(TestData.items);
   };
 
-  const currentItemId = visibleItems.length > 0 ? String(visibleItems[visibleItems.length - 1].id) : null;
-  const isLiked = currentItemId ? likedIds[currentItemId] ?? false : false;
+  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
+  const currentItemLiked = currentItem ? isLiked(currentItem.id) : false;
 
   const toggleLike = () => {
-    if (!currentItemId) return;
-    setLikedIds(prev => ({ ...prev, [currentItemId]: !prev[currentItemId] }));
+    if (!currentItem) return;
+    toggleLikeContext(currentItem.id);
   };
 
   const handleSwipeUp = () => {
@@ -166,7 +167,7 @@ export default function TabTwoScreen() {
             onPress={toggleLike}
           >
             <Ionicons
-              name={isLiked ? 'heart' : 'heart-outline'}
+              name={currentItemLiked ? 'heart' : 'heart-outline'}
               size={26}
               color="#32D74B"
             />
