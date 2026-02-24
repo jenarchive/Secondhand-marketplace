@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
+import TestData from '@/test-data.json';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,7 +18,6 @@ export default function HomeScreen() {
   const itemData = TestData.items[id - 1];
   const { toggleLike, isLiked } = useLikedItems();
   const liked = isLiked(itemData.id);
-  // const navigation = useNavigation();
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -33,13 +32,11 @@ export default function HomeScreen() {
     location: itemData.location
   };
 
-  // use item rating if available otherwise default to 4
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
 
-  // action handlers for floating buttons
   const handleBuy = async () => {
     try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); } catch {}
     // TODO: implement buy logic
@@ -52,86 +49,78 @@ export default function HomeScreen() {
     console.log('Make offer', MyData.id);
   };
 
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     title: MyData.title,
-  //     headerBackTitleVisible: false,
-  //   });
-  // }, [navigation, MyData]);
-
   return (
     <>
-    <Stack.Screen
-      options={{
-        title: MyData.title,
-        headerBackTitleVisible: false,
-      }}
-    />
-
-    <View style={{ flex: 1 }}>
-    <ScrollView
-      style={{ flex: 1, backgroundColor }}
-      contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 24 + Math.max(insets.bottom, 12) + 280 }}
-      showsVerticalScrollIndicator={false}>
+      <Stack.Screen options={{ title: MyData.title, headerBackTitleVisible: false }} />
+      <View style={styles.screen}>
+        <ScrollView
+          style={[styles.scrollView, { backgroundColor }]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 + Math.max(insets.bottom, 12) + 280 }]}
+          showsVerticalScrollIndicator={false}
+        >
       <ThemedView style={styles.listingContainer}>
-      <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id}/>
-    <View style={styles.imageWrapper}>
-      <Image
-        alt={MyData.title}
-        style={styles.image}
-        placeholder={{ blurhash }}
-        contentFit="cover"
-        source={{ uri: MyData.image }}
-      />
-      <Pressable
-        style={styles.likeButton}
-        onPress={() => toggleLike(itemData.id)}
-        hitSlop={8}
-      >
-        <Ionicons
-          name={liked ? 'heart' : 'heart-outline'}
-          size={28}
-          color={liked ? '#FF3B30' : '#FFFFFF'}
-        />
-      </Pressable>
-    </View>
-  <ThemedView style={styles.listingTitle}>
-    <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{MyData.title}</ThemedText>
-    <ThemedText type="default" style={{color: '#fff'}}>Category: {MyData.category}</ThemedText>
-    <ThemedView style={styles.priceContainer}>
-      <ThemedText type="default" style={{color: '#fff'}}>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price)}</ThemedText>
-      <ThemedText type="default" style={{color: '#fff'}}>Price Incl Postage: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price + 5)}</ThemedText>
-    </ThemedView>
-  </ThemedView>
-  <ThemedView style={styles.listingDescription}>
-    <ThemedView style={{ backgroundColor: 'transparent' }}>  
-      <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Description</ThemedText>
-      <ThemedText type="default" style={{color: '#fff'}}>{MyData.description}</ThemedText>
-    </ThemedView>
-  </ThemedView>
+        <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id} />
+        <View style={styles.imageWrapper}>
+          <Image
+            alt={MyData.title}
+            style={styles.image}
+            placeholder={{ blurhash }}
+            contentFit="cover"
+            source={{ uri: MyData.image }}
+          />
+          <Pressable style={styles.likeButton} onPress={() => toggleLike(itemData.id)} hitSlop={8}>
+            <Ionicons name={liked ? 'heart' : 'heart-outline'} size={28} color={liked ? '#FF3B30' : '#FFFFFF'} />
+          </Pressable>
+        </View>
+        <ThemedView style={styles.listingTitle}>
+          <ThemedText type="defaultSemiBold" style={styles.cardText}>{MyData.title}</ThemedText>
+          <ThemedText type="default" style={styles.cardText}>Category: {MyData.category}</ThemedText>
+          <ThemedView style={styles.priceContainer}>
+            <ThemedText type="default" style={styles.cardText}>
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price)}
+            </ThemedText>
+            <ThemedText type="default" style={styles.cardText}>
+              Price Incl Postage: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price + 5)}
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+        <ThemedView style={styles.listingDescription}>
+          <ThemedView style={styles.descriptionInner}>
+            <ThemedText type="defaultSemiBold" style={styles.cardText}>Description</ThemedText>
+            <ThemedText type="default" style={styles.cardText}>{MyData.description}</ThemedText>
+          </ThemedView>
+        </ThemedView>
       </ThemedView>
-    </ScrollView>
-
-    {/* 플로팅 버튼 */}
-    <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+        </ScrollView>
+        <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
       <Pressable style={styles.buyButton} onPress={handleBuy} accessibilityLabel="Buy now">
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Buy Now</ThemedText>
+        <ThemedText type="defaultSemiBold" style={styles.cardText}>Buy Now</ThemedText>
       </Pressable>
       <Pressable style={styles.offerButton} onPress={handleMakeOffer} accessibilityLabel="Make offer">
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>Make Offer</ThemedText>
-      </Pressable>
-    </View>
-    </View>
+        <ThemedText type="defaultSemiBold" style={styles.cardText}>Make Offer</ThemedText>
+        </Pressable>
+        </View>
+      </View>
     </>
   );
 }
 
 const colours = {
   container: '#25282B',
-  button: '#28289D'
-}
+  button: '#28289D',
+};
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingTop: 12,
+  },
   listingContainer: {
     gap: 12,
   },
@@ -141,13 +130,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     backgroundColor: colours.container,
-    borderRadius: 16
-  },
-
-  listingLink: {
-    width: '48%',
-    textDecorationLine: 'none',
-    marginBottom: 16
+    borderRadius: 16,
   },
 
   imageWrapper: {
@@ -157,7 +140,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     borderRadius: 16,
-    aspectRatio: 1
+    aspectRatio: 1,
   },
 
   likeButton: {
@@ -170,18 +153,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  //wraps children into two columns
-  flexbox: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-
-  descriptionText: {
-    textOverflow: "ellipsis",
-    overflow: "hidden"
   },
 
   priceContainer: {
@@ -197,41 +168,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     backgroundColor: colours.container,
-    borderRadius: 16
-  },
-
-  userProfileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginTop: 0,
-    backgroundColor: colours.container,
-    padding: 12,
     borderRadius: 16,
   },
 
-  userProfileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#333333',
-    justifyContent: 'center',
-    alignItems: 'center',
+  descriptionInner: {
+    backgroundColor: 'transparent',
   },
 
-  userMeta: {
-    backgroundColor: 'transparent',
-    marginLeft: 12,
-    flex: 1,
+  cardText: {
+    color: '#fff',
   },
 
-  userRating: {
-    backgroundColor: 'transparent',
-    marginLeft: 'auto',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   floatingContainer: {
     position: 'absolute',
     left: 16,
@@ -251,7 +198,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
     minWidth: 120,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
 
   offerButton: {
@@ -262,5 +209,5 @@ const styles = StyleSheet.create({
     minWidth: 120,
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
 });
