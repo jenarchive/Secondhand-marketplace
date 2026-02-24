@@ -7,7 +7,7 @@ import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { useState } from 'react';
 import { Butterfly } from '@/components/butterfly';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -21,6 +21,7 @@ const ARROW_COLOR = '#5a5a5a';
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
 export default function TabTwoScreen() {
+  const router = useRouter();
   const [visibleItems, setVisibleItems] = useState(TestData.items);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [likedIds, setLikedIds] = useState<Record<string, boolean>>({});
@@ -60,6 +61,13 @@ export default function TabTwoScreen() {
     setLikedIds(prev => ({ ...prev, [currentItemId]: !prev[currentItemId] }));
   };
 
+  const handleSwipeUp = () => {
+    const currentItem = visibleItems[visibleItems.length - 1];
+    if (currentItem) {
+      router.push(`/items/${currentItem.id}`);
+    }
+  };
+
   return (
     <View style={styles.screen}>
       <ParallaxScrollView
@@ -67,6 +75,7 @@ export default function TabTwoScreen() {
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
         onSwipeDirection={spawnButterflies}
+        onSwipeUp={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
           <ThemedView
@@ -109,7 +118,7 @@ export default function TabTwoScreen() {
                   <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
                   <View style={styles.hintTextUp}>
                     <Text style={styles.hintText}>Swipe up</Text>
-                    <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                    <Text style={styles.hintText}>to view details</Text>
                   </View>
                 </View>
                 <View style={styles.hintLeft}>
@@ -148,7 +157,7 @@ export default function TabTwoScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionBtnBuy, styles.actionBuy, pressed && styles.actionPressed]}
-            onPress={() => {}}
+            onPress={handleSwipeUp}
           >
             <Ionicons name="bag" size={32} color="#fff" />
           </Pressable>

@@ -16,25 +16,31 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 50;
 const TRIGGER_THRESHOLD = 10;
 
+const SWIPE_UP_THRESHOLD = 80;
+
 type Props = PropsWithChildren<{
   headerImage?: ReactElement;
   headerBackgroundColor?: { dark: string; light: string };
   onCardDismiss?: () => void;
   onSwipeDirection?: (direction: 'left' | 'right') => void;
+  onSwipeUp?: () => void;
 }>;
 
 export default function ParallaxScrollView({
   children,
   onCardDismiss,
   onSwipeDirection,
+  onSwipeUp,
 }: Props) {
   const backgroundColor = useThemeColor({}, 'background');
   const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
   const hasTriggeredHaptic = useSharedValue(false);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
       translateX.value = event.translationX;
+      translateY.value = event.translationY;
 
       if (Math.abs(event.translationX) > TRIGGER_THRESHOLD && !hasTriggeredHaptic.value) {
         hasTriggeredHaptic.value = true;
@@ -45,13 +51,19 @@ export default function ParallaxScrollView({
       }
     })
     .onEnd((event) => {
-      if (Math.abs(event.translationX) > SWIPE_THRESHOLD) {
-        // Dismiss
+      const isSwipeUp = event.translationY < -SWIPE_UP_THRESHOLD && Math.abs(event.translationY) > Math.abs(event.translationX);
+      const isSwipeHorizontal = Math.abs(event.translationX) > SWIPE_THRESHOLD;
+
+      if (isSwipeUp && onSwipeUp) {
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        runOnJS(onSwipeUp)();
+      } else if (isSwipeHorizontal) {
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
         if (onCardDismiss) runOnJS(onCardDismiss)();
       }
 
       translateX.value = withSpring(0);
+      translateY.value = withSpring(0);
       hasTriggeredHaptic.value = false;
     });
 
@@ -65,6 +77,7 @@ export default function ParallaxScrollView({
     return {
       transform: [
         { translateX: translateX.value },
+        { translateY: translateY.value },
         { rotateZ: `${rotate}deg` }
       ],
     };
