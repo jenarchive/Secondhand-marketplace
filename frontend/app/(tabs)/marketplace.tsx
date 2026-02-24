@@ -76,7 +76,10 @@ export default function HomeScreen() {
                     />
                     <Pressable
                       style={styles.likeButton}
-                      onPress={() => toggleLike(item.id)}
+                      onPress={(e) => {
+                        e.stopPropagation?.();
+                        toggleLike(item.id);
+                      }}
                       hitSlop={8}
                     >
                       <Ionicons

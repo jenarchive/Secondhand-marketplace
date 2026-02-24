@@ -1,91 +1,92 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { Colors } from '@/constants/theme';
+import TestData from '@/test-data.json';
+import { useLikedItems } from '@/contexts/LikedItemsContext';
+import * as Haptics from 'expo-haptics';
+
+const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
 export default function LikedItemsScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { likedMap, toggleLike, isLiked } = useLikedItems();
 
-  const items = [
-    { id: 1, name: 'Product Name 1', price: '35.00', sold: true },
-    { id: 2, name: 'Product Name 2', price: '12.00', sold: false },
-    { id: 3, name: 'Product Name 3', price: '48.00', sold: false },
-  ];
+  const likedItems = TestData.items.filter((item) => likedMap[String(item.id)]);
 
-  const [likedMap, setLikedMap] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
-    for (const item of items) {
-      initial[String(item.id)] = true;
-    }
-    return initial;
-  });
-
-  const toggleLike = (id: string | number) => {
-    const key = String(id);
-    setLikedMap((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  // Match React Navigation DarkTheme card/header so one seamless color (light mode later)
   const screenBg = '#121212';
   const textColor = Colors.dark.text;
   const placeholderBg = '#2c2c2e';
-  const soldBg = '#333333';
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
-      <Stack.Screen 
-        options={{ 
-          headerShown: false,
-        }} 
-      />
+      <Stack.Screen options={{ headerShown: false }} />
 
       <ScrollView
-        contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 32 }]}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingTop: insets.top + 32 },
+          likedItems.length === 0 && styles.emptyContent,
+        ]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
       >
-        {items.map((item, index) => (
-          <View key={item.id} style={[styles.card, index === 0 && styles.firstCard]}>
-            {(() => {
-              const key = String(item.id);
-              const isLiked = likedMap[key];
-              return (
-            <View style={styles.imageWrapper}>
-              <View style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]} />
-              <Pressable
-                style={styles.likeButton}
-                onPress={() => toggleLike(item.id)}
-                hitSlop={8}
-              >
-                <Ionicons
-                  name={isLiked ? 'heart' : 'heart-outline'}
-                  size={20}
-                  color={isLiked ? '#FF3B30' : '#FFFFFF'}
+        {likedItems.length === 0 ? (
+          <ThemedText style={[styles.emptyText, { color: textColor }]}>
+            No liked items yet
+          </ThemedText>
+        ) : (
+          likedItems.map((item, index) => (
+            <Pressable
+              key={item.id}
+              style={[styles.card, index === 0 && styles.firstCard]}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                router.push(`/items/${item.id}`);
+              }}
+            >
+              <View style={styles.imageWrapper}>
+                <Image
+                  source={{ uri: item.image }}
+                  alt={item.title}
+                  style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
+                  placeholder={{ blurhash }}
+                  contentFit="cover"
                 />
-              </Pressable>
-            </View>
-              );
-            })()}
-            <View style={styles.infoContainer}>
-              <ThemedText style={[styles.productName, { color: textColor }]}>{item.name}</ThemedText>
-              <View style={styles.priceRow}>
-                {item.sold && (
-                  <View style={[styles.soldBadge, { backgroundColor: soldBg }]}>
-                    <ThemedText style={styles.soldText}>SOLD</ThemedText>
-                  </View>
-                )}
-                <ThemedText style={[styles.price, { color: textColor }]}>£{item.price}</ThemedText>
+                <Pressable
+                  style={styles.likeButton}
+                  onPress={async (e) => {
+                    e.stopPropagation?.();
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    toggleLike(item.id);
+                  }}
+                  hitSlop={8}
+                >
+                  <Ionicons
+                    name={isLiked(item.id) ? 'heart' : 'heart-outline'}
+                    size={20}
+                    color={isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
+                  />
+                </Pressable>
               </View>
-            </View>
-          </View>
-        ))}
+              <View style={styles.infoContainer}>
+                <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
+                  {item.title}
+                </ThemedText>
+                <ThemedText style={[styles.price, { color: textColor }]}>
+                  {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
+                </ThemedText>
+              </View>
+            </Pressable>
+          ))
+        )}
       </ScrollView>
     </View>
   );
@@ -98,6 +99,17 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 20,
     paddingBottom: 24,
+  },
+  emptyContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 80,
+  },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   firstCard: {
     marginTop: 0,
@@ -135,21 +147,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
-  },
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  soldBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginRight: 8,
-  },
-  soldText: {
-    color: '#ffffff',
-    fontSize: 10,
-    fontWeight: 'bold',
   },
   price: {
     fontSize: 18,
