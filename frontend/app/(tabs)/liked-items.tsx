@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
@@ -172,14 +172,16 @@ export default function LikedItemsScreen() {
                     </ThemedText>
                   </View>
                 </View>
-                <Pressable
+                <TouchableOpacity
                   onLongPress={drag}
                   disabled={isActive}
                   style={styles.dragHandleRight}
-                  hitSlop={8}
+                  activeOpacity={0.7}
+                  delayLongPress={300}
+                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                 >
                   <Ionicons name="reorder-three" size={24} color={textColor} />
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </ScaleDecorator>
           )}
@@ -330,6 +332,7 @@ const styles = StyleSheet.create({
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    opacity: 0.85,
   },
   infoContainer: {
     flex: 1,
