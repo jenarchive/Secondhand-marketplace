@@ -131,36 +131,56 @@ export default function LikedItemsScreen() {
           style={{ backgroundColor: screenBg }}
           renderItem={({ item, drag, isActive, getIndex }) => (
             <ScaleDecorator>
-              <Pressable
-                onLongPress={drag}
-                disabled={isActive}
+              <View
                 style={[
                   styles.card,
                   getIndex() === 0 && styles.firstCard,
                   { opacity: isActive ? 0.9 : 1 },
                 ]}
               >
-                <View style={styles.imageWrapper}>
-                  <Image
-                    source={{ uri: item.image }}
-                    alt={item.title}
-                    style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
-                    placeholder={{ blurhash }}
-                    contentFit="cover"
-                  />
-                  <View style={styles.dragHandle}>
-                    <Ionicons name="reorder-three" size={24} color={textColor} />
+                <View style={styles.cardContent}>
+                  <View style={styles.imageWrapper}>
+                    <Image
+                      source={{ uri: item.image }}
+                      alt={item.title}
+                      style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
+                      placeholder={{ blurhash }}
+                      contentFit="cover"
+                    />
+                    <Pressable
+                      style={styles.likeButton}
+                      onPress={async (e) => {
+                        e.stopPropagation?.();
+                        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        handleUnlike(item.id);
+                      }}
+                      hitSlop={8}
+                    >
+                      <Ionicons
+                        name={pendingRemovalId === item.id ? 'heart-outline' : isLiked(item.id) ? 'heart' : 'heart-outline'}
+                        size={20}
+                        color={pendingRemovalId === item.id ? '#FFFFFF' : isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
+                      />
+                    </Pressable>
+                  </View>
+                  <View style={styles.infoContainer}>
+                    <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
+                      {item.title}
+                    </ThemedText>
+                    <ThemedText style={[styles.price, { color: textColor }]}>
+                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
+                    </ThemedText>
                   </View>
                 </View>
-                <View style={styles.infoContainer}>
-                  <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
-                    {item.title}
-                  </ThemedText>
-                  <ThemedText style={[styles.price, { color: textColor }]}>
-                    {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
-                  </ThemedText>
-                </View>
-              </Pressable>
+                <Pressable
+                  onLongPress={drag}
+                  disabled={isActive}
+                  style={styles.dragHandleRight}
+                  hitSlop={8}
+                >
+                  <Ionicons name="reorder-three" size={24} color={textColor} />
+                </Pressable>
+              </View>
             </ScaleDecorator>
           )}
         />
@@ -279,6 +299,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: 'center',
   },
+  cardContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   imageWrapper: {
     position: 'relative',
     marginRight: 16,
@@ -299,14 +324,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  dragHandle: {
-    position: 'absolute',
-    right: 8,
-    bottom: 8,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+  dragHandleRight: {
+    marginLeft: 8,
+    marginRight: -20,
+    padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
