@@ -2,119 +2,107 @@ import type { PropsWithChildren, ReactElement } from 'react';
 import { StyleSheet, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
-  useAnimatedRef,
   useAnimatedStyle,
-  useScrollOffset,
   useSharedValue,
-  withTiming,
+  withSpring,
+  runOnJS,
 } from 'react-native-reanimated';
-import { Children, useRef } from 'react';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { ThemedView } from '@/components/themed-view';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import * as Haptics from 'expo-haptics';
-import { ThemedText } from './themed-text';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const HEADER_WIDTH = SCREEN_WIDTH;
+const SWIPE_THRESHOLD = 50;
+const TRIGGER_THRESHOLD = 10;
+
+const SWIPE_UP_THRESHOLD = 80;
 
 type Props = PropsWithChildren<{
-  headerImage: ReactElement;
-  headerBackgroundColor: { dark: string; light: string };
-  onCardDismiss?: () => void;
+  headerImage?: ReactElement;
+  headerBackgroundColor?: { dark: string; light: string };
+  onCardDismiss?: (direction?: 'left' | 'right') => void;
+  onSwipeDirection?: (direction: 'left' | 'right') => void;
+  onSwipeUp?: () => void;
 }>;
 
 export default function ParallaxScrollView({
   children,
   onCardDismiss,
+  onSwipeDirection,
+  onSwipeUp,
 }: Props) {
   const backgroundColor = useThemeColor({}, 'background');
-  const colorScheme = useColorScheme() ?? 'light';
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const hasTriggeredHaptic = useSharedValue(false);
 
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollOffset(scrollRef);
+  const gesture = Gesture.Pan()
+    .onUpdate((event) => {
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
 
-  // Prevent console spam
-  const hasLoggedRef = useRef(false);
-  // Track whether the user has crossed the threshold during the current gesture
-  const hasExceededRef = useRef(false);
+      if (Math.abs(event.translationX) > TRIGGER_THRESHOLD && !hasTriggeredHaptic.value) {
+        hasTriggeredHaptic.value = true;
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        if (onSwipeDirection) {
+          runOnJS(onSwipeDirection)(event.translationX > 0 ? 'right' : 'left');
+        }
+      }
+    })
+    .onEnd((event) => {
+      const isSwipeUp = event.translationY < -SWIPE_UP_THRESHOLD && Math.abs(event.translationY) > Math.abs(event.translationX);
+      const isSwipeHorizontal = Math.abs(event.translationX) > SWIPE_THRESHOLD;
+
+      if (isSwipeUp && onSwipeUp) {
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        runOnJS(onSwipeUp)();
+      } else if (isSwipeHorizontal) {
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        const direction = event.translationX > 0 ? 'right' : 'left';
+        if (onCardDismiss) runOnJS(onCardDismiss)(direction);
+      }
+
+      translateX.value = withSpring(0);
+      translateY.value = withSpring(0);
+      hasTriggeredHaptic.value = false;
+    });
 
   const contentAnimatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(
-      scrollOffset.value,
-      [-HEADER_WIDTH, 0, HEADER_WIDTH],
-      [10, 0, -10]
+      translateX.value,
+      [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
+      [-10, 0, 10]
     );
 
     return {
-      transform: [{ rotateZ: `${rotate}deg` }],
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { rotateZ: `${rotate}deg` }
+      ],
     };
   });
 
   return (
-    <Animated.ScrollView
-      ref={scrollRef}
-      horizontal
-      decelerationRate="normal"
-      showsHorizontalScrollIndicator={false}
-      style={{ backgroundColor }}
-      scrollEventThrottle={16}
-      onScroll={async (event) => {
-        const x = event.nativeEvent.contentOffset.x;
-
-        if (x > 50 && !hasLoggedRef.current) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          console.log('Scrolled more than 50px horizontally');
-          hasLoggedRef.current = true;
-          hasExceededRef.current = true;
-        }else if (x < -50 && !hasLoggedRef.current) {
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          console.log('Scrolled less than -50px horizontally');
-          hasLoggedRef.current = true;
-          hasExceededRef.current = true;
-        }
-        //reset if user scrolls back
-        if (x <= 50 && hasLoggedRef.current && x >= -50) {
-          
-          
-          hasLoggedRef.current = false;
-          hasExceededRef.current = false;
-        }
-        
-      }}
-      onScrollEndDrag={async (event) => {
-        const x = event.nativeEvent.contentOffset.x;
-        
-        
-        if (Math.abs(x) > 50) {
-          console.log('Touch ended after scrolling more than 50px horizontally');
-          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-          
-          onCardDismiss?.();
-        }
-        
-        if (hasExceededRef.current) {
-          hasExceededRef.current = false;
-        }
-      }}
-    >
-      <Animated.View style={contentAnimatedStyle}>
-        <ThemedView style={styles.content}>
+    <ThemedView style={[styles.container, { backgroundColor }]}>
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={[styles.content, contentAnimatedStyle]}>
           {children}
-        </ThemedView>
-      </Animated.View>
-    </Animated.ScrollView>
+        </Animated.View>
+      </GestureDetector>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   content: {
-    width: HEADER_WIDTH,
+    flex: 1,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 64,
-    paddingBottom: 32,
-    aspectRatio: 9 / 16,
-    gap: 16,
   },
 });

@@ -27,13 +27,12 @@ export default function HomeScreen() {
   }, [query]);
 
   const blurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#191C1F' }}
       headerImage={<Image />}>
-      
       <ThemedView>
         {/* Search bar (Apple-native like) */}
         <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}> 
@@ -77,7 +76,10 @@ export default function HomeScreen() {
                     />
                     <Pressable
                       style={styles.likeButton}
-                      onPress={() => toggleLike(item.id)}
+                      onPress={(e) => {
+                        e.stopPropagation?.();
+                        toggleLike(item.id);
+                      }}
                       hitSlop={8}
                     >
                       <Ionicons
@@ -149,8 +151,7 @@ const styles = StyleSheet.create({
 
   pressed: {
     opacity: 0.85
-  }
-  ,
+  },
   searchContainer: {
     paddingHorizontal: 0,
     paddingVertical: 16,
