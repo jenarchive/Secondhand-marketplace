@@ -1,7 +1,9 @@
 # General trend: 
 * Users liked: 
-    * UI and interface: It looks clean, modern, minimalistic and easy to access. 
-    * Swiping feature: allow users to discover, interactive and unique in online market
+    * 80% of users complimented our UI and interface: 
+        - clean, modern, minimalistic and easy to access. 
+    * 50% of users complimented our swiping feature: 
+        - allow users to discover, interactive and unique in online market
     * Easy to list things
 * Users pointed out areas that can be improved / implemented: 
     * Marketplace: 
@@ -13,7 +15,7 @@
     * Swiping 
         - small description area
         - buy or not buy feature 
-    * Others
+    * Others: 
         - When exiting page, on the top left is (tabs) not back
         - Liked items page
         - Chat section 
