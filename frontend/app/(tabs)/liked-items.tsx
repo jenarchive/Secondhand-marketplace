@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
@@ -57,9 +57,20 @@ export default function LikedItemsScreen() {
         showsVerticalScrollIndicator={false}
       >
         {likedItems.length === 0 ? (
-          <ThemedText style={[styles.emptyText, { color: textColor }]}>
-            No liked items yet
-          </ThemedText>
+          <View style={styles.emptyState}>
+            <ThemedText style={[styles.emptyText, { color: textColor }]}>
+              No liked items yet
+            </ThemedText>
+            <Pressable
+              style={({ pressed }) => [styles.marketplaceButton, pressed && { opacity: 0.85 }]}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                router.replace('/(tabs)');
+              }}
+            >
+              <Text style={styles.marketplaceButtonText}>Go to Marketplace</Text>
+            </Pressable>
+          </View>
         ) : (
           likedItems.map((item, index) => (
             <Pressable
@@ -124,10 +135,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 80,
   },
+  emptyState: {
+    alignItems: 'center',
+    gap: 20,
+  },
   emptyText: {
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  marketplaceButton: {
+    width: 300,
+    height: 60,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#28289D',
+  },
+  marketplaceButtonText: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: '500',
   },
   firstCard: {
     marginTop: 0,
