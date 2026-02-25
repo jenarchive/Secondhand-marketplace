@@ -6,7 +6,9 @@ type LikedMap = Record<string, boolean>;
 
 type LikedItemsContextType = {
   likedMap: LikedMap;
+  likedOrder: number[];
   toggleLike: (id: string | number) => void;
+  setLikedOrder: (order: number[]) => void;
   isLiked: (id: string | number) => boolean;
 };
 
@@ -14,13 +16,22 @@ const LikedItemsContext = createContext<LikedItemsContextType | null>(null);
 
 export function LikedItemsProvider({ children }: { children: React.ReactNode }) {
   const [likedMap, setLikedMap] = useState<LikedMap>({});
+  const [likedOrder, setLikedOrderState] = useState<number[]>([]);
 
   const toggleLike = useCallback((id: string | number) => {
     const key = String(id);
-    setLikedMap((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    const numId = Number(id);
+    setLikedMap((prev) => {
+      const wasLiked = prev[key];
+      setLikedOrderState((prevOrder) =>
+        wasLiked ? prevOrder.filter((x) => x !== numId) : [...prevOrder, numId]
+      );
+      return { ...prev, [key]: !wasLiked };
+    });
+  }, []);
+
+  const setLikedOrder = useCallback((order: number[]) => {
+    setLikedOrderState(order);
   }, []);
 
   const isLiked = useCallback((id: string | number) => {
@@ -28,7 +39,7 @@ export function LikedItemsProvider({ children }: { children: React.ReactNode }) 
   }, [likedMap]);
 
   return (
-    <LikedItemsContext.Provider value={{ likedMap, toggleLike, isLiked }}>
+    <LikedItemsContext.Provider value={{ likedMap, likedOrder, toggleLike, setLikedOrder, isLiked }}>
       {children}
     </LikedItemsContext.Provider>
   );

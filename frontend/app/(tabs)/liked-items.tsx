@@ -10,20 +10,47 @@ import { Colors } from '@/constants/theme';
 import TestData from '@/test-data.json';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import * as Haptics from 'expo-haptics';
+import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
 const UNLIKE_DELAY_MS = 100;
 
+type TestItem = (typeof TestData.items)[number];
+
+function getOrderedLikedItems(
+  likedMap: Record<string, boolean>,
+  likedOrder: number[]
+): TestItem[] {
+  const defaultOrder = TestData.items.filter((i) => likedMap[String(i.id)]).map((i) => i.id);
+  const orderedIds =
+    likedOrder.length > 0
+      ? [
+          ...likedOrder.filter((id) => likedMap[String(id)]),
+          ...defaultOrder.filter((id) => !likedOrder.includes(id)),
+        ]
+      : defaultOrder;
+  return orderedIds
+    .map((id) => TestData.items.find((i) => i.id === id))
+    .filter((i): i is TestItem => !!i);
+}
+
 export default function LikedItemsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { likedMap, toggleLike, isLiked } = useLikedItems();
+  const { likedMap, likedOrder, toggleLike, setLikedOrder, isLiked } = useLikedItems();
   const [pendingRemovalId, setPendingRemovalId] = useState<number | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [orderedItems, setOrderedItems] = useState<TestItem[]>([]);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const likedItems = TestData.items.filter((item) => likedMap[String(item.id)]);
+  const likedItems = getOrderedLikedItems(likedMap, likedOrder);
+
+  const likedIdsStr = likedItems.map((i) => i.id).join(',');
+  useEffect(() => {
+    setOrderedItems(likedItems);
+  }, [likedIdsStr]);
 
   const handleUnlike = (itemId: number) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -54,11 +81,18 @@ export default function LikedItemsScreen() {
           headerTintColor: textColor,
           headerRight: () => (
             <Pressable
-              onPress={() => {}}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsEditMode((v) => !v);
+              }}
               style={({ pressed }) => [{ padding: 8, marginLeft: -24, opacity: pressed ? 0.7 : 1 }]}
               hitSlop={8}
             >
-              <Ionicons name="reorder-three" size={28} color={textColor} />
+              <Ionicons
+                name={isEditMode ? 'checkmark' : 'reorder-three'}
+                size={28}
+                color={textColor}
+              />
             </Pressable>
           ),
         }}
@@ -85,6 +119,51 @@ export default function LikedItemsScreen() {
             </Pressable>
           </View>
         </View>
+      ) : isEditMode ? (
+        <DraggableFlatList
+          data={orderedItems}
+          keyExtractor={(item) => String(item.id)}
+          onDragEnd={({ data }) => {
+            setOrderedItems(data);
+            setLikedOrder(data.map((i) => i.id));
+          }}
+          contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+          style={{ backgroundColor: screenBg }}
+          renderItem={({ item, drag, isActive, getIndex }) => (
+            <ScaleDecorator>
+              <Pressable
+                onLongPress={drag}
+                disabled={isActive}
+                style={[
+                  styles.card,
+                  getIndex() === 0 && styles.firstCard,
+                  { opacity: isActive ? 0.9 : 1 },
+                ]}
+              >
+                <View style={styles.imageWrapper}>
+                  <Image
+                    source={{ uri: item.image }}
+                    alt={item.title}
+                    style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
+                    placeholder={{ blurhash }}
+                    contentFit="cover"
+                  />
+                  <View style={styles.dragHandle}>
+                    <Ionicons name="reorder-three" size={24} color={textColor} />
+                  </View>
+                </View>
+                <View style={styles.infoContainer}>
+                  <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
+                    {item.title}
+                  </ThemedText>
+                  <ThemedText style={[styles.price, { color: textColor }]}>
+                    {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
+                  </ThemedText>
+                </View>
+              </Pressable>
+            </ScaleDecorator>
+          )}
+        />
       ) : (
       <ScrollView
         contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
@@ -216,6 +295,17 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dragHandle: {
+    position: 'absolute',
+    right: 8,
+    bottom: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
