@@ -23,7 +23,7 @@ jobs:
             cd /home/ubuntu/2025-SecondhandMarketplace2/backend
             # pull latest code from dev
             git pull origin dev
-            # create virtual environment
+            # activate virtual environment
             source venv/bin/activate
             # install required dependencies
             pip install -r requirements.txt
