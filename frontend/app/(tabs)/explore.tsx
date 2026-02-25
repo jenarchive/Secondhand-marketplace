@@ -193,8 +193,8 @@ export default function TabTwoScreen() {
       </View>
 
       {visibleItems.length === 0 && (
-        <>
-          <View style={styles.emptyStateCenter}>
+        <View style={styles.emptyStateCenter}>
+          <View style={styles.emptyStateButtonAtCenter}>
             <Link href="/(tabs)/liked-items" asChild>
               <Pressable>
                 <ThemedView style={styles.row}>
@@ -205,10 +205,12 @@ export default function TabTwoScreen() {
               </Pressable>
             </Link>
           </View>
-          <Pressable style={styles.emptyStateReset} onPress={resetCards}>
-            <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
-          </Pressable>
-        </>
+          <View style={styles.emptyStateBelow}>
+            <Pressable style={styles.emptyStateReset} onPress={resetCards}>
+              <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
+            </Pressable>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -272,7 +274,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     fontSize: 18,
     backgroundColor: '#28289D',
-    marginBottom: 16,
   },
   text: {
     fontSize: 18,
@@ -361,14 +362,26 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    justifyContent: 'center',
     alignItems: 'center',
   },
-  emptyStateReset: {
+  emptyStateButtonAtCenter: {
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 100,
+    top: '50%',
+    alignItems: 'center',
+    transform: [{ translateY: -30 }],
+  },
+  emptyStateBelow: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '50%',
+    marginTop: 38,
+    alignItems: 'center',
+  },
+  emptyStateReset: {
+    marginTop: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },

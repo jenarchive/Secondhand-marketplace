@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Text } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import { Colors } from '@/constants/theme';
 import TestData from '@/test-data.json';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
@@ -46,33 +47,35 @@ export default function LikedItemsScreen() {
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <ScrollView
-        contentContainerStyle={[
-          styles.listContent,
-          { paddingTop: insets.top + 32 },
-          likedItems.length === 0 && styles.emptyContent,
-        ]}
-        contentInsetAdjustmentBehavior="never"
-        style={{ backgroundColor: screenBg }}
-        showsVerticalScrollIndicator={false}
-      >
-        {likedItems.length === 0 ? (
-          <View style={styles.emptyState}>
+      {likedItems.length === 0 ? (
+        <View style={styles.emptyStateCenter}>
+          <View style={styles.emptyStateAbove}>
             <ThemedText style={[styles.emptyText, { color: textColor }]}>
               No liked items yet
             </ThemedText>
+          </View>
+          <View style={styles.emptyStateButtonAtCenter}>
             <Pressable
-              style={({ pressed }) => [styles.marketplaceButton, pressed && { opacity: 0.85 }]}
+              style={({ pressed }) => [pressed && { opacity: 0.85 }]}
               onPress={async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 router.replace('/(tabs)');
               }}
             >
-              <Text style={styles.marketplaceButtonText}>Go to Marketplace</Text>
+              <ThemedView style={styles.marketplaceButton}>
+                <ThemedText style={styles.marketplaceButtonText}>Go to Marketplace</ThemedText>
+              </ThemedView>
             </Pressable>
           </View>
-        ) : (
-          likedItems.map((item, index) => (
+        </View>
+      ) : (
+      <ScrollView
+        contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 32 }]}
+        contentInsetAdjustmentBehavior="never"
+        style={{ backgroundColor: screenBg }}
+        showsVerticalScrollIndicator={false}
+      >
+        {likedItems.map((item, index) => (
             <Pressable
               key={item.id}
               style={[styles.card, index === 0 && styles.firstCard]}
@@ -114,9 +117,9 @@ export default function LikedItemsScreen() {
                 </ThemedText>
               </View>
             </Pressable>
-          ))
-        )}
+          ))}
       </ScrollView>
+      )}
     </View>
   );
 }
@@ -129,15 +132,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
-  emptyContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
+  emptyStateCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
     alignItems: 'center',
-    paddingBottom: 80,
+    zIndex: 10,
+    backgroundColor: '#121212',
   },
-  emptyState: {
+  emptyStateAbove: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '50%',
+    marginBottom: 52,
     alignItems: 'center',
-    gap: 20,
+  },
+  emptyStateButtonAtCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '50%',
+    alignItems: 'center',
+    transform: [{ translateY: -30 }],
   },
   emptyText: {
     fontSize: 20,
@@ -155,7 +174,6 @@ const styles = StyleSheet.create({
   marketplaceButtonText: {
     fontSize: 18,
     color: '#fff',
-    fontWeight: '500',
   },
   firstCard: {
     marginTop: 0,
