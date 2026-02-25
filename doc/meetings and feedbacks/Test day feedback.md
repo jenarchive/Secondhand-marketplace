@@ -15,6 +15,7 @@
         - buy or not buy feature 
     * Others: 
         - When exiting page, on the top left is (tabs) not back
+        - Empty home page
         - Liked items page
         - Prefer webpage 
 * Average Score of 2.67/5 on "How different do you think this app is compare to other online market" 
