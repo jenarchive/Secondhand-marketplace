@@ -142,12 +142,14 @@ export default function LikedItemsScreen() {
                           handleUnlike(item.id);
                         }}
                       >
-                        <ThemedText style={styles.deleteButtonText}>Delete</ThemedText>
+                        <ThemedText style={styles.deleteButtonText} numberOfLines={1}>
+                          Delete
+                        </ThemedText>
                       </Pressable>
                     </View>
                 )}
                 overshootRight={false}
-                rightThreshold={40}
+                rightThreshold={45}
               >
                 <TouchableOpacity
                   onLongPress={drag}
@@ -353,7 +355,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF3B30',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 80,
+    minWidth: 90,
+    width: 90,
     alignSelf: 'stretch',
     marginBottom: 24,
   },
@@ -362,7 +365,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
+    minWidth: 90,
   },
   deleteButtonText: {
     color: '#fff',
