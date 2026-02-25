@@ -52,6 +52,15 @@ export default function LikedItemsScreen() {
           headerTitleStyle: { fontWeight: '700' },
           headerStyle: { backgroundColor: screenBg },
           headerTintColor: textColor,
+          headerRight: () => (
+            <Pressable
+              onPress={() => {}}
+              style={({ pressed }) => [{ padding: 8, marginLeft: -24, opacity: pressed ? 0.7 : 1 }]}
+              hitSlop={8}
+            >
+              <Ionicons name="reorder-three" size={28} color={textColor} />
+            </Pressable>
+          ),
         }}
       />
 
