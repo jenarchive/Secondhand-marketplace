@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -51,6 +52,14 @@ export default function LikedItemsScreen() {
   useEffect(() => {
     setOrderedItems(likedItems);
   }, [likedIdsStr]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setIsEditMode(false);
+      };
+    }, [])
+  );
 
   const handleUnlike = (itemId: number) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
