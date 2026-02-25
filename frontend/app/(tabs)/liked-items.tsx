@@ -40,8 +40,7 @@ function getOrderedLikedItems(
 export default function LikedItemsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { likedMap, likedOrder, toggleLike, setLikedOrder, isLiked } = useLikedItems();
-  const [pendingRemovalId, setPendingRemovalId] = useState<number | null>(null);
+  const { likedMap, likedOrder, toggleLike, setLikedOrder } = useLikedItems();
   const [isEditMode, setIsEditMode] = useState(false);
   const [orderedItems, setOrderedItems] = useState<TestItem[]>([]);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -55,10 +54,8 @@ export default function LikedItemsScreen() {
 
   const handleUnlike = (itemId: number) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setPendingRemovalId(itemId);
     timeoutRef.current = setTimeout(() => {
       toggleLike(itemId);
-      setPendingRemovalId(null);
       timeoutRef.current = null;
     }, UNLIKE_DELAY_MS);
   };
@@ -171,21 +168,6 @@ export default function LikedItemsScreen() {
                         placeholder={{ blurhash }}
                         contentFit="cover"
                       />
-                      <Pressable
-                        style={styles.likeButton}
-                        onPress={async (e) => {
-                          e.stopPropagation?.();
-                          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                          handleUnlike(item.id);
-                        }}
-                        hitSlop={8}
-                      >
-                        <Ionicons
-                          name={pendingRemovalId === item.id ? 'heart-outline' : isLiked(item.id) ? 'heart' : 'heart-outline'}
-                          size={20}
-                          color={pendingRemovalId === item.id ? '#FFFFFF' : isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
-                        />
-                      </Pressable>
                     </View>
                     <View style={styles.infoContainer}>
                       <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
@@ -228,21 +210,6 @@ export default function LikedItemsScreen() {
                   placeholder={{ blurhash }}
                   contentFit="cover"
                 />
-                <Pressable
-                  style={styles.likeButton}
-                  onPress={async (e) => {
-                    e.stopPropagation?.();
-                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    handleUnlike(item.id);
-                  }}
-                  hitSlop={8}
-                >
-                  <Ionicons
-                    name={pendingRemovalId === item.id ? 'heart-outline' : isLiked(item.id) ? 'heart' : 'heart-outline'}
-                    size={20}
-                    color={pendingRemovalId === item.id ? '#FFFFFF' : isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
-                  />
-                </Pressable>
               </View>
               <View style={styles.infoContainer}>
                 <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
@@ -332,17 +299,6 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 12,
-  },
-  likeButton: {
-    position: 'absolute',
-    right: 8,
-    bottom: 8,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   dragHandleRight: {
     marginLeft: 8,
