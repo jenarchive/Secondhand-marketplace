@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
 
   imageWrapper: {
     position: 'relative',
+    marginBottom: 12,
   },
 
   likeButton: {

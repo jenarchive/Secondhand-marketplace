@@ -126,7 +126,7 @@ export default function TabTwoScreen() {
                   <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
                   <View style={styles.hintTextUp}>
                     <Text style={styles.hintText}>Swipe up</Text>
-                    <Text style={styles.hintText}>to view details</Text>
+                    <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
                   </View>
                 </View>
                 <View style={styles.hintLeft}>
