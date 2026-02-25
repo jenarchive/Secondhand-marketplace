@@ -92,7 +92,9 @@ export default function LikedItemsScreen() {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setIsEditMode((v) => !v);
               }}
-              style={({ pressed }) => [{ padding: 8, marginLeft: -24, opacity: pressed ? 0.7 : 1 }]}
+              style={({ pressed }) => [
+                { padding: 8, marginRight: 20, opacity: pressed ? 0.7 : 1 },
+              ]}
               hitSlop={8}
             >
               <Ionicons
