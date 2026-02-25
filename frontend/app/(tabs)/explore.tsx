@@ -47,11 +47,14 @@ export default function TabTwoScreen() {
   };
 
   const handleCardDismiss = (direction?: 'left' | 'right') => {
-    const itemToDismiss = visibleItems[visibleItems.length - 1];
-    if (direction === 'right' && itemToDismiss) {
-      toggleLikeContext(itemToDismiss.id);
-    }
     setVisibleItems(prev => prev.slice(0, -1));
+  };
+
+  const handleSwipeDirection = (direction: 'left' | 'right') => {
+    spawnButterflies(direction);
+    if (direction === 'right' && currentItem) {
+      toggleLikeContext(currentItem.id);
+    }
   };
 
   const resetCards = () => {
@@ -79,7 +82,7 @@ export default function TabTwoScreen() {
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
-        onSwipeDirection={spawnButterflies}
+        onSwipeDirection={handleSwipeDirection}
         onSwipeUp={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
