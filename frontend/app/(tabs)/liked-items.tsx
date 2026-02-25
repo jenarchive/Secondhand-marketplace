@@ -131,7 +131,11 @@ export default function LikedItemsScreen() {
           style={{ backgroundColor: screenBg }}
           renderItem={({ item, drag, isActive, getIndex }) => (
             <ScaleDecorator>
-              <View
+              <TouchableOpacity
+                onLongPress={drag}
+                disabled={isActive}
+                activeOpacity={1}
+                delayLongPress={300}
                 style={[
                   styles.card,
                   getIndex() === 0 && styles.firstCard,
@@ -172,17 +176,10 @@ export default function LikedItemsScreen() {
                     </ThemedText>
                   </View>
                 </View>
-                <TouchableOpacity
-                  onLongPress={drag}
-                  disabled={isActive}
-                  style={styles.dragHandleRight}
-                  activeOpacity={0.7}
-                  delayLongPress={300}
-                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-                >
+                <View style={styles.dragHandleRight}>
                   <Ionicons name="reorder-three" size={24} color={textColor} />
-                </TouchableOpacity>
-              </View>
+                </View>
+              </TouchableOpacity>
             </ScaleDecorator>
           )}
         />
