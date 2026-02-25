@@ -45,7 +45,15 @@ export default function LikedItemsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen
+        options={{
+          title: 'Liked Items',
+          headerShown: likedItems.length > 0,
+          headerTitleStyle: { fontWeight: '700' },
+          headerStyle: { backgroundColor: screenBg },
+          headerTintColor: textColor,
+        }}
+      />
 
       {likedItems.length === 0 ? (
         <View style={styles.emptyStateCenter}>
@@ -70,7 +78,7 @@ export default function LikedItemsScreen() {
         </View>
       ) : (
       <ScrollView
-        contentContainerStyle={[styles.listContent, { paddingTop: insets.top + 32 }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
