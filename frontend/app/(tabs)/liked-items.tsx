@@ -11,6 +11,7 @@ import TestData from '@/test-data.json';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import * as Haptics from 'expo-haptics';
 import DraggableFlatList, { ScaleDecorator } from 'react-native-draggable-flatlist';
+import { Swipeable } from 'react-native-gesture-handler';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -131,55 +132,73 @@ export default function LikedItemsScreen() {
           style={{ backgroundColor: screenBg }}
           renderItem={({ item, drag, isActive, getIndex }) => (
             <ScaleDecorator>
-              <TouchableOpacity
-                onLongPress={drag}
-                disabled={isActive}
-                activeOpacity={1}
-                delayLongPress={300}
-                style={[
-                  styles.card,
-                  getIndex() === 0 && styles.firstCard,
-                  { opacity: isActive ? 0.9 : 1 },
-                ]}
+              <Swipeable
+                renderRightActions={() => (
+                    <View style={styles.deleteAction}>
+                      <Pressable
+                        style={styles.deleteButton}
+                        onPress={async () => {
+                          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                          handleUnlike(item.id);
+                        }}
+                      >
+                        <ThemedText style={styles.deleteButtonText}>Delete</ThemedText>
+                      </Pressable>
+                    </View>
+                )}
+                overshootRight={false}
+                rightThreshold={40}
               >
-                <View style={styles.cardContent}>
-                  <View style={styles.imageWrapper}>
-                    <Image
-                      source={{ uri: item.image }}
-                      alt={item.title}
-                      style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
-                      placeholder={{ blurhash }}
-                      contentFit="cover"
-                    />
-                    <Pressable
-                      style={styles.likeButton}
-                      onPress={async (e) => {
-                        e.stopPropagation?.();
-                        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        handleUnlike(item.id);
-                      }}
-                      hitSlop={8}
-                    >
-                      <Ionicons
-                        name={pendingRemovalId === item.id ? 'heart-outline' : isLiked(item.id) ? 'heart' : 'heart-outline'}
-                        size={20}
-                        color={pendingRemovalId === item.id ? '#FFFFFF' : isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
+                <TouchableOpacity
+                  onLongPress={drag}
+                  disabled={isActive}
+                  activeOpacity={1}
+                  delayLongPress={300}
+                  style={[
+                    styles.card,
+                    getIndex() === 0 && styles.firstCard,
+                    { opacity: isActive ? 0.9 : 1 },
+                  ]}
+                >
+                  <View style={styles.cardContent}>
+                    <View style={styles.imageWrapper}>
+                      <Image
+                        source={{ uri: item.image }}
+                        alt={item.title}
+                        style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
+                        placeholder={{ blurhash }}
+                        contentFit="cover"
                       />
-                    </Pressable>
+                      <Pressable
+                        style={styles.likeButton}
+                        onPress={async (e) => {
+                          e.stopPropagation?.();
+                          await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          handleUnlike(item.id);
+                        }}
+                        hitSlop={8}
+                      >
+                        <Ionicons
+                          name={pendingRemovalId === item.id ? 'heart-outline' : isLiked(item.id) ? 'heart' : 'heart-outline'}
+                          size={20}
+                          color={pendingRemovalId === item.id ? '#FFFFFF' : isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
+                        />
+                      </Pressable>
+                    </View>
+                    <View style={styles.infoContainer}>
+                      <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
+                        {item.title}
+                      </ThemedText>
+                      <ThemedText style={[styles.price, { color: textColor }]}>
+                        {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
+                      </ThemedText>
+                    </View>
                   </View>
-                  <View style={styles.infoContainer}>
-                    <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
-                      {item.title}
-                    </ThemedText>
-                    <ThemedText style={[styles.price, { color: textColor }]}>
-                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
-                    </ThemedText>
+                  <View style={styles.dragHandleRight}>
+                    <Ionicons name="reorder-three" size={24} color={textColor} />
                   </View>
-                </View>
-                <View style={styles.dragHandleRight}>
-                  <Ionicons name="reorder-three" size={24} color={textColor} />
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+              </Swipeable>
             </ScaleDecorator>
           )}
         />
@@ -325,11 +344,30 @@ const styles = StyleSheet.create({
   },
   dragHandleRight: {
     marginLeft: 8,
-    marginRight: -20,
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
     opacity: 0.85,
+  },
+  deleteAction: {
+    backgroundColor: '#FF3B30',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    alignSelf: 'stretch',
+    marginBottom: 24,
+  },
+  deleteButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   infoContainer: {
     flex: 1,
