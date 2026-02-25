@@ -7,20 +7,16 @@
     * Easy to list things
 * Users pointed out areas that can be improved / implemented: 
     * Marketplace: 
-        - Labels for items 
+        - Labels for items, Searching can find related items & Sort by categories
         - Tapping on seller doesn't give details
-        - Searching can find related items 
         - Contact seller 
-        - Sort by categories
     * Swiping 
         - small description area
         - buy or not buy feature 
     * Others: 
         - When exiting page, on the top left is (tabs) not back
         - Liked items page
-        - Chat section 
         - Prefer webpage 
-        - Color Scheme
 * Average Score of 2.67/5 on "How different do you think this app is compare to other online market" 
 
 # Data collected: 
