@@ -123,28 +123,34 @@ export default function TabTwoScreen() {
                 {hintsVisible && (
               <View style={styles.swipeHints} pointerEvents="none">
                 <View style={styles.hintUp}>
-                  <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
-                  <View style={styles.hintTextUp}>
-                    <Text style={styles.hintText}>Swipe up</Text>
-                    <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                  <View style={styles.hintBackdrop}>
+                    <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
+                    <View style={styles.hintTextUp}>
+                      <Text style={styles.hintText}>Swipe up</Text>
+                      <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.hintLeft}>
-                  <View style={styles.arrowLeft}>
-                    <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
-                  </View>
-                  <View style={styles.hintTextLeft}>
-                    <Text style={styles.hintText}>Swipe left</Text>
-                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropLeft]}>
+                    <View style={styles.arrowLeft}>
+                      <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextLeft}>
+                      <Text style={styles.hintText}>Swipe left</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.hintRight}>
-                  <View style={styles.arrowRight}>
-                    <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
-                  </View>
-                  <View style={styles.hintTextRight}>
-                    <Text style={styles.hintText}>Swipe right</Text>
-                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropRight]}>
+                    <View style={styles.arrowRight}>
+                      <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextRight}>
+                      <Text style={styles.hintText}>Swipe right</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -342,6 +348,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   hintTextRight: {
+    alignItems: 'flex-end',
+  },
+  hintBackdrop: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hintBackdropLeft: {
+    alignItems: 'flex-start',
+  },
+  hintBackdropRight: {
     alignItems: 'flex-end',
   },
   hintText: {
