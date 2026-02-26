@@ -112,7 +112,7 @@ export default function TabTwoScreen() {
     spawnButterflies('right');
     setTimeout(() => {
       parallaxRef.current?.triggerSwipe('right');
-    }, 50);
+    }, 25);
   };
 
   const handleCardWillDismiss = (direction: 'left' | 'right') => {

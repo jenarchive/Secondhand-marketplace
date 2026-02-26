@@ -47,13 +47,20 @@ const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function Par
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
   };
 
+  const SWIPE_DURATION_RIGHT = 700;
+  const SWIPE_DURATION_LEFT = 300;
+  const SLIDE_IN_DURATION_RIGHT = 1000;
+
   useImperativeHandle(ref, () => ({
     triggerSwipe: (direction: 'left' | 'right') => {
       triggerHaptic();
       const targetX = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-      translateX.value = withTiming(targetX, { duration: 250 }, () => {
+      const duration = direction === 'right' ? SWIPE_DURATION_RIGHT : SWIPE_DURATION_LEFT;
+      translateX.value = withTiming(targetX, { duration }, () => {
         if (onCardDismiss) runOnJS(onCardDismiss)(direction);
-        translateX.value = withSpring(0);
+        translateX.value = direction === 'right'
+          ? withTiming(0, { duration: SLIDE_IN_DURATION_RIGHT })
+          : withSpring(0);
       });
     },
     resetPosition: () => {
@@ -79,11 +86,13 @@ const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function Par
       const direction = x > 0 ? 'right' : 'left';
       onCardWillDismiss?.(direction);
       const targetX = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-      const duration = direction === 'right' ? 300 : 200;
+      const duration = direction === 'right' ? SWIPE_DURATION_RIGHT : SWIPE_DURATION_LEFT;
       translateY.value = withSpring(0);
       translateX.value = withTiming(targetX, { duration }, () => {
         runOnJS(handleSwipeComplete)(direction);
-        translateX.value = withSpring(0);
+        translateX.value = direction === 'right'
+          ? withTiming(0, { duration: SLIDE_IN_DURATION_RIGHT })
+          : withSpring(0);
       });
     } else {
       translateX.value = withSpring(0);
