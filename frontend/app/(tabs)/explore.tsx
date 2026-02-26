@@ -64,9 +64,14 @@ export default function TabTwoScreen() {
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
   const currentItemLiked = currentItem ? isLiked(currentItem.id) : false;
 
-  const toggleLike = () => {
+  const handleLikePress = () => {
     if (!currentItem) return;
-    toggleLikeContext(currentItem.id);
+    const wasLiked = isLiked(currentItem.id);
+    if (!wasLiked) {
+      toggleLikeContext(currentItem.id);
+      spawnButterflies('right');
+    }
+    setTimeout(() => handleCardDismiss('right'), wasLiked ? 0 : 200);
   };
 
   const handleSwipeUp = () => {
@@ -177,7 +182,7 @@ export default function TabTwoScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={toggleLike}
+            onPress={handleLikePress}
           >
             <Ionicons
               name={currentItemLiked ? 'heart' : 'heart-outline'}
