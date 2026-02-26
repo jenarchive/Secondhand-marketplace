@@ -81,7 +81,7 @@ export default function LikedItemsScreen() {
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen
         options={{
-          title: 'Liked Items',
+          title: 'Likes',
           headerShown: likedItems.length > 0,
           headerTitleStyle: { fontWeight: '700' },
           headerStyle: { backgroundColor: screenBg },

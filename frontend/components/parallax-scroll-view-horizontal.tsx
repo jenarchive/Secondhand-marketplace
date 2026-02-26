@@ -26,12 +26,14 @@ type Props = PropsWithChildren<{
   headerImage?: ReactElement;
   headerBackgroundColor?: { dark: string; light: string };
   onCardDismiss?: (direction?: 'left' | 'right') => void;
+  onCardWillDismiss?: (direction: 'left' | 'right') => void;
   onSwipeUp?: () => void;
 }>;
 
 const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function ParallaxScrollView({
   children,
   onCardDismiss,
+  onCardWillDismiss,
   onSwipeUp,
 }, ref) {
   const backgroundColor = useThemeColor({}, 'background');
@@ -70,6 +72,7 @@ const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function Par
     } else if (isSwipeHorizontal && onCardDismiss) {
       triggerHaptic();
       const direction = x > 0 ? 'right' : 'left';
+      onCardWillDismiss?.(direction);
       const targetX = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
       translateY.value = withSpring(0);
       translateX.value = withTiming(targetX, { duration: 200 }, () => {

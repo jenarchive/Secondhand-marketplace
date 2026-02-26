@@ -34,6 +34,7 @@ export default function TabTwoScreen() {
   const [hintsVisible, setHintsVisible] = useState(true);
   const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
   const prevItemsLengthRef = useRef(0);
+  const alreadyAddedToLikesRef = useRef(false);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -67,9 +68,11 @@ export default function TabTwoScreen() {
     if (prevLen > visibleItems.length && pendingDismissRef.current) {
       const { direction, item } = pendingDismissRef.current;
       pendingDismissRef.current = null;
+      const alreadyAdded = alreadyAddedToLikesRef.current;
+      alreadyAddedToLikesRef.current = false;
       if (direction === 'right') {
         spawnButterflies('right');
-        if (!isLiked(item.id)) toggleLikeContext(item.id);
+        if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
       }
     }
   }, [visibleItems, isLiked, toggleLikeContext]);
@@ -83,7 +86,16 @@ export default function TabTwoScreen() {
 
   const handleLikePress = () => {
     if (!currentItem) return;
+    alreadyAddedToLikesRef.current = true;
+    if (!isLiked(currentItem.id)) toggleLikeContext(currentItem.id);
     parallaxRef.current?.triggerSwipe('right');
+  };
+
+  const handleCardWillDismiss = (direction: 'left' | 'right') => {
+    if (direction === 'right' && currentItem && !isLiked(currentItem.id)) {
+      alreadyAddedToLikesRef.current = true;
+      toggleLikeContext(currentItem.id);
+    }
   };
 
   const handleSwipeUp = () => {
@@ -100,6 +112,7 @@ export default function TabTwoScreen() {
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
+        onCardWillDismiss={handleCardWillDismiss}
         onSwipeUp={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
