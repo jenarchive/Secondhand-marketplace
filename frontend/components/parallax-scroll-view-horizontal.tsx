@@ -1,10 +1,12 @@
 import type { PropsWithChildren, ReactElement } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
 import { StyleSheet, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
   runOnJS,
 } from 'react-native-reanimated';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
@@ -18,6 +20,10 @@ const TRIGGER_THRESHOLD = 10;
 
 const SWIPE_UP_THRESHOLD = 80;
 
+export type ParallaxScrollViewRef = {
+  triggerSwipe: (direction: 'left' | 'right') => void;
+};
+
 type Props = PropsWithChildren<{
   headerImage?: ReactElement;
   headerBackgroundColor?: { dark: string; light: string };
@@ -26,16 +32,27 @@ type Props = PropsWithChildren<{
   onSwipeUp?: () => void;
 }>;
 
-export default function ParallaxScrollView({
+const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function ParallaxScrollView({
   children,
   onCardDismiss,
   onSwipeDirection,
   onSwipeUp,
-}: Props) {
+}, ref) {
   const backgroundColor = useThemeColor({}, 'background');
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const hasTriggeredHaptic = useSharedValue(false);
+
+  useImperativeHandle(ref, () => ({
+    triggerSwipe: (direction: 'left' | 'right') => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      const targetX = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
+      translateX.value = withTiming(targetX, { duration: 250 }, () => {
+        if (onCardDismiss) runOnJS(onCardDismiss)(direction);
+        translateX.value = withSpring(0);
+      });
+    },
+  }), [onCardDismiss]);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -93,7 +110,9 @@ export default function ParallaxScrollView({
       </GestureDetector>
     </ThemedView>
   );
-}
+});
+
+export default ParallaxScrollView;
 
 const styles = StyleSheet.create({
   container: {

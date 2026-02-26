@@ -1,7 +1,8 @@
+import { useRef } from 'react';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
+import ParallaxScrollView, { ParallaxScrollViewRef } from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
@@ -23,6 +24,7 @@ type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 
 export default function TabTwoScreen() {
   const router = useRouter();
+  const parallaxRef = useRef<ParallaxScrollViewRef>(null);
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const [visibleItems, setVisibleItems] = useState(TestData.items);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
@@ -71,7 +73,7 @@ export default function TabTwoScreen() {
       toggleLikeContext(currentItem.id);
       spawnButterflies('right');
     }
-    setTimeout(() => handleCardDismiss('right'), wasLiked ? 0 : 200);
+    parallaxRef.current?.triggerSwipe('right');
   };
 
   const handleSwipeUp = () => {
@@ -84,6 +86,7 @@ export default function TabTwoScreen() {
   return (
     <View style={styles.screen}>
       <ParallaxScrollView
+        ref={parallaxRef}
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
