@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
@@ -41,7 +41,7 @@ function getOrderedLikedItems(
 export default function LikedItemsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { likedMap, likedOrder, toggleLike, setLikedOrder } = useLikedItems();
+  const { likedMap, likedOrder, toggleLike, clearAllLikes, setLikedOrder } = useLikedItems();
   const [isEditMode, setIsEditMode] = useState(false);
   const [orderedItems, setOrderedItems] = useState<TestItem[]>([]);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -86,6 +86,38 @@ export default function LikedItemsScreen() {
           headerTitleStyle: { fontWeight: '700' },
           headerStyle: { backgroundColor: screenBg },
           headerTintColor: textColor,
+          headerLeft: isEditMode
+            ? () => (
+                <Pressable
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    Alert.alert(
+                      'Clear all items',
+                      'Remove all items from your liked list?',
+                      [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                          text: 'Clear all',
+                          style: 'destructive',
+                          onPress: () => {
+                            clearAllLikes();
+                            setIsEditMode(false);
+                          },
+                        },
+                      ]
+                    );
+                  }}
+                  style={({ pressed }) => [
+                    { padding: 8, marginLeft: 8, opacity: pressed ? 0.7 : 1 },
+                  ]}
+                  hitSlop={8}
+                >
+                  <ThemedText style={[styles.clearAllText, { color: '#FF3B30' }]}>
+                    Clear all
+                  </ThemedText>
+                </Pressable>
+              )
+            : undefined,
           headerRight: () => (
             <Pressable
               onPress={async () => {
@@ -352,5 +384,9 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  clearAllText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
