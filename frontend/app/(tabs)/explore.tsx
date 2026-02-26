@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,14 +21,19 @@ const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
 const ARROW_COLOR = '#5a5a5a';
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
+type TestItem = (typeof TestData.items)[number];
 
 export default function TabTwoScreen() {
   const router = useRouter();
   const parallaxRef = useRef<ParallaxScrollViewRef>(null);
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
-  const [visibleItems, setVisibleItems] = useState(TestData.items);
+  const [visibleItems, setVisibleItems] = useState(() =>
+    TestData.items.filter((item) => !isLiked(item.id))
+  );
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
+  const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
+  const prevItemsLengthRef = useRef(0);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -49,18 +54,28 @@ export default function TabTwoScreen() {
   };
 
   const handleCardDismiss = (direction?: 'left' | 'right') => {
+    const item = visibleItems[visibleItems.length - 1];
+    if (direction && item) {
+      pendingDismissRef.current = { direction, item };
+    }
     setVisibleItems(prev => prev.slice(0, -1));
   };
 
-  const handleSwipeDirection = (direction: 'left' | 'right') => {
-    spawnButterflies(direction);
-    if (direction === 'right' && currentItem) {
-      toggleLikeContext(currentItem.id);
+  useEffect(() => {
+    const prevLen = prevItemsLengthRef.current;
+    prevItemsLengthRef.current = visibleItems.length;
+    if (prevLen > visibleItems.length && pendingDismissRef.current) {
+      const { direction, item } = pendingDismissRef.current;
+      pendingDismissRef.current = null;
+      if (direction === 'right') {
+        spawnButterflies('right');
+        if (!isLiked(item.id)) toggleLikeContext(item.id);
+      }
     }
-  };
+  }, [visibleItems, isLiked, toggleLikeContext]);
 
   const resetCards = () => {
-    setVisibleItems(TestData.items);
+    setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
   };
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
@@ -68,11 +83,6 @@ export default function TabTwoScreen() {
 
   const handleLikePress = () => {
     if (!currentItem) return;
-    const wasLiked = isLiked(currentItem.id);
-    if (!wasLiked) {
-      toggleLikeContext(currentItem.id);
-      spawnButterflies('right');
-    }
     parallaxRef.current?.triggerSwipe('right');
   };
 
@@ -90,7 +100,6 @@ export default function TabTwoScreen() {
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
-        onSwipeDirection={handleSwipeDirection}
         onSwipeUp={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
