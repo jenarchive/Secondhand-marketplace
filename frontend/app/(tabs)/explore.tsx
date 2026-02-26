@@ -44,7 +44,7 @@ export default function TabTwoScreen() {
   const spawnButterflies = (direction: 'left' | 'right') => {
     if (direction !== 'right') return;
     const baseId = Date.now();
-    const count = 3 + Math.floor(Math.random() * 2);
+    const count = 2 + Math.floor(Math.random() * 2);
     const newOnes: ButterflyInstance[] = Array.from({ length: count }, (_, i) => ({
       id: baseId + i,
       direction: direction,
@@ -98,16 +98,20 @@ export default function TabTwoScreen() {
 
   const handleLikePress = () => {
     if (!currentItem) return;
-    setHeartFilledId(currentItem.id);
+    const itemId = currentItem.id;
+    setHeartFilledId(itemId);
     alreadyAddedToLikesRef.current = true;
-    if (!isLiked(currentItem.id)) toggleLikeContext(currentItem.id);
+    if (!isLiked(itemId)) toggleLikeContext(itemId);
     spawnButterflies('right');
-    parallaxRef.current?.triggerSwipe('right');
+    setTimeout(() => {
+      parallaxRef.current?.triggerSwipe('right');
+    }, 50);
   };
 
   const handleCardWillDismiss = (direction: 'left' | 'right') => {
     if (direction === 'right' && currentItem) {
       setHeartFilledId(currentItem.id);
+      spawnButterflies('right');
       if (!isLiked(currentItem.id)) {
         alreadyAddedToLikesRef.current = true;
         toggleLikeContext(currentItem.id);
