@@ -75,7 +75,7 @@ export default function TabTwoScreen() {
       const alreadyAdded = alreadyAddedToLikesRef.current;
       alreadyAddedToLikesRef.current = false;
       if (direction === 'right') {
-        if (!alreadyAdded) spawnButterflies('right');
+        spawnButterflies('right');
         if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
       }
     }
@@ -109,7 +109,6 @@ export default function TabTwoScreen() {
     setHeartFilledId(itemId);
     alreadyAddedToLikesRef.current = true;
     if (!isLiked(itemId)) toggleLikeContext(itemId);
-    spawnButterflies('right');
     setTimeout(() => {
       parallaxRef.current?.triggerSwipe('right');
     }, 25);
@@ -118,7 +117,6 @@ export default function TabTwoScreen() {
   const handleCardWillDismiss = (direction: 'left' | 'right') => {
     if (direction === 'right' && currentItem) {
       setHeartFilledId(currentItem.id);
-      spawnButterflies('right');
       if (!isLiked(currentItem.id)) {
         alreadyAddedToLikesRef.current = true;
         toggleLikeContext(currentItem.id);
