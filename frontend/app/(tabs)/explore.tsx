@@ -37,6 +37,7 @@ export default function TabTwoScreen() {
   const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
   const prevItemsLengthRef = useRef(0);
   const alreadyAddedToLikesRef = useRef(false);
+  const fromItemDetailRef = useRef(false);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -86,8 +87,14 @@ export default function TabTwoScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      setHeartFilledId(null);
-      setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
+      if (fromItemDetailRef.current) {
+        fromItemDetailRef.current = false;
+        parallaxRef.current?.resetPosition();
+      } else {
+        setHeartFilledId(null);
+        setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
+        parallaxRef.current?.resetPosition();
+      }
     }, [isLiked])
   );
 
@@ -122,6 +129,8 @@ export default function TabTwoScreen() {
   const handleSwipeUp = () => {
     const currentItem = visibleItems[visibleItems.length - 1];
     if (currentItem) {
+      fromItemDetailRef.current = true;
+      parallaxRef.current?.resetPosition();
       router.push(`/items/${currentItem.id}`);
     }
   };

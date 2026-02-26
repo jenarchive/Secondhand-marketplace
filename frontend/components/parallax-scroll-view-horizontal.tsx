@@ -20,6 +20,7 @@ const SWIPE_UP_THRESHOLD = 80;
 
 export type ParallaxScrollViewRef = {
   triggerSwipe: (direction: 'left' | 'right') => void;
+  resetPosition: () => void;
 };
 
 type Props = PropsWithChildren<{
@@ -55,6 +56,10 @@ const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function Par
         translateX.value = withSpring(0);
       });
     },
+    resetPosition: () => {
+      translateX.value = 0;
+      translateY.value = 0;
+    },
   }), [onCardDismiss]);
 
   const handleSwipeComplete = (direction: 'left' | 'right') => {
@@ -74,8 +79,9 @@ const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function Par
       const direction = x > 0 ? 'right' : 'left';
       onCardWillDismiss?.(direction);
       const targetX = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
+      const duration = direction === 'right' ? 300 : 200;
       translateY.value = withSpring(0);
-      translateX.value = withTiming(targetX, { duration: 200 }, () => {
+      translateX.value = withTiming(targetX, { duration }, () => {
         runOnJS(handleSwipeComplete)(direction);
         translateX.value = withSpring(0);
       });
