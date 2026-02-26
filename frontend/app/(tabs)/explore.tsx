@@ -173,7 +173,7 @@ export default function TabTwoScreen() {
         <View style={styles.actionBar}>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionSkip, pressed && styles.actionPressed]}
-            onPress={handleCardDismiss}
+            onPress={() => parallaxRef.current?.triggerSwipe('left')}
           >
             <Ionicons name="close" size={26} color="#FF453A" />
           </Pressable>
