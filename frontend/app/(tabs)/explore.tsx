@@ -1,4 +1,5 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,6 +33,7 @@ export default function TabTwoScreen() {
   );
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
+  const [heartFilledId, setHeartFilledId] = useState<number | null>(null);
   const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
   const prevItemsLengthRef = useRef(0);
   const alreadyAddedToLikesRef = useRef(false);
@@ -68,10 +70,11 @@ export default function TabTwoScreen() {
     if (prevLen > visibleItems.length && pendingDismissRef.current) {
       const { direction, item } = pendingDismissRef.current;
       pendingDismissRef.current = null;
+      setHeartFilledId(null);
       const alreadyAdded = alreadyAddedToLikesRef.current;
       alreadyAddedToLikesRef.current = false;
       if (direction === 'right') {
-        spawnButterflies('right');
+        if (!alreadyAdded) spawnButterflies('right');
         if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
       }
     }
@@ -81,20 +84,34 @@ export default function TabTwoScreen() {
     setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      setHeartFilledId(null);
+      setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
+    }, [isLiked])
+  );
+
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
-  const currentItemLiked = currentItem ? isLiked(currentItem.id) : false;
+  const currentItemLiked = currentItem
+    ? isLiked(currentItem.id) || heartFilledId === currentItem.id
+    : false;
 
   const handleLikePress = () => {
     if (!currentItem) return;
+    setHeartFilledId(currentItem.id);
     alreadyAddedToLikesRef.current = true;
     if (!isLiked(currentItem.id)) toggleLikeContext(currentItem.id);
+    spawnButterflies('right');
     parallaxRef.current?.triggerSwipe('right');
   };
 
   const handleCardWillDismiss = (direction: 'left' | 'right') => {
-    if (direction === 'right' && currentItem && !isLiked(currentItem.id)) {
-      alreadyAddedToLikesRef.current = true;
-      toggleLikeContext(currentItem.id);
+    if (direction === 'right' && currentItem) {
+      setHeartFilledId(currentItem.id);
+      if (!isLiked(currentItem.id)) {
+        alreadyAddedToLikesRef.current = true;
+        toggleLikeContext(currentItem.id);
+      }
     }
   };
 
@@ -244,11 +261,13 @@ export default function TabTwoScreen() {
               </Pressable>
             </Link>
           </View>
-          <View style={styles.emptyStateBelow}>
-            <Pressable style={styles.emptyStateReset} onPress={resetCards}>
-              <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
-            </Pressable>
-          </View>
+          {!TestData.items.every((item) => isLiked(item.id)) && (
+            <View style={styles.emptyStateBelow}>
+              <Pressable style={styles.emptyStateReset} onPress={resetCards}>
+                <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
+              </Pressable>
+            </View>
+          )}
         </View>
       )}
     </View>
