@@ -49,7 +49,7 @@ const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function Par
 
   const SWIPE_DURATION_RIGHT = 700;
   const SWIPE_DURATION_LEFT = 300;
-  const SLIDE_IN_DURATION_RIGHT = 1000;
+  const SLIDE_IN_DURATION_RIGHT = 2000;
 
   useImperativeHandle(ref, () => ({
     triggerSwipe: (direction: 'left' | 'right') => {
