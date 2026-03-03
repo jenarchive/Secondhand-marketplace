@@ -1,12 +1,10 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { forwardRef, useImperativeHandle } from 'react';
 import { StyleSheet, Dimensions } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
   runOnJS,
 } from 'react-native-reanimated';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
@@ -15,104 +13,59 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import * as Haptics from 'expo-haptics';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const SWIPE_THRESHOLD = 15;
-const SWIPE_UP_THRESHOLD = 80;
+const SWIPE_THRESHOLD = 50;
+const TRIGGER_THRESHOLD = 10;
 
-export type ParallaxScrollViewRef = {
-  triggerSwipe: (direction: 'left' | 'right') => void;
-  resetPosition: () => void;
-};
+const SWIPE_UP_THRESHOLD = 80;
 
 type Props = PropsWithChildren<{
   headerImage?: ReactElement;
   headerBackgroundColor?: { dark: string; light: string };
   onCardDismiss?: (direction?: 'left' | 'right') => void;
-  onCardWillDismiss?: (direction: 'left' | 'right') => void;
+  onSwipeDirection?: (direction: 'left' | 'right') => void;
   onSwipeUp?: () => void;
 }>;
 
-const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function ParallaxScrollView({
+export default function ParallaxScrollView({
   children,
   onCardDismiss,
-  onCardWillDismiss,
+  onSwipeDirection,
   onSwipeUp,
-}, ref) {
+}: Props) {
   const backgroundColor = useThemeColor({}, 'background');
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
-  const lastX = useSharedValue(0);
-  const lastY = useSharedValue(0);
-
-  const triggerHaptic = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-  };
-
-  const SWIPE_DURATION_RIGHT = 700;
-  const SWIPE_DURATION_LEFT = 300;
-  const SLIDE_IN_DURATION_RIGHT = 2000;
-
-  useImperativeHandle(ref, () => ({
-    triggerSwipe: (direction: 'left' | 'right') => {
-      triggerHaptic();
-      const targetX = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-      const duration = direction === 'right' ? SWIPE_DURATION_RIGHT : SWIPE_DURATION_LEFT;
-      translateX.value = withTiming(targetX, { duration }, () => {
-        if (onCardDismiss) runOnJS(onCardDismiss)(direction);
-        translateX.value = direction === 'right'
-          ? withTiming(0, { duration: SLIDE_IN_DURATION_RIGHT })
-          : withSpring(0);
-      });
-    },
-    resetPosition: () => {
-      translateX.value = 0;
-      translateY.value = 0;
-    },
-  }), [onCardDismiss]);
-
-  const handleSwipeComplete = (direction: 'left' | 'right') => {
-    if (onCardDismiss) onCardDismiss(direction);
-  };
-
-  const handleFinalize = (x: number, y: number, didSucceed: boolean) => {
-    if (!didSucceed) return;
-    const isSwipeUp = y < -SWIPE_UP_THRESHOLD && Math.abs(y) > Math.abs(x);
-    const isSwipeHorizontal = Math.abs(x) > SWIPE_THRESHOLD && Math.abs(x) > Math.abs(y);
-
-    if (isSwipeUp && onSwipeUp) {
-      triggerHaptic();
-      onSwipeUp();
-    } else if (isSwipeHorizontal && onCardDismiss) {
-      triggerHaptic();
-      const direction = x > 0 ? 'right' : 'left';
-      onCardWillDismiss?.(direction);
-      const targetX = direction === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-      const duration = direction === 'right' ? SWIPE_DURATION_RIGHT : SWIPE_DURATION_LEFT;
-      translateY.value = withSpring(0);
-      translateX.value = withTiming(targetX, { duration }, () => {
-        runOnJS(handleSwipeComplete)(direction);
-        translateX.value = direction === 'right'
-          ? withTiming(0, { duration: SLIDE_IN_DURATION_RIGHT })
-          : withSpring(0);
-      });
-    } else {
-      translateX.value = withSpring(0);
-      translateY.value = withSpring(0);
-    }
-  };
+  const hasTriggeredHaptic = useSharedValue(false);
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
       translateX.value = event.translationX;
       translateY.value = event.translationY;
-      lastX.value = event.translationX;
-      lastY.value = event.translationY;
-    })
-    .onFinalize((_e, didSucceed) => {
-      runOnJS(handleFinalize)(lastX.value, lastY.value, didSucceed);
-      if (!didSucceed) {
-        translateX.value = withSpring(0);
-        translateY.value = withSpring(0);
+
+      if (Math.abs(event.translationX) > TRIGGER_THRESHOLD && !hasTriggeredHaptic.value) {
+        hasTriggeredHaptic.value = true;
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        if (onSwipeDirection) {
+          runOnJS(onSwipeDirection)(event.translationX > 0 ? 'right' : 'left');
+        }
       }
+    })
+    .onEnd((event) => {
+      const isSwipeUp = event.translationY < -SWIPE_UP_THRESHOLD && Math.abs(event.translationY) > Math.abs(event.translationX);
+      const isSwipeHorizontal = Math.abs(event.translationX) > SWIPE_THRESHOLD;
+
+      if (isSwipeUp && onSwipeUp) {
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        runOnJS(onSwipeUp)();
+      } else if (isSwipeHorizontal) {
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        const direction = event.translationX > 0 ? 'right' : 'left';
+        if (onCardDismiss) runOnJS(onCardDismiss)(direction);
+      }
+
+      translateX.value = withSpring(0);
+      translateY.value = withSpring(0);
+      hasTriggeredHaptic.value = false;
     });
 
   const contentAnimatedStyle = useAnimatedStyle(() => {
@@ -140,9 +93,7 @@ const ParallaxScrollView = forwardRef<ParallaxScrollViewRef, Props>(function Par
       </GestureDetector>
     </ThemedView>
   );
-});
-
-export default ParallaxScrollView;
+}
 
 const styles = StyleSheet.create({
   container: {

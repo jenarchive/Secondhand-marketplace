@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import ParallaxScrollView, { ParallaxScrollViewRef } from '@/components/parallax-scroll-view-horizontal';
+import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
@@ -26,7 +26,6 @@ type TestItem = (typeof TestData.items)[number];
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const parallaxRef = useRef<ParallaxScrollViewRef>(null);
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const [visibleItems, setVisibleItems] = useState(() =>
     TestData.items.filter((item) => !isLiked(item.id))
@@ -75,7 +74,7 @@ export default function TabTwoScreen() {
       const alreadyAdded = alreadyAddedToLikesRef.current;
       alreadyAddedToLikesRef.current = false;
       if (direction === 'right') {
-        spawnButterflies('right');
+        if (!alreadyAdded) spawnButterflies('right');
         if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
       }
     }
@@ -89,11 +88,9 @@ export default function TabTwoScreen() {
     useCallback(() => {
       if (fromItemDetailRef.current) {
         fromItemDetailRef.current = false;
-        parallaxRef.current?.resetPosition();
       } else {
         setHeartFilledId(null);
         setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
-        parallaxRef.current?.resetPosition();
       }
     }, [isLiked])
   );
@@ -103,20 +100,10 @@ export default function TabTwoScreen() {
     ? isLiked(currentItem.id) || heartFilledId === currentItem.id
     : false;
 
-  const handleLikePress = () => {
-    if (!currentItem) return;
-    const itemId = currentItem.id;
-    setHeartFilledId(itemId);
-    alreadyAddedToLikesRef.current = true;
-    if (!isLiked(itemId)) toggleLikeContext(itemId);
-    setTimeout(() => {
-      parallaxRef.current?.triggerSwipe('right');
-    }, 25);
-  };
-
-  const handleCardWillDismiss = (direction: 'left' | 'right') => {
+  const handleSwipeDirection = (direction: 'left' | 'right') => {
     if (direction === 'right' && currentItem) {
       setHeartFilledId(currentItem.id);
+      spawnButterflies('right');
       if (!isLiked(currentItem.id)) {
         alreadyAddedToLikesRef.current = true;
         toggleLikeContext(currentItem.id);
@@ -124,11 +111,20 @@ export default function TabTwoScreen() {
     }
   };
 
+  const handleLikePress = () => {
+    if (!currentItem) return;
+    const itemId = currentItem.id;
+    setHeartFilledId(itemId);
+    alreadyAddedToLikesRef.current = true;
+    if (!isLiked(itemId)) toggleLikeContext(itemId);
+    spawnButterflies('right');
+    handleCardDismiss('right');
+  };
+
   const handleSwipeUp = () => {
     const currentItem = visibleItems[visibleItems.length - 1];
     if (currentItem) {
       fromItemDetailRef.current = true;
-      parallaxRef.current?.resetPosition();
       router.push(`/items/${currentItem.id}`);
     }
   };
@@ -136,11 +132,10 @@ export default function TabTwoScreen() {
   return (
     <View style={styles.screen}>
       <ParallaxScrollView
-        ref={parallaxRef}
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
-        onCardWillDismiss={handleCardWillDismiss}
+        onSwipeDirection={handleSwipeDirection}
         onSwipeUp={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
@@ -223,7 +218,7 @@ export default function TabTwoScreen() {
         <View style={styles.actionBar}>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionSkip, pressed && styles.actionPressed]}
-            onPress={() => parallaxRef.current?.triggerSwipe('left')}
+            onPress={() => handleCardDismiss('left')}
           >
             <Ionicons name="close" size={26} color="#FF453A" />
           </Pressable>
