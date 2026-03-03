@@ -33,7 +33,9 @@ export default function TabTwoScreen() {
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
   const [heartFilledId, setHeartFilledId] = useState<number | null>(null);
+  const [likeButtonHeartFilled, setLikeButtonHeartFilled] = useState(false);
   const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
+  const fromLikeButtonRef = useRef(false);
   const prevItemsLengthRef = useRef(0);
   const alreadyAddedToLikesRef = useRef(false);
   const fromItemDetailRef = useRef(false);
@@ -70,12 +72,17 @@ export default function TabTwoScreen() {
     if (prevLen > visibleItems.length && pendingDismissRef.current) {
       const { direction, item } = pendingDismissRef.current;
       pendingDismissRef.current = null;
-      setHeartFilledId(null);
+      const fromLikeButton = fromLikeButtonRef.current;
+      fromLikeButtonRef.current = false;
       const alreadyAdded = alreadyAddedToLikesRef.current;
       alreadyAddedToLikesRef.current = false;
       if (direction === 'right') {
         if (!alreadyAdded) spawnButterflies('right');
         if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
+        setHeartFilledId(null);
+        setLikeButtonHeartFilled(false);
+      } else {
+        setHeartFilledId(null);
       }
     }
   }, [visibleItems, isLiked, toggleLikeContext]);
@@ -90,6 +97,7 @@ export default function TabTwoScreen() {
         fromItemDetailRef.current = false;
       } else {
         setHeartFilledId(null);
+        setLikeButtonHeartFilled(false);
         setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
       }
     }, [isLiked])
@@ -97,7 +105,7 @@ export default function TabTwoScreen() {
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
   const currentItemLiked = currentItem
-    ? isLiked(currentItem.id) || heartFilledId === currentItem.id
+    ? isLiked(currentItem.id) || heartFilledId === currentItem.id || likeButtonHeartFilled
     : false;
 
   const handleSwipeDirection = (direction: 'left' | 'right') => {
@@ -115,10 +123,14 @@ export default function TabTwoScreen() {
     if (!currentItem) return;
     const itemId = currentItem.id;
     setHeartFilledId(itemId);
+    setLikeButtonHeartFilled(true);
+    fromLikeButtonRef.current = true;
     alreadyAddedToLikesRef.current = true;
     if (!isLiked(itemId)) toggleLikeContext(itemId);
     spawnButterflies('right');
-    handleCardDismiss('right');
+    requestAnimationFrame(() => {
+      handleCardDismiss('right');
+    });
   };
 
   const handleSwipeUp = () => {
