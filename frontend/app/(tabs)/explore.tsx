@@ -26,7 +26,7 @@ type TestItem = (typeof TestData.items)[number];
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
+  const { toggleLike: toggleLikeContext, isLiked, likedMap } = useLikedItems();
   const [visibleItems, setVisibleItems] = useState(() =>
     TestData.items.filter((item) => !isLiked(item.id))
   );
@@ -36,6 +36,7 @@ export default function TabTwoScreen() {
   const [likeButtonHeartFilled, setLikeButtonHeartFilled] = useState(false);
   const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
   const fromLikeButtonRef = useRef(false);
+  const visibleItemsRef = useRef<TestItem[]>([]);
   const prevItemsLengthRef = useRef(0);
   const alreadyAddedToLikesRef = useRef(false);
   const fromItemDetailRef = useRef(false);
@@ -58,12 +59,17 @@ export default function TabTwoScreen() {
     setButterflies((prev) => prev.filter((b) => b.id !== id));
   };
 
-  const handleCardDismiss = (direction?: 'left' | 'right') => {
-    const item = visibleItems[visibleItems.length - 1];
+  const handleCardDismiss = (direction?: 'left' | 'right', itemIdOverride?: number) => {
+    const item =
+      itemIdOverride != null
+        ? TestData.items.find((i) => i.id === itemIdOverride)
+        : visibleItems[visibleItems.length - 1];
     if (direction && item) {
       pendingDismissRef.current = { direction, item };
     }
-    setVisibleItems(prev => prev.slice(0, -1));
+    const nextItems = visibleItems.slice(0, -1);
+    visibleItemsRef.current = nextItems;
+    setVisibleItems(nextItems);
   };
 
   useEffect(() => {
@@ -91,46 +97,62 @@ export default function TabTwoScreen() {
     setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
   };
 
+  useEffect(() => {
+    const items = TestData.items.filter((item) => !likedMap[String(item.id)]);
+    visibleItemsRef.current = items;
+  }, [likedMap]);
+
   useFocusEffect(
     useCallback(() => {
       if (fromItemDetailRef.current) {
         fromItemDetailRef.current = false;
       } else {
+        const newItems = TestData.items.filter((item) => !likedMap[String(item.id)]);
+        visibleItemsRef.current = newItems;
         setHeartFilledId(null);
         setLikeButtonHeartFilled(false);
-        setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
+        setVisibleItems(newItems);
       }
-    }, [isLiked])
+    }, [likedMap])
   );
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
+  visibleItemsRef.current = visibleItems;
+
   const currentItemLiked = currentItem
     ? isLiked(currentItem.id) || heartFilledId === currentItem.id || likeButtonHeartFilled
     : false;
 
+  const getTopItemId = () => {
+    const items = visibleItemsRef.current;
+    if (items.length > 0) return items[items.length - 1].id;
+    const unliked = TestData.items.find((i) => !likedMap[String(i.id)]);
+    return unliked?.id ?? null;
+  };
+
   const handleSwipeDirection = (direction: 'left' | 'right') => {
-    if (direction === 'right' && currentItem) {
-      setHeartFilledId(currentItem.id);
+    const itemId = getTopItemId();
+    if (direction === 'right' && itemId != null) {
+      setHeartFilledId(itemId);
+      setLikeButtonHeartFilled(true);
       spawnButterflies('right');
-      if (!isLiked(currentItem.id)) {
+      if (!isLiked(itemId)) {
         alreadyAddedToLikesRef.current = true;
-        toggleLikeContext(currentItem.id);
+        toggleLikeContext(itemId);
       }
     }
   };
 
   const handleLikePress = () => {
-    if (!currentItem) return;
-    const itemId = currentItem.id;
+    const itemId = getTopItemId();
+    if (itemId == null) return;
     setHeartFilledId(itemId);
     setLikeButtonHeartFilled(true);
     fromLikeButtonRef.current = true;
     alreadyAddedToLikesRef.current = true;
     if (!isLiked(itemId)) toggleLikeContext(itemId);
     spawnButterflies('right');
-    requestAnimationFrame(() => {
-      handleCardDismiss('right');
-    });
+    setTimeout(() => handleCardDismiss('right', itemId), 80);
   };
 
   const handleSwipeUp = () => {
