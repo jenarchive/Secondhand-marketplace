@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-import os
+import botocore.exceptions
 import psycopg2
 import boto3
 from werkzeug.utils import secure_filename
@@ -31,10 +31,12 @@ def upload_file_to_s3(file, filename):
             ExtraArgs={'ContentType': file.content_type}
         )
 
-        url = f"https://{current_app.config['S3_BUCKET']}.s3.{current_app.config['S3_REGION']}.amazonaws.com/{filename}"
+        bucket = current_app.config['S3_BUCKET']
+        region = current_app.config['S3_REGION']
+        url = f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
         return url
 
-    except Exception as e:
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         print(f"S3 upload error: {e}")
         return None
 
@@ -82,7 +84,7 @@ def create_item():
 
                 filename = secure_filename(file.filename)
                 unique_filename = f"{new_item_id}_{filename}"
-                
+
                 image_url = upload_file_to_s3(file, unique_filename)
 
                 if image_url:
@@ -95,19 +97,20 @@ def create_item():
 
         conn.commit()
         cur.close()
-        
+
         # POST response
         return jsonify({
             "message": "product uploaded successfully",
             "item_id": new_item_id
         }), 201
 
+    # pylint: disable=broad-exception-caught
     except Exception as e:
         if conn:
             conn.rollback()
         print("error:", e)
         return jsonify({"error": str(e)}), 500
-    
+
     finally:
         if conn:
             conn.close()

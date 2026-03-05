@@ -445,12 +445,14 @@ disable=raw-checker-failed,
         deprecated-pragma,
         use-implicit-booleaness-not-comparison-to-string,
         use-implicit-booleaness-not-comparison-to-zero,
-        use-symbolic-message-instead
         missing-docstring,
+        missing-module-docstring,
         invalid-name,
         fixme,
         too-many-locals,
-        too-many-arguments
+        too-many-arguments,
+        too-few-public-methods,
+        trailing-newlines
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

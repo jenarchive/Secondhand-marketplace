@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint
 
 item_listing_bp = Blueprint("listing", __name__)
 

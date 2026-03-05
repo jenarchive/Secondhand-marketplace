@@ -5,4 +5,5 @@ python-dotenv
 boto3
 gunicorn
 psycopg2-binary
+pylint
 
