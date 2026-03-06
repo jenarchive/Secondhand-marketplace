@@ -54,6 +54,9 @@ def create_item():
         # change later when we add authentication
         seller_id = 1
 
+        if 'images' not in request.files or not request.files.getlist('images')[0].filename:
+            return jsonify({"error": "at least one image is required"}), 400
+
         conn = connect_db()
         cur = conn.cursor()
 
@@ -75,25 +78,24 @@ def create_item():
         new_item_id = cur.fetchone()[0]
 
         # insert images to db
-        if 'images' in request.files:
-            files = request.files.getlist('images')
+        files = request.files.getlist('images')
 
-            for file in files:
-                if file.filename == '':
-                    continue
+        for file in files:
+            if file.filename == '':
+                continue
 
-                filename = secure_filename(file.filename)
-                unique_filename = f"{new_item_id}_{filename}"
+            filename = secure_filename(file.filename)
+            unique_filename = f"{new_item_id}_{filename}"
 
-                image_url = upload_file_to_s3(file, unique_filename)
+            image_url = upload_file_to_s3(file, unique_filename)
 
-                if image_url:
-                    insert_image_query = """
-                        INSERT INTO product_images (product_id, image_url)
-                        VALUES (%s, %s);
-                    """
+            if image_url:
+                insert_image_query = """
+                    INSERT INTO product_images (product_id, image_url)
+                    VALUES (%s, %s);
+                """
 
-                    cur.execute(insert_image_query, (new_item_id, image_url))
+                cur.execute(insert_image_query, (new_item_id, image_url))
 
         conn.commit()
         cur.close()
