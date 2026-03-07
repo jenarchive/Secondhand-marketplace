@@ -1,4 +1,3 @@
-# workflow trigger2 - delete later
 from app.config import Config
 import os
 import psycopg2
