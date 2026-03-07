@@ -1,9 +1,11 @@
-name: Deploy to AWS
+name: Deploy to AWS main server
 
 on:
   push:
     branches:
       - dev
+    paths:
+      - 'backend/**'
 
 jobs:
   deploy:
