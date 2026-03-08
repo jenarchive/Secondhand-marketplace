@@ -15,6 +15,7 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { router, useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ThemedText } from '@/components/themed-text';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import TestData from '@/test-data.json';
@@ -52,6 +53,7 @@ export default function EditItemScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const id = Number(params.id);
   const itemData = TestData.items[id - 1];
+  const headerTitleColor = useThemeColor({}, 'text');
 
   const [title, setTitle] = useState(itemData?.title ?? '');
   const [description, setDescription] = useState(itemData?.description ?? '');
@@ -296,7 +298,7 @@ export default function EditItemScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <ThemedText type="title" style={styles.pageTitle}>
+        <ThemedText type="title" style={[styles.pageTitle, { color: headerTitleColor }]}>
           Edit Item
         </ThemedText>
       </View>
@@ -368,7 +370,6 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 18,
     marginBottom: 4,
-    color: '#fff',
   },
   formContainer: {
     padding: 16,

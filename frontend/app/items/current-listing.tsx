@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/themed-text';
 import TestData from '@/test-data.json';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
@@ -22,6 +23,7 @@ const blurhash =
 
 export default function CurrentListingScreen() {
   const router = useRouter();
+  const headerTitleColor = useThemeColor({}, 'text');
 
   const myListings = useMemo(() => {
     const shuffled = shuffleArray(TestData.items);
@@ -43,7 +45,7 @@ export default function CurrentListingScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <ThemedText type="title" style={styles.pageTitle}>My Listings</ThemedText>
+        <ThemedText type="title" style={[styles.pageTitle, { color: headerTitleColor }]}>My Listings</ThemedText>
       </View>
       <ScrollView
         contentContainerStyle={[styles.listContent, { paddingTop: 112 }]}
@@ -113,7 +115,6 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 18,
     marginBottom: 4,
-    color: '#fff',
   },
   listContent: {
     paddingHorizontal: 20,

@@ -37,6 +37,7 @@ export default function HomeScreen() {
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
+  const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
 
   const handleBuy = async () => {
@@ -70,7 +71,7 @@ export default function HomeScreen() {
           >
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
-          <ThemedText type="title" style={styles.customHeaderTitle}>Edit Item</ThemedText>
+          <ThemedText type="title" style={[styles.customHeaderTitle, { color: headerTitleColor }]}>Edit Item</ThemedText>
         </View>
       )}
       <View style={styles.screen}>
@@ -169,7 +170,6 @@ const styles = StyleSheet.create({
   customHeaderTitle: {
     fontSize: 18,
     marginBottom: 4,
-    color: '#fff',
   },
   screen: {
     flex: 1,
