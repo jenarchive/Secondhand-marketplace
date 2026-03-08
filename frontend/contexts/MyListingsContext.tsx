@@ -1,9 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import TestData from '@/test-data.json';
-
-export type MyListingItem = (typeof TestData.items)[number];
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import type { MyListingItem } from '@/store/myListingsStore';
+import { getItems, setItems as setStoreItems } from '@/store/myListingsStore';
 
 type MyListingsContextType = {
   items: MyListingItem[];
@@ -13,13 +12,17 @@ type MyListingsContextType = {
 
 const MyListingsContext = createContext<MyListingsContextType | null>(null);
 
+export type { MyListingItem };
+
 export function MyListingsProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<MyListingItem[]>(() => [...TestData.items]);
+  const [items, setItems] = useState<MyListingItem[]>(() => getItems());
 
   const updateItem = useCallback((id: number, updates: Partial<MyListingItem>) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+    const next = getItems().map((item) =>
+      item.id === id ? { ...item, ...updates } : { ...item }
     );
+    setStoreItems(next);
+    setItems(next);
   }, []);
 
   const getItemById = useCallback(
@@ -27,8 +30,13 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
     [items]
   );
 
+  const value = useMemo(
+    () => ({ items, updateItem, getItemById }),
+    [items, updateItem, getItemById]
+  );
+
   return (
-    <MyListingsContext.Provider value={{ items, updateItem, getItemById }}>
+    <MyListingsContext.Provider value={value}>
       {children}
     </MyListingsContext.Provider>
   );

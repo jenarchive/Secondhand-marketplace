@@ -15,8 +15,8 @@ export default function HomeScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
   const id = Number(params.id);
   const isMyListing = params.fromMyListings === 'true';
-  const { getItemById } = useMyListings();
-  const itemData = getItemById(id);
+  const { items } = useMyListings();
+  const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
   const liked = itemData ? isLiked(itemData.id) : false;
 
@@ -75,7 +75,7 @@ export default function HomeScreen() {
           {isMyListing ? 'Edit Item' : MyData.title}
         </ThemedText>
       </View>
-      <View style={styles.screen}>
+      <View style={styles.screen} key={`item-${id}-${itemData.title}`}>
         <ScrollView
           style={[styles.scrollView, { backgroundColor }]}
           contentContainerStyle={[

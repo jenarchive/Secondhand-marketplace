@@ -4,11 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import { useMyListings } from '@/contexts/MyListingsContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -24,9 +24,17 @@ type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
-  const [visibleItems, setVisibleItems] = useState(TestData.items);
+  const { items: contextItems } = useMyListings();
+  const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
+
+  useEffect(() => {
+    setVisibleItems((prev) => {
+      if (prev.length === 0) return [...contextItems];
+      return prev.map((item) => contextItems.find((c) => c.id === item.id) ?? item);
+    });
+  }, [contextItems]);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -58,7 +66,7 @@ export default function TabTwoScreen() {
   };
 
   const resetCards = () => {
-    setVisibleItems(TestData.items);
+    setVisibleItems([...contextItems]);
   };
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;

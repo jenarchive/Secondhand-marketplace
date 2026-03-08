@@ -17,15 +17,15 @@ export default function HomeScreen() {
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
-  const { items } = useMyListings();
+  const { items: displayItems } = useMyListings();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter(i =>
+    if (!q) return displayItems;
+    return displayItems.filter(i =>
       i.title.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q)
     );
-  }, [query, items]);
+  }, [query, displayItems]);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -53,7 +53,7 @@ export default function HomeScreen() {
         <ThemedView style={styles.flexbox}>
             {filtered.map((item) => (
               <Pressable
-                key={item.id}
+                key={`${item.id}-${item.title}`}
                 style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
                 onPress={async () => {
                   // light selection haptic and navigate
