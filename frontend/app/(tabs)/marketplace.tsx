@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
+import { Alert, Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
 import { useState, useMemo, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +17,7 @@ export default function HomeScreen() {
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
-  const { items: contextItems } = useMyListings();
+  const { items: contextItems, isMyListing } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
 
   useEffect(() => {
@@ -84,6 +84,10 @@ export default function HomeScreen() {
                       style={styles.likeButton}
                       onPress={(e) => {
                         e.stopPropagation?.();
+                        if (isMyListing(item.id)) {
+                          Alert.alert('', 'This is your posted product.');
+                          return;
+                        }
                         toggleLike(item.id);
                       }}
                       hitSlop={8}

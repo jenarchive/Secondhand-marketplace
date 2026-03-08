@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
+import { Alert, View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
@@ -24,7 +24,7 @@ type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
-  const { items: contextItems } = useMyListings();
+  const { items: contextItems, isMyListing } = useMyListings();
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
@@ -61,6 +61,10 @@ export default function TabTwoScreen() {
   const handleSwipeDirection = (direction: 'left' | 'right') => {
     spawnButterflies(direction);
     if (direction === 'right' && currentItem) {
+      if (isMyListing(currentItem.id)) {
+        Alert.alert('', 'This is your posted product.');
+        return;
+      }
       toggleLikeContext(currentItem.id);
     }
   };
@@ -74,6 +78,10 @@ export default function TabTwoScreen() {
 
   const toggleLike = () => {
     if (!currentItem) return;
+    if (isMyListing(currentItem.id)) {
+      Alert.alert('', 'This is your posted product.');
+      return;
+    }
     toggleLikeContext(currentItem.id);
   };
 

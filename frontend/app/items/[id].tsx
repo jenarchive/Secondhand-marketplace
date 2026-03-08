@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
@@ -14,8 +14,8 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 export default function HomeScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
   const id = Number(params.id);
-  const isMyListing = params.fromMyListings === 'true';
-  const { items } = useMyListings();
+  const fromMyListings = params.fromMyListings === 'true';
+  const { items, isMyListing: isItemMine } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
   const liked = itemData ? isLiked(itemData.id) : false;
@@ -72,7 +72,7 @@ export default function HomeScreen() {
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <ThemedText type="title" style={[styles.customHeaderTitle, { color: headerTitleColor }]} numberOfLines={1}>
-          {isMyListing ? 'Edit Item' : MyData.title}
+          {fromMyListings ? 'Edit Item' : MyData.title}
         </ThemedText>
       </View>
       <View style={styles.screen} key={`item-${id}-${itemData.title}`}>
@@ -82,13 +82,13 @@ export default function HomeScreen() {
             styles.scrollContent,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isMyListing ? 280 : 0),
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!fromMyListings ? 280 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
         >
       <ThemedView style={styles.listingContainer}>
-        {!isMyListing && (
+        {!fromMyListings && (
         <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id} />
         )}
         <View style={styles.imageWrapper}>
@@ -99,8 +99,18 @@ export default function HomeScreen() {
             contentFit="cover"
             source={{ uri: MyData.image }}
           />
-          {!isMyListing && (
-          <Pressable style={styles.likeButton} onPress={() => toggleLike(itemData.id)} hitSlop={8}>
+          {!fromMyListings && (
+          <Pressable
+            style={styles.likeButton}
+            onPress={() => {
+              if (isItemMine(itemData.id)) {
+                Alert.alert('', 'This is your posted product.');
+                return;
+              }
+              toggleLike(itemData.id);
+            }}
+            hitSlop={8}
+          >
             <Ionicons name={liked ? 'heart' : 'heart-outline'} size={28} color={liked ? '#FF3B30' : '#FFFFFF'} />
           </Pressable>
           )}
@@ -125,7 +135,7 @@ export default function HomeScreen() {
         </ThemedView>
       </ThemedView>
         </ScrollView>
-        {!isMyListing && (
+        {!fromMyListings && (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
       <Pressable style={styles.buyButton} onPress={handleBuy} accessibilityLabel="Buy now">
         <ThemedText type="defaultSemiBold" style={styles.cardText}>Buy Now</ThemedText>

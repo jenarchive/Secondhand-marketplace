@@ -14,6 +14,8 @@ type MyListingsContextType = {
   items: MyListingItem[];
   /** Only the items I have listed (for My Listings page). Starts at 4, then 3,2,1,0 on delete. */
   myListings: MyListingItem[];
+  /** True if the item is one I posted (used to block liking own item elsewhere). */
+  isMyListing: (id: number) => boolean;
   updateItem: (id: number, updates: Partial<MyListingItem>) => void;
   removeItem: (id: number) => void;
   getItemById: (id: number) => MyListingItem | undefined;
@@ -26,7 +28,7 @@ export type { MyListingItem };
 export function MyListingsProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<MyListingItem[]>(() => getItems());
   const [myListingIds, setMyListingIds] = useState<number[]>(() =>
-    pickRandomItems(getItems(), 4).map((i) => i.id)
+    pickRandomItems(getItems(), 2).map((i) => i.id)
   );
 
   const myListings = useMemo(
@@ -54,9 +56,14 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
     [items]
   );
 
+  const isMyListing = useCallback(
+    (id: number) => myListingIds.includes(id),
+    [myListingIds]
+  );
+
   const value = useMemo(
-    () => ({ items, myListings, updateItem, removeItem, getItemById }),
-    [items, myListings, updateItem, removeItem, getItemById]
+    () => ({ items, myListings, isMyListing, updateItem, removeItem, getItemById }),
+    [items, myListings, isMyListing, updateItem, removeItem, getItemById]
   );
 
   return (
