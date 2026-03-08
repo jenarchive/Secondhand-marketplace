@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRef } from 'react';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
@@ -49,6 +50,18 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
+  const hasNavigatedToTransaction = useRef(false);
+
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (hasNavigatedToTransaction.current) return;
+    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
+    const paddingToBottom = 120;
+    const isNearBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - paddingToBottom;
+    if (isNearBottom) {
+      hasNavigatedToTransaction.current = true;
+      router.push(`/items/transaction/${id}`);
+    }
+  };
 
   return (
     <>
@@ -69,14 +82,17 @@ export default function HomeScreen() {
         <ScrollView
           style={[styles.scrollView, { backgroundColor }]}
           contentContainerStyle={[
-            styles.scrollContent,
+            styles.scrollContentWrap,
             {
               paddingTop: 112,
               paddingBottom: 24 + Math.max(insets.bottom, 12) + (isItemMine(itemData.id) ? 280 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         >
+          <View style={styles.detailSection}>
       <ThemedView style={styles.listingContainer}>
         <UserHeader
           itemId={itemData.id}
@@ -122,6 +138,14 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
       </ThemedView>
+          <Pressable
+            style={styles.scrollHint}
+            onPress={() => router.push(`/items/transaction/${id}`)}
+          >
+            <Ionicons name="chevron-down" size={28} color={headerTitleColor} />
+            <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: headerTitleColor }]}>Buy Now</ThemedText>
+          </Pressable>
+          </View>
         </ScrollView>
         {isItemMine(itemData.id) && (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
@@ -196,8 +220,18 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
-  scrollContent: {
+  scrollContentWrap: {
     paddingHorizontal: 24,
+  },
+  detailSection: {},
+  scrollHint: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 32,
+    gap: 8,
+  },
+  scrollHintText: {
+    fontSize: 16,
   },
   listingContainer: {
     gap: 12,
