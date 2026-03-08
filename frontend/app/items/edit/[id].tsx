@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import {
+  Alert,
   Platform,
   StyleSheet,
   TouchableOpacity,
@@ -52,7 +53,7 @@ function mapTestCategoryToForm(testCategory: string): string {
 export default function EditItemScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const id = Number(params.id);
-  const { getItemById, updateItem } = useMyListings();
+  const { getItemById, updateItem, removeItem } = useMyListings();
   const itemData = getItemById(id);
   const headerTitleColor = useThemeColor({}, 'text');
   const labelColor = useThemeColor({}, 'text');
@@ -313,7 +314,23 @@ export default function EditItemScreen() {
         </ThemedText>
         <TouchableOpacity
           style={styles.delistButton}
-          onPress={() => {}}
+          onPress={() => {
+            Alert.alert(
+              'Delete listing',
+              'Are you sure you want to delete this listing? This action cannot be undone.',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Delete',
+                  style: 'destructive',
+                  onPress: () => {
+                    removeItem(id);
+                    router.back();
+                  },
+                },
+              ]
+            );
+          }}
         >
           <Ionicons name="trash-outline" size={24} color="white" />
         </TouchableOpacity>

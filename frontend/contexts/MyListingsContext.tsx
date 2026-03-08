@@ -7,6 +7,7 @@ import { getItems, setItems as setStoreItems } from '@/store/myListingsStore';
 type MyListingsContextType = {
   items: MyListingItem[];
   updateItem: (id: number, updates: Partial<MyListingItem>) => void;
+  removeItem: (id: number) => void;
   getItemById: (id: number) => MyListingItem | undefined;
 };
 
@@ -25,14 +26,20 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
     setItems(next);
   }, []);
 
+  const removeItem = useCallback((id: number) => {
+    const next = getItems().filter((item) => item.id !== id);
+    setStoreItems(next);
+    setItems(next);
+  }, []);
+
   const getItemById = useCallback(
     (id: number) => items.find((item) => item.id === id),
     [items]
   );
 
   const value = useMemo(
-    () => ({ items, updateItem, getItemById }),
-    [items, updateItem, getItemById]
+    () => ({ items, updateItem, removeItem, getItemById }),
+    [items, updateItem, removeItem, getItemById]
   );
 
   return (
