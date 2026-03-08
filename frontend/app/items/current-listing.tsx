@@ -6,7 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import TestData from '@/test-data.json';
 import * as Haptics from 'expo-haptics';
-import { Colors } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -24,15 +23,14 @@ const blurhash =
 export default function CurrentListingScreen() {
   const router = useRouter();
   const headerTitleColor = useThemeColor({}, 'text');
+  const screenBg = useThemeColor({ light: '#fff', dark: '#000' }, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const placeholderBg = useThemeColor({ light: '#e5e5e5', dark: '#2c2c2e' }, 'background');
 
   const myListings = useMemo(() => {
     const shuffled = shuffleArray(TestData.items);
     return shuffled.slice(0, 4);
   }, []);
-
-  const screenBg = '#121212';
-  const textColor = Colors.dark.text;
-  const placeholderBg = '#2c2c2e';
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
