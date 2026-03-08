@@ -20,7 +20,7 @@ def init_db():
     try:
         with open(create_path, 'r', encoding='utf-8') as f:
             cur.execute(f.read())
-don't want to have people to need to review it again, so i c
+
         conn.commit()
         print("database initialised successfully")
 
