@@ -34,22 +34,19 @@ export default function CurrentListingScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
-      <Stack.Screen
-        options={{
-          headerBackVisible: false,
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.headerBackButton}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="arrow-back" size={24} color="#fff" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <ThemedText type="title" style={styles.pageTitle}>My Listings</ThemedText>
+      </View>
       <ScrollView
-        contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: 112 }]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
@@ -91,14 +88,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerBackButton: {
-    marginLeft: 8,
-    width: 40,
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 0,
+    padding: 4,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    width: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderRadius: 20,
+  },
+  pageTitle: {
+    fontSize: 18,
+    marginBottom: 4,
+    color: '#fff',
   },
   listContent: {
     paddingHorizontal: 20,

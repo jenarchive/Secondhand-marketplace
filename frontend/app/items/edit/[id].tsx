@@ -290,7 +290,10 @@ export default function EditItemScreen() {
       </ParallaxScrollView>
 
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <ThemedText type="title" style={styles.pageTitle}>
@@ -353,7 +356,7 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 20,
-    bottom: 8,
+    bottom: 0,
     padding: 4,
     height: 40,
     width: 40,
@@ -365,6 +368,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontSize: 18,
     marginBottom: 4,
+    color: '#fff',
   },
   formContainer: {
     padding: 16,

@@ -56,26 +56,33 @@ export default function HomeScreen() {
       <Stack.Screen
         options={{
           title: isMyListing ? 'Edit Item' : MyData.title,
+          headerShown: !isMyListing,
           headerBackTitleVisible: false,
           headerBackTitle: '',
-          ...(isMyListing && {
-            headerBackVisible: false,
-            headerLeft: () => (
-              <TouchableOpacity
-                onPress={() => router.back()}
-                style={styles.headerBackButton}
-                activeOpacity={0.8}
-              >
-                <Ionicons name="arrow-back" size={24} color="#fff" />
-              </TouchableOpacity>
-            ),
-          }),
         }}
       />
+      {isMyListing && (
+        <View style={styles.customHeader}>
+          <TouchableOpacity
+            style={styles.customHeaderBackButton}
+            onPress={() => router.back()}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+          <ThemedText type="title" style={styles.customHeaderTitle}>Edit Item</ThemedText>
+        </View>
+      )}
       <View style={styles.screen}>
         <ScrollView
           style={[styles.scrollView, { backgroundColor }]}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 + Math.max(insets.bottom, 12) + (isMyListing ? 0 : 280) }]}
+          contentContainerStyle={[
+            styles.scrollContent,
+            {
+              paddingTop: isMyListing ? 112 : 12,
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (isMyListing ? 0 : 280),
+            },
+          ]}
           showsVerticalScrollIndicator={false}
         >
       <ThemedView style={styles.listingContainer}>
@@ -137,14 +144,32 @@ const colours = {
 };
 
 const styles = StyleSheet.create({
-  headerBackButton: {
-    marginLeft: 8,
-    width: 40,
+  customHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  customHeaderBackButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 0,
+    padding: 4,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    width: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderRadius: 20,
+  },
+  customHeaderTitle: {
+    fontSize: 18,
+    marginBottom: 4,
+    color: '#fff',
   },
   screen: {
     flex: 1,
@@ -154,7 +179,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 24,
-    paddingTop: 12,
   },
   listingContainer: {
     gap: 12,
