@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRef, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
@@ -54,6 +54,9 @@ export default function HomeScreen() {
   const headerTitleColor = useThemeColor({}, 'text');
   const buyNowColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const router = useRouter();
+  const isFocused = useIsFocused();
+  const isFocusedRef = useRef(isFocused);
+  isFocusedRef.current = isFocused;
   const hasNavigatedToTransaction = useRef(false);
   const scrollYAtDragStart = useRef(0);
 
@@ -68,6 +71,7 @@ export default function HomeScreen() {
   };
 
   const checkAndNavigateToTransaction = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!isFocusedRef.current) return;
     if (isItemMine(itemData.id) || hasNavigatedToTransaction.current) return;
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
     const paddingToBottom = 80;
