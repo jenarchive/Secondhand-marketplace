@@ -1,10 +1,10 @@
 import { Image } from 'expo-image';
-import { Alert, View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
+import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
@@ -25,16 +25,20 @@ export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
+  const exploreItems = useMemo(
+    () => contextItems.filter((item) => !isMyListing(item.id)),
+    [contextItems, isMyListing]
+  );
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
 
   useEffect(() => {
     setVisibleItems((prev) => {
-      if (prev.length === 0) return [...contextItems];
-      return prev.map((item) => contextItems.find((c) => c.id === item.id) ?? item);
+      if (prev.length === 0) return [...exploreItems];
+      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
     });
-  }, [contextItems]);
+  }, [exploreItems]);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -61,16 +65,12 @@ export default function TabTwoScreen() {
   const handleSwipeDirection = (direction: 'left' | 'right') => {
     spawnButterflies(direction);
     if (direction === 'right' && currentItem) {
-      if (isMyListing(currentItem.id)) {
-        Alert.alert('', 'This is your posted product.');
-        return;
-      }
       toggleLikeContext(currentItem.id);
     }
   };
 
   const resetCards = () => {
-    setVisibleItems([...contextItems]);
+    setVisibleItems([...exploreItems]);
   };
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
@@ -78,23 +78,17 @@ export default function TabTwoScreen() {
 
   const toggleLike = () => {
     if (!currentItem) return;
-    if (isMyListing(currentItem.id)) {
-      Alert.alert('', 'This is your posted product.');
-      return;
-    }
     toggleLikeContext(currentItem.id);
   };
 
   const handleSwipeUp = () => {
-    const currentItem = visibleItems[visibleItems.length - 1];
-    if (currentItem) {
-      router.push(`/items/${currentItem.id}`);
-    }
+    const topItem = visibleItems[visibleItems.length - 1];
+    if (topItem) router.push(`/items/${topItem.id}`);
   };
 
   return (
     <View style={styles.screen}>
-      {contextItems.length === 0 ? (
+      {exploreItems.length === 0 ? (
         <View style={styles.emptyState}>
           <ThemedText style={styles.emptyTitle}>No items to explore</ThemedText>
           <ThemedText style={styles.emptySubtitle}>Listings will appear here when available.</ThemedText>
