@@ -44,6 +44,9 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
 
   const removeItem = useCallback((id: number) => {
     setMyListingIds((prev) => prev.filter((listingId) => listingId !== id));
+    const next = getItems().filter((item) => item.id !== id);
+    setStoreItems(next);
+    setItems(next);
   }, []);
 
   const getItemById = useCallback(
