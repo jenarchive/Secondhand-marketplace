@@ -1,14 +1,23 @@
 # General trend: 
 * Users liked: 
-    * 
+    * 75% of users complimented the UI/UX and interface:
+        - Sleek, clear, user friendly and intuitive
+    * All users liked the swiping feature at explore page: 
+        - Fun, unique, responsive
+        - Average score of 8.125/10 for swiping feature
 * Users pointed out areas that can be improved / implemented: 
     * Marketplace: 
-        - 
+        - Side bar for sort / filtering products by catagories
+        - Implement label for products 
     * Swiping 
-        - 
+        - Consider about the algo of it recommending items to users (and scaling) 
+        - Consider about products with more than one picture 
+        - More items to scroll 
     * Others: 
-        - 
-* Average Score of /5 on "How different do you think this app is compare to other online market" 
+        - Latest liked items should be on top of the page 
+        - Profile, Rating, My listing, Notification page
+        - Buy now, Make offer 
+* Average Score of 3/5 on "How different do you think this app is compare to other online market" 
 
 # Data collected: 
 ## Participant 1
