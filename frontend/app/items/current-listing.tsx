@@ -20,7 +20,10 @@ function shuffleArray<T>(array: T[]): T[] {
 export default function CurrentListingScreen() {
   const router = useRouter();
 
-  const myListings = useMemo(() => shuffleArray(TestData.items), []);
+  const myListings = useMemo(() => {
+    const shuffled = shuffleArray(TestData.items);
+    return shuffled.slice(0, 4);
+  }, []);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
