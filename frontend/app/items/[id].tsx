@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
@@ -82,15 +82,19 @@ export default function HomeScreen() {
             styles.scrollContent,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!fromMyListings ? 280 : 0),
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) ? 280 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
         >
       <ThemedView style={styles.listingContainer}>
-        {!fromMyListings && (
-        <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id} />
-        )}
+        <UserHeader
+          itemId={itemData.id}
+          userLocation={itemData.location}
+          userRating={userRatingValue}
+          userId={MyData.id}
+          displayName={isItemMine(itemData.id) ? 'Me' : undefined}
+        />
         <View style={styles.imageWrapper}>
           <Image
             alt={MyData.title}
@@ -99,16 +103,10 @@ export default function HomeScreen() {
             contentFit="cover"
             source={{ uri: MyData.image }}
           />
-          {!fromMyListings && (
+          {!isItemMine(itemData.id) && (
           <Pressable
             style={styles.likeButton}
-            onPress={() => {
-              if (isItemMine(itemData.id)) {
-                Alert.alert('', 'This is your posted product.');
-                return;
-              }
-              toggleLike(itemData.id);
-            }}
+            onPress={() => toggleLike(itemData.id)}
             hitSlop={8}
           >
             <Ionicons name={liked ? 'heart' : 'heart-outline'} size={28} color={liked ? '#FF3B30' : '#FFFFFF'} />
@@ -135,7 +133,7 @@ export default function HomeScreen() {
         </ThemedView>
       </ThemedView>
         </ScrollView>
-        {!fromMyListings && (
+        {!isItemMine(itemData.id) && (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
       <Pressable style={styles.buyButton} onPress={handleBuy} accessibilityLabel="Buy now">
         <ThemedText type="defaultSemiBold" style={styles.cardText}>Buy Now</ThemedText>
