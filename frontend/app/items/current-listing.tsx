@@ -1,9 +1,9 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View, ScrollView } from 'react-native';
 import { useMemo } from 'react';
+import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import TestData from '@/test-data.json';
-import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '@/constants/theme';
 
@@ -45,7 +45,7 @@ export default function CurrentListingScreen() {
             style={[styles.card, index === 0 && styles.firstCard]}
             onPress={async () => {
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              router.push(`/items/${item.id}`);
+              router.push(`/items/${item.id}?fromMyListings=true`);
             }}
           >
             <View style={styles.imageWrapper}>

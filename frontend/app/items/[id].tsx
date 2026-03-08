@@ -13,8 +13,9 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
 
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
   const id = Number(params.id);
+  const isMyListing = params.fromMyListings === 'true';
   const itemData = TestData.items[id - 1];
   const { toggleLike, isLiked } = useLikedItems();
   const liked = isLiked(itemData.id);
@@ -55,7 +56,7 @@ export default function HomeScreen() {
       <View style={styles.screen}>
         <ScrollView
           style={[styles.scrollView, { backgroundColor }]}
-          contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 + Math.max(insets.bottom, 12) + 280 }]}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: 24 + Math.max(insets.bottom, 12) + (isMyListing ? 0 : 280) }]}
           showsVerticalScrollIndicator={false}
         >
       <ThemedView style={styles.listingContainer}>
@@ -92,6 +93,7 @@ export default function HomeScreen() {
         </ThemedView>
       </ThemedView>
         </ScrollView>
+        {!isMyListing && (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
       <Pressable style={styles.buyButton} onPress={handleBuy} accessibilityLabel="Buy now">
         <ThemedText type="defaultSemiBold" style={styles.cardText}>Buy Now</ThemedText>
@@ -100,6 +102,7 @@ export default function HomeScreen() {
         <ThemedText type="defaultSemiBold" style={styles.cardText}>Make Offer</ThemedText>
         </Pressable>
         </View>
+        )}
       </View>
     </>
   );
