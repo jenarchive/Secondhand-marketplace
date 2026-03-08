@@ -12,6 +12,7 @@ import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function HomeScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
@@ -48,8 +49,10 @@ export default function HomeScreen() {
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
 
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
+  const buyNowColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const router = useRouter();
   const hasNavigatedToTransaction = useRef(false);
   const scrollYAtDragStart = useRef(0);
@@ -160,10 +163,13 @@ export default function HomeScreen() {
           {!isItemMine(itemData.id) && (
           <Pressable
             style={styles.scrollHint}
-            onPress={() => router.push(`/items/transaction/${id}`)}
+            onPress={() => {
+              hasNavigatedToTransaction.current = true;
+              router.push(`/items/transaction/${id}`);
+            }}
           >
-            <Ionicons name="chevron-down" size={28} color="#0047AB" />
-            <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: '#0047AB' }]}>Buy Now</ThemedText>
+            <Ionicons name="chevron-down" size={28} color={buyNowColor} />
+            <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: buyNowColor }]}>Buy Now</ThemedText>
           </Pressable>
           )}
           </View>
