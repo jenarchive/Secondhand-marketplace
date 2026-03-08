@@ -1,12 +1,11 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Pressable, View } from 'react-native';
+import { StyleSheet, Pressable, View, ScrollView } from 'react-native';
 import { useMemo } from 'react';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import TestData from '@/test-data.json';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { Colors } from '@/constants/theme';
 
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
@@ -17,6 +16,9 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
+const blurhash =
+  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
 export default function CurrentListingScreen() {
   const router = useRouter();
 
@@ -25,91 +27,87 @@ export default function CurrentListingScreen() {
     return shuffled.slice(0, 4);
   }, []);
 
-  const blurhash =
-    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+  const screenBg = '#121212';
+  const textColor = Colors.dark.text;
+  const placeholderBg = '#2c2c2e';
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={<Image />}
-    >
-      <ThemedView style={styles.container}>
-        <View style={styles.flexbox}>
-          {myListings.map((item) => (
-            <Pressable
-              key={item.id}
-              style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
-              onPress={async () => {
-                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                router.push(`/items/${item.id}`);
-              }}
-            >
-              <ThemedView style={styles.listingContainer}>
-                <View style={styles.imageWrapper}>
-                  <Image
-                    alt={item.title}
-                    style={styles.image}
-                    placeholder={{ blurhash }}
-                    contentFit="cover"
-                    source={{ uri: item.image }}
-                  />
-                </View>
-                <ThemedText type="defaultSemiBold" numberOfLines={1} style={styles.itemTitle}>
-                  {item.title}
-                </ThemedText>
-                <ThemedText type="defaultSemiBold" style={styles.price}>
-                  {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
-          ))}
-        </View>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={[styles.container, { backgroundColor: screenBg }]}>
+      <ScrollView
+        contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+        contentInsetAdjustmentBehavior="never"
+        style={{ backgroundColor: screenBg }}
+        showsVerticalScrollIndicator={false}
+      >
+        {myListings.map((item, index) => (
+          <Pressable
+            key={item.id}
+            style={[styles.card, index === 0 && styles.firstCard]}
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push(`/items/${item.id}`);
+            }}
+          >
+            <View style={styles.imageWrapper}>
+              <Image
+                source={{ uri: item.image }}
+                alt={item.title}
+                style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
+                placeholder={{ blurhash }}
+                contentFit="cover"
+              />
+            </View>
+            <View style={styles.infoContainer}>
+              <ThemedText style={[styles.productName, { color: textColor }]} numberOfLines={1}>
+                {item.title}
+              </ThemedText>
+              <ThemedText style={[styles.price, { color: textColor }]}>
+                {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
+              </ThemedText>
+            </View>
+          </Pressable>
+        ))}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 64,
-  },
-  listingContainer: {
-    padding: 12,
     flex: 1,
-    borderRadius: 8,
-    backgroundColor: '#25282B',
   },
-  listingLink: {
-    flexBasis: '48%',
-    maxWidth: '48%',
-    marginBottom: 16,
-    overflow: 'hidden',
+  listContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
   },
-  image: {
-    width: '100%',
-    borderRadius: 8,
-    aspectRatio: 1,
+  firstCard: {
+    marginTop: 0,
+  },
+  card: {
+    flexDirection: 'row',
+    marginBottom: 24,
+    alignItems: 'center',
   },
   imageWrapper: {
     position: 'relative',
-    marginBottom: 12,
+    marginRight: 16,
   },
-  itemTitle: {
-    color: '#fff',
-    flexShrink: 1,
+  imagePlaceholder: {
+    width: 90,
+    height: 90,
+    borderRadius: 12,
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  productName: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   price: {
-    color: '#fff',
-    marginTop: 4,
-  },
-  flexbox: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  pressed: {
-    opacity: 0.85,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
