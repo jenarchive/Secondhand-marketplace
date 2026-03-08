@@ -52,6 +52,7 @@ export default function HomeScreen() {
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
   const hasNavigatedToTransaction = useRef(false);
+  const scrollYAtDragStart = useRef(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -59,12 +60,17 @@ export default function HomeScreen() {
     }, []),
   );
 
+  const handleScrollBeginDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollYAtDragStart.current = e.nativeEvent.contentOffset.y;
+  };
+
   const checkAndNavigateToTransaction = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (isItemMine(itemData.id) || hasNavigatedToTransaction.current) return;
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
     const paddingToBottom = 80;
     const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - paddingToBottom;
-    if (isAtBottom) {
+    const scrolledDownThisGesture = contentOffset.y > scrollYAtDragStart.current;
+    if (isAtBottom && scrolledDownThisGesture) {
       hasNavigatedToTransaction.current = true;
       router.push(`/items/transaction/${id}`);
     }
@@ -100,6 +106,7 @@ export default function HomeScreen() {
             },
           ]}
           showsVerticalScrollIndicator={false}
+          onScrollBeginDrag={handleScrollBeginDrag}
           onMomentumScrollEnd={handleScrollEnd}
           onScrollEndDrag={handleScrollEnd}
           scrollEventThrottle={16}
@@ -155,8 +162,8 @@ export default function HomeScreen() {
             style={styles.scrollHint}
             onPress={() => router.push(`/items/transaction/${id}`)}
           >
-            <Ionicons name="chevron-down" size={28} color={headerTitleColor} />
-            <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: headerTitleColor }]}>Buy Now</ThemedText>
+            <Ionicons name="chevron-down" size={28} color="#0047AB" />
+            <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: '#0047AB' }]}>Buy Now</ThemedText>
           </Pressable>
           )}
           </View>
@@ -241,8 +248,8 @@ const styles = StyleSheet.create({
   scrollHint: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 32,
-    gap: 8,
+    paddingVertical: 24,
+    gap: 0,
   },
   scrollHintText: {
     fontSize: 16,
