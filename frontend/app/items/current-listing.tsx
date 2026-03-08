@@ -23,7 +23,7 @@ const blurhash =
 export default function CurrentListingScreen() {
   const router = useRouter();
   const headerTitleColor = useThemeColor({}, 'text');
-  const screenBg = useThemeColor({ light: '#fff', dark: '#000' }, 'background');
+  const screenBg = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const placeholderBg = useThemeColor({ light: '#e5e5e5', dark: '#2c2c2e' }, 'background');
 
