@@ -22,18 +22,18 @@ export default function CurrentListingScreen() {
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen options={{ headerShown: false }} />
-      {myListings.length > 0 && (
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        {myListings.length > 0 && (
           <ThemedText type="title" style={[styles.pageTitle, { color: headerTitleColor }]}>My Listings</ThemedText>
-        </View>
-      )}
+        )}
+      </View>
       {myListings.length === 0 ? (
         <View style={[styles.emptyStateCenter, { backgroundColor: screenBg }]}>
           <View style={styles.emptyStateAbove}>
