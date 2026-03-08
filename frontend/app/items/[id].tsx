@@ -2,26 +2,34 @@ import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
-
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
   const id = Number(params.id);
   const isMyListing = params.fromMyListings === 'true';
-  const itemData = TestData.items[id - 1];
+  const { getItemById } = useMyListings();
+  const itemData = getItemById(id);
   const { toggleLike, isLiked } = useLikedItems();
-  const liked = isLiked(itemData.id);
+  const liked = itemData ? isLiked(itemData.id) : false;
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
+  if (!itemData) {
+    return (
+      <View style={[styles.screen, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
+        <ThemedText>Item not found</ThemedText>
+      </View>
+    );
+  }
 
   const MyData = {
     id: itemData.id,
@@ -54,34 +62,27 @@ export default function HomeScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: isMyListing ? 'Edit Item' : MyData.title,
-          headerShown: !isMyListing,
-          headerBackTitleVisible: false,
-          headerBackTitle: '',
-        }}
-      />
-      {isMyListing && (
-        <View style={styles.customHeader}>
-          <TouchableOpacity
-            style={styles.customHeaderBackButton}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-          <ThemedText type="title" style={[styles.customHeaderTitle, { color: headerTitleColor }]}>Edit Item</ThemedText>
-        </View>
-      )}
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.customHeader}>
+        <TouchableOpacity
+          style={styles.customHeaderBackButton}
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <ThemedText type="title" style={[styles.customHeaderTitle, { color: headerTitleColor }]} numberOfLines={1}>
+          {isMyListing ? 'Edit Item' : MyData.title}
+        </ThemedText>
+      </View>
       <View style={styles.screen}>
         <ScrollView
           style={[styles.scrollView, { backgroundColor }]}
           contentContainerStyle={[
             styles.scrollContent,
             {
-              paddingTop: isMyListing ? 112 : 12,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (isMyListing ? 0 : 280),
+              paddingTop: 112,
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isMyListing ? 280 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
