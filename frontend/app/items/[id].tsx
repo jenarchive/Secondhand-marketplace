@@ -145,7 +145,7 @@ export default function HomeScreen() {
         )}
         {isItemMine(itemData.id) && (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-          <Pressable style={styles.buyButton} onPress={() => {}} accessibilityLabel="Edit">
+          <Pressable style={styles.buyButton} onPress={() => router.push(`/items/edit/${itemData.id}`)} accessibilityLabel="Edit">
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Edit</ThemedText>
           </Pressable>
           <Pressable style={styles.removeButton} onPress={() => {}} accessibilityLabel="Remove">
