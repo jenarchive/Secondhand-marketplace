@@ -3,3 +3,4 @@ from flask_jwt_extended import JWTManager
 
 jwt = JWTManager()
 cors = CORS(resources={r"/*": {"origins": "*"}})
+
