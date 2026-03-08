@@ -54,6 +54,7 @@ export default function EditItemScreen() {
   const id = Number(params.id);
   const itemData = TestData.items[id - 1];
   const headerTitleColor = useThemeColor({}, 'text');
+  const labelColor = useThemeColor({}, 'text');
 
   const [title, setTitle] = useState(itemData?.title ?? '');
   const [description, setDescription] = useState(itemData?.description ?? '');
@@ -184,7 +185,7 @@ export default function EditItemScreen() {
         headerImage={<Image />}
       >
         <View style={styles.formContainer}>
-          <ThemedText type="subtitle" style={styles.label}>
+          <ThemedText type="subtitle" style={[styles.label, { color: labelColor }]}>
             Title
           </ThemedText>
           <TextInput
@@ -199,7 +200,7 @@ export default function EditItemScreen() {
             placeholder="What is your item"
           />
 
-          <ThemedText type="subtitle" style={styles.label}>
+          <ThemedText type="subtitle" style={[styles.label, { color: labelColor }]}>
             Description
           </ThemedText>
           <TextInput
@@ -217,7 +218,7 @@ export default function EditItemScreen() {
             placeholder="Describe more about your item"
           />
 
-          <ThemedText type="subtitle" style={styles.label}>
+          <ThemedText type="subtitle" style={[styles.label, { color: labelColor }]}>
             Price (£)
           </ThemedText>
           <TextInput
@@ -240,7 +241,7 @@ export default function EditItemScreen() {
             keyboardType="numeric"
           />
 
-          <ThemedText type="subtitle" style={styles.label}>
+          <ThemedText type="subtitle" style={[styles.label, { color: labelColor }]}>
             Category
           </ThemedText>
           <TouchableOpacity
@@ -256,7 +257,7 @@ export default function EditItemScreen() {
           </TouchableOpacity>
 
           <View style={{ gap: 12 }}>
-            <ThemedText type="subtitle">Photos ({images.length}/5)</ThemedText>
+            <ThemedText type="subtitle" style={{ color: labelColor }}>Photos ({images.length}/5)</ThemedText>
 
             <View style={styles.imageGrid}>
               {images.length < 5 && (
@@ -379,9 +380,7 @@ const styles = StyleSheet.create({
     gap: 16,
     marginTop: 100,
   },
-  label: {
-    color: '#fff',
-  },
+  label: {},
   input: {
     backgroundColor: '#333333',
     color: 'white',
