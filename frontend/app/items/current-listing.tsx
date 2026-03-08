@@ -31,12 +31,6 @@ export default function CurrentListingScreen() {
       headerImage={<Image />}
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>
-          My Listings
-        </ThemedText>
-        <ThemedText type="default" style={styles.subtitle}>
-          Items you're selling
-        </ThemedText>
         <View style={styles.flexbox}>
           {myListings.map((item) => (
             <Pressable
@@ -75,15 +69,8 @@ export default function CurrentListingScreen() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
+    paddingTop: 16,
     paddingBottom: 64,
-  },
-  title: {
-    marginTop: 16,
-    marginBottom: 4,
-  },
-  subtitle: {
-    marginBottom: 20,
-    opacity: 0.8,
   },
   listingContainer: {
     padding: 12,
