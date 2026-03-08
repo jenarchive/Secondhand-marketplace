@@ -4,33 +4,22 @@ import { useMemo } from 'react';
 import { useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
-import TestData from '@/test-data.json';
 import * as Haptics from 'expo-haptics';
 import { useThemeColor } from '@/hooks/use-theme-color';
-
-function shuffleArray<T>(array: T[]): T[] {
-  const arr = [...array];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
+import { useMyListings } from '@/contexts/MyListingsContext';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
 export default function CurrentListingScreen() {
   const router = useRouter();
+  const { items } = useMyListings();
   const headerTitleColor = useThemeColor({}, 'text');
   const screenBg = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const placeholderBg = useThemeColor({ light: '#e5e5e5', dark: '#2c2c2e' }, 'background');
 
-  const myListings = useMemo(() => {
-    const shuffled = shuffleArray(TestData.items);
-    return shuffled.slice(0, 4);
-  }, []);
+  const myListings = useMemo(() => items.slice(0, 4), [items]);
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>

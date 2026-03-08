@@ -18,7 +18,7 @@ import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import TestData from '@/test-data.json';
+import { useMyListings } from '@/contexts/MyListingsContext';
 
 const screenWidth = Dimensions.get('window').width;
 const padding = 32;
@@ -52,7 +52,8 @@ function mapTestCategoryToForm(testCategory: string): string {
 export default function EditItemScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const id = Number(params.id);
-  const itemData = TestData.items[id - 1];
+  const { getItemById, updateItem } = useMyListings();
+  const itemData = getItemById(id);
   const headerTitleColor = useThemeColor({}, 'text');
   const labelColor = useThemeColor({}, 'text');
 
@@ -163,9 +164,14 @@ export default function EditItemScreen() {
 
     setErrors(newErrors);
 
-    if (valid) {
-      // TODO: implement update API call
-      console.log('Update item', id, { title, description, price, category, images });
+    if (valid && itemData) {
+      updateItem(id, {
+        title: title.trim(),
+        description: description.trim(),
+        price: Number(price) || 0,
+        category: category.trim(),
+        image: images[0] ?? itemData.image,
+      });
       router.back();
     }
   };
