@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
@@ -15,13 +15,15 @@ export default function HomeScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
-  const { items, isMyListing: isItemMine } = useMyListings();
+  const { items, isMyListing: isItemMine, removeItem } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
   const liked = itemData ? isLiked(itemData.id) : false;
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
+  const unifiedMyLocation = items.find((item) => isItemMine(item.id))?.location ?? itemData?.location ?? '';
 
   if (!itemData) {
     return (
@@ -90,7 +92,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.listingContainer}>
         <UserHeader
           itemId={itemData.id}
-          userLocation={itemData.location}
+          userLocation={isItemMine(itemData.id) ? unifiedMyLocation : itemData.location}
           userRating={userRatingValue}
           userId={MyData.id}
           displayName={isItemMine(itemData.id) ? 'Me' : undefined}
@@ -148,7 +150,27 @@ export default function HomeScreen() {
           <Pressable style={styles.buyButton} onPress={() => router.push(`/items/edit/${itemData.id}`)} accessibilityLabel="Edit">
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Edit</ThemedText>
           </Pressable>
-          <Pressable style={styles.removeButton} onPress={() => {}} accessibilityLabel="Remove">
+          <Pressable
+            style={styles.removeButton}
+            onPress={() => {
+              Alert.alert(
+                'Remove listing',
+                'Are you sure you want to remove this listing? This action cannot be undone.',
+                [
+                  { text: 'Cancel', style: 'cancel' },
+                  {
+                    text: 'Remove',
+                    style: 'destructive',
+                    onPress: () => {
+                      removeItem(itemData.id);
+                      router.replace('/(tabs)');
+                    },
+                  },
+                ]
+              );
+            }}
+            accessibilityLabel="Remove"
+          >
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
           </Pressable>
         </View>
