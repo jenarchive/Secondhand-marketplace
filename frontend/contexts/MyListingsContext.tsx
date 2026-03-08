@@ -4,8 +4,16 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 import type { MyListingItem } from '@/store/myListingsStore';
 import { getItems, setItems as setStoreItems } from '@/store/myListingsStore';
 
+function pickRandomItems<T>(array: T[], count: number): T[] {
+  const shuffled = [...array].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, Math.min(count, array.length));
+}
+
 type MyListingsContextType = {
+  /** All items (marketplace + explore). */
   items: MyListingItem[];
+  /** Only the items I have listed (for My Listings page). Starts at 4, then 3,2,1,0 on delete. */
+  myListings: MyListingItem[];
   updateItem: (id: number, updates: Partial<MyListingItem>) => void;
   removeItem: (id: number) => void;
   getItemById: (id: number) => MyListingItem | undefined;
@@ -17,6 +25,14 @@ export type { MyListingItem };
 
 export function MyListingsProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<MyListingItem[]>(() => getItems());
+  const [myListingIds, setMyListingIds] = useState<number[]>(() =>
+    pickRandomItems(getItems(), 4).map((i) => i.id)
+  );
+
+  const myListings = useMemo(
+    () => items.filter((item) => myListingIds.includes(item.id)),
+    [items, myListingIds]
+  );
 
   const updateItem = useCallback((id: number, updates: Partial<MyListingItem>) => {
     const next = getItems().map((item) =>
@@ -27,9 +43,7 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const removeItem = useCallback((id: number) => {
-    const next = getItems().filter((item) => item.id !== id);
-    setStoreItems(next);
-    setItems(next);
+    setMyListingIds((prev) => prev.filter((listingId) => listingId !== id));
   }, []);
 
   const getItemById = useCallback(
@@ -38,8 +52,8 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   );
 
   const value = useMemo(
-    () => ({ items, updateItem, removeItem, getItemById }),
-    [items, updateItem, removeItem, getItemById]
+    () => ({ items, myListings, updateItem, removeItem, getItemById }),
+    [items, myListings, updateItem, removeItem, getItemById]
   );
 
   return (

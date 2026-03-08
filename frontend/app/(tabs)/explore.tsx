@@ -86,6 +86,13 @@ export default function TabTwoScreen() {
 
   return (
     <View style={styles.screen}>
+      {contextItems.length === 0 ? (
+        <View style={styles.emptyState}>
+          <ThemedText style={styles.emptyTitle}>No items to explore</ThemedText>
+          <ThemedText style={styles.emptySubtitle}>Listings will appear here when available.</ThemedText>
+        </View>
+      ) : (
+      <>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
@@ -223,6 +230,8 @@ export default function TabTwoScreen() {
           </View>
         </View>
       )}
+      </>
+      )}
     </View>
   );
 }
@@ -231,6 +240,23 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#353636',
+  },
+  emptyState: {
+    flex: 1,
+    paddingVertical: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#fff',
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    opacity: 0.8,
+    color: '#fff',
   },
   cardContainer: {
     position: 'absolute',

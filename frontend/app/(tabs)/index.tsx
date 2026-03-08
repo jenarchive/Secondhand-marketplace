@@ -59,7 +59,12 @@ export default function HomeScreen() {
           </View>
         </View>
         <ThemedView style={styles.flexbox}>
-            {filtered.map((item) => (
+            {filtered.length === 0 ? (
+              <View style={styles.emptyState}>
+                <ThemedText style={styles.emptyTitle}>No listings</ThemedText>
+                <ThemedText style={styles.emptySubtitle}>There are no items to show right now.</ThemedText>
+              </View>
+            ) : filtered.map((item) => (
               <View key={item.id} style={styles.listingLink}>
                 <Pressable
                   style={({ pressed }) => [styles.listingContainer, pressed && styles.pressed]}
@@ -99,7 +104,8 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </Pressable>
               </View>
-            ))}
+            ))
+            }
         </ThemedView>
       </ThemedView>
 
@@ -178,5 +184,23 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     color: '#111'
-  }
+  },
+  emptyState: {
+    flex: 1,
+    paddingVertical: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#fff',
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    opacity: 0.8,
+    color: '#fff',
+  },
 });
