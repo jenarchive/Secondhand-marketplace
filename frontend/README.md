@@ -24,6 +24,7 @@ In the output, you'll find options to open the app in a
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
 ## Project Structure
+```text
 frontend                           # Frontend React Native (Expo) application
 ├── app                            # File-based Routing (Crucial for UI)
 │   ├── (tabs)                     # Main navigation tab screens
@@ -43,3 +44,4 @@ frontend                           # Frontend React Native (Expo) application
 ├── hooks                          # Custom React hooks (Theme, Colour schemes)
 ├── test-data.json                 # Mock data for frontend testing
 └── package.json                   # Frontend dependencies and scripts
+```
