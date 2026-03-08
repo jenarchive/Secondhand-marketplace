@@ -1,7 +1,8 @@
 import { Image } from 'expo-image';
 import { StyleSheet, Pressable, View, ScrollView } from 'react-native';
 import { useMemo } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import TestData from '@/test-data.json';
 import * as Haptics from 'expo-haptics';
@@ -33,6 +34,17 @@ export default function CurrentListingScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
+      <Stack.Screen
+        options={{
+          headerLeft: () => (
+            <Pressable onPress={() => router.back()} style={styles.backButton}>
+              <View style={styles.backButtonInner}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </View>
+            </Pressable>
+          ),
+        }}
+      />
       <ScrollView
         contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
         contentInsetAdjustmentBehavior="never"
@@ -75,6 +87,17 @@ export default function CurrentListingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  backButton: {
+    marginLeft: 8,
+  },
+  backButtonInner: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   listContent: {
     paddingHorizontal: 20,

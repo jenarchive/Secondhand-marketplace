@@ -6,7 +6,7 @@ import TestData from '@/test-data.json';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -37,6 +37,8 @@ export default function HomeScreen() {
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
+  const router = useRouter();
+
   const handleBuy = async () => {
     try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); } catch {}
     // TODO: implement buy logic
@@ -55,6 +57,16 @@ export default function HomeScreen() {
         options={{
           title: isMyListing ? 'Edit Item' : MyData.title,
           headerBackTitleVisible: false,
+          headerBackTitle: '',
+          ...(isMyListing && {
+            headerLeft: () => (
+              <Pressable onPress={() => router.back()} style={styles.backButton}>
+                <View style={styles.backButtonInner}>
+                  <Ionicons name="arrow-back" size={24} color="#fff" />
+                </View>
+              </Pressable>
+            ),
+          }),
         }}
       />
       <View style={styles.screen}>
@@ -122,6 +134,17 @@ const colours = {
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    marginLeft: 8,
+  },
+  backButtonInner: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   screen: {
     flex: 1,
   },
