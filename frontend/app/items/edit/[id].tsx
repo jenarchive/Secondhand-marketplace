@@ -311,6 +311,12 @@ export default function EditItemScreen() {
         <ThemedText type="title" style={[styles.pageTitle, { color: headerTitleColor }]}>
           Edit Item
         </ThemedText>
+        <TouchableOpacity
+          style={styles.delistButton}
+          onPress={() => {}}
+        >
+          <Ionicons name="trash-outline" size={24} color="white" />
+        </TouchableOpacity>
       </View>
 
       <Modal animationType="none" transparent visible={modalVisible} onRequestClose={closeModal}>
@@ -368,6 +374,18 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 20,
+    bottom: 0,
+    padding: 4,
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    borderRadius: 20,
+  },
+  delistButton: {
+    position: 'absolute',
+    right: 20,
     bottom: 0,
     padding: 4,
     height: 40,
