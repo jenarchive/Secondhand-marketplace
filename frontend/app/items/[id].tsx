@@ -37,7 +37,6 @@ export default function HomeScreen() {
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
-
   const handleBuy = async () => {
     try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); } catch {}
     // TODO: implement buy logic
@@ -52,7 +51,12 @@ export default function HomeScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: MyData.title, headerBackTitleVisible: false }} />
+      <Stack.Screen
+        options={{
+          title: isMyListing ? 'Edit Item' : MyData.title,
+          headerBackTitleVisible: false,
+        }}
+      />
       <View style={styles.screen}>
         <ScrollView
           style={[styles.scrollView, { backgroundColor }]}
@@ -60,7 +64,9 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
         >
       <ThemedView style={styles.listingContainer}>
+        {!isMyListing && (
         <UserHeader itemId={itemData.id} userLocation={itemData.location} userRating={userRatingValue} userId={MyData.id} />
+        )}
         <View style={styles.imageWrapper}>
           <Image
             alt={MyData.title}
@@ -69,9 +75,11 @@ export default function HomeScreen() {
             contentFit="cover"
             source={{ uri: MyData.image }}
           />
+          {!isMyListing && (
           <Pressable style={styles.likeButton} onPress={() => toggleLike(itemData.id)} hitSlop={8}>
             <Ionicons name={liked ? 'heart' : 'heart-outline'} size={28} color={liked ? '#FF3B30' : '#FFFFFF'} />
           </Pressable>
+          )}
         </View>
         <ThemedView style={styles.listingTitle}>
           <ThemedText type="defaultSemiBold" style={styles.cardText}>{MyData.title}</ThemedText>
