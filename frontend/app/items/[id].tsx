@@ -1,7 +1,8 @@
 import { Image } from 'expo-image';
 import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
@@ -52,15 +53,25 @@ export default function HomeScreen() {
   const router = useRouter();
   const hasNavigatedToTransaction = useRef(false);
 
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (hasNavigatedToTransaction.current) return;
+  useFocusEffect(
+    useCallback(() => {
+      hasNavigatedToTransaction.current = false;
+    }, []),
+  );
+
+  const checkAndNavigateToTransaction = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (isItemMine(itemData.id) || hasNavigatedToTransaction.current) return;
     const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
-    const paddingToBottom = 120;
-    const isNearBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - paddingToBottom;
-    if (isNearBottom) {
+    const paddingToBottom = 80;
+    const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - paddingToBottom;
+    if (isAtBottom) {
       hasNavigatedToTransaction.current = true;
       router.push(`/items/transaction/${id}`);
     }
+  };
+
+  const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    checkAndNavigateToTransaction(e);
   };
 
   return (
@@ -89,7 +100,8 @@ export default function HomeScreen() {
             },
           ]}
           showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
+          onMomentumScrollEnd={handleScrollEnd}
+          onScrollEndDrag={handleScrollEnd}
           scrollEventThrottle={16}
         >
           <View style={styles.detailSection}>
@@ -138,6 +150,7 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
       </ThemedView>
+          {!isItemMine(itemData.id) && (
           <Pressable
             style={styles.scrollHint}
             onPress={() => router.push(`/items/transaction/${id}`)}
@@ -145,6 +158,7 @@ export default function HomeScreen() {
             <Ionicons name="chevron-down" size={28} color={headerTitleColor} />
             <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: headerTitleColor }]}>Buy Now</ThemedText>
           </Pressable>
+          )}
           </View>
         </ScrollView>
         {isItemMine(itemData.id) && (
