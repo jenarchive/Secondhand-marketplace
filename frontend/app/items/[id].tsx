@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Pressable, View, ScrollView } from 'react-native';
+import { StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json';
@@ -59,12 +59,15 @@ export default function HomeScreen() {
           headerBackTitleVisible: false,
           headerBackTitle: '',
           ...(isMyListing && {
+            headerBackVisible: false,
             headerLeft: () => (
-              <Pressable onPress={() => router.back()} style={styles.backButton}>
-                <View style={styles.backButtonInner}>
-                  <Ionicons name="arrow-back" size={24} color="#fff" />
-                </View>
-              </Pressable>
+              <TouchableOpacity
+                onPress={() => router.back()}
+                style={styles.headerBackButton}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+              </TouchableOpacity>
             ),
           }),
         }}
@@ -134,10 +137,8 @@ const colours = {
 };
 
 const styles = StyleSheet.create({
-  backButton: {
+  headerBackButton: {
     marginLeft: 8,
-  },
-  backButtonInner: {
     width: 40,
     height: 40,
     borderRadius: 20,

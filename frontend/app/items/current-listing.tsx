@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Pressable, View, ScrollView } from 'react-native';
+import { StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { useMemo } from 'react';
 import { useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,12 +36,15 @@ export default function CurrentListingScreen() {
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen
         options={{
+          headerBackVisible: false,
           headerLeft: () => (
-            <Pressable onPress={() => router.back()} style={styles.backButton}>
-              <View style={styles.backButtonInner}>
-                <Ionicons name="arrow-back" size={24} color="#fff" />
-              </View>
-            </Pressable>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.headerBackButton}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -88,10 +91,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  backButton: {
+  headerBackButton: {
     marginLeft: 8,
-  },
-  backButtonInner: {
     width: 40,
     height: 40,
     borderRadius: 20,
