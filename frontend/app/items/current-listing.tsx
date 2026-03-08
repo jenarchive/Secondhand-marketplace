@@ -57,7 +57,7 @@ export default function CurrentListingScreen() {
             style={[styles.card, index === 0 && styles.firstCard]}
             onPress={async () => {
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              router.push(`/items/${item.id}?fromMyListings=true`);
+              router.push(`/items/edit/${item.id}`);
             }}
           >
             <View style={styles.imageWrapper}>

@@ -197,7 +197,6 @@ export default function EditItemScreen() {
             value={title}
             onChangeText={setTitle}
             placeholder="What is your item"
-            placeholderTextColor="#888"
           />
 
           <ThemedText type="subtitle" style={styles.label}>
@@ -216,7 +215,6 @@ export default function EditItemScreen() {
             numberOfLines={4}
             textAlignVertical="top"
             placeholder="Describe more about your item"
-            placeholderTextColor="#888"
           />
 
           <ThemedText type="subtitle" style={styles.label}>
@@ -235,8 +233,10 @@ export default function EditItemScreen() {
                 setPrice(text);
               }
             }}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
             placeholder="0.00"
-            placeholderTextColor="#888"
             keyboardType="numeric"
           />
 
@@ -277,7 +277,10 @@ export default function EditItemScreen() {
               {images.map((uri, index) => (
                 <View key={index} style={styles.imageWrapper}>
                   <Image source={{ uri }} style={styles.imagePreview} />
-                  <TouchableOpacity onPress={() => removeImage(index)} style={styles.removeImageButton}>
+                  <TouchableOpacity
+                    onPress={() => removeImage(index)}
+                    style={styles.removeImageButton}
+                  >
                     <Ionicons name="close" size={12} color="white" />
                   </TouchableOpacity>
                 </View>
