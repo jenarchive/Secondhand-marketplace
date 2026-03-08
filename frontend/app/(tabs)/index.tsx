@@ -1,17 +1,17 @@
 import { Image } from 'expo-image';
 import { Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import { useMyListings } from '@/contexts/MyListingsContext';
 
 export default function HomeScreen() {
   const colourScheme = useColorScheme();
@@ -19,14 +19,20 @@ export default function HomeScreen() {
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
+  const { items: contextItems } = useMyListings();
+  const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+
+  useEffect(() => {
+    setDisplayItems([...contextItems]);
+  }, [contextItems]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return TestData.items;
-    return TestData.items.filter(i =>
+    if (!q) return displayItems;
+    return displayItems.filter(i =>
       i.title.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, displayItems]);
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';

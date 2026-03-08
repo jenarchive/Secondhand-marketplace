@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -17,7 +17,12 @@ export default function HomeScreen() {
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
-  const { items: displayItems } = useMyListings();
+  const { items: contextItems } = useMyListings();
+  const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+
+  useEffect(() => {
+    setDisplayItems([...contextItems]);
+  }, [contextItems]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
