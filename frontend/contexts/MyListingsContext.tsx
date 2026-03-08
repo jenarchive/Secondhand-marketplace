@@ -10,11 +10,8 @@ function pickRandomItems<T>(array: T[], count: number): T[] {
 }
 
 type MyListingsContextType = {
-  /** All items (marketplace + explore). */
   items: MyListingItem[];
-  /** Only the items I have listed (for My Listings page). Starts at 4, then 3,2,1,0 on delete. */
   myListings: MyListingItem[];
-  /** True if the item is one I posted (used to block liking own item elsewhere). */
   isMyListing: (id: number) => boolean;
   updateItem: (id: number, updates: Partial<MyListingItem>) => void;
   removeItem: (id: number) => void;

@@ -2,7 +2,6 @@ import TestData from '@/test-data.json';
 
 export type MyListingItem = (typeof TestData.items)[number];
 
-/** Full catalog: my listings + others. Used by Marketplace & Explore. */
 let items: MyListingItem[] = [...TestData.items];
 const listeners = new Set<(next: MyListingItem[]) => void>();
 
