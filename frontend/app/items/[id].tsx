@@ -50,18 +50,6 @@ export default function HomeScreen() {
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
 
-  const handleBuy = async () => {
-    try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); } catch {}
-    // TODO: implement buy logic
-    console.log('Buy now', MyData.id);
-  };
-
-  const handleMakeOffer = async () => {
-    try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid); } catch {}
-    // TODO: make-offer modal
-    console.log('Make offer', MyData.id);
-  };
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -84,7 +72,7 @@ export default function HomeScreen() {
             styles.scrollContent,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + 280,
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (isItemMine(itemData.id) ? 280 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -135,16 +123,6 @@ export default function HomeScreen() {
         </ThemedView>
       </ThemedView>
         </ScrollView>
-        {!isItemMine(itemData.id) && (
-        <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-      <Pressable style={styles.buyButton} onPress={handleBuy} accessibilityLabel="Buy now">
-        <ThemedText type="defaultSemiBold" style={styles.cardText}>Buy Now</ThemedText>
-      </Pressable>
-      <Pressable style={styles.offerButton} onPress={handleMakeOffer} accessibilityLabel="Make offer">
-        <ThemedText type="defaultSemiBold" style={styles.cardText}>Make Offer</ThemedText>
-        </Pressable>
-        </View>
-        )}
         {isItemMine(itemData.id) && (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable style={styles.buyButton} onPress={() => router.push(`/items/edit/${itemData.id}`)} accessibilityLabel="Edit">
