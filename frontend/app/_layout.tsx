@@ -23,7 +23,7 @@ export default function RootLayout() {
         <ThemeProvider value={theme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="items" options={{ headerShown: false }} />
+            <Stack.Screen name="items" options={{ title: "My Listings" }} />
             <Stack.Screen name="auth/login" options={{ title: 'Log In' }} />
             <Stack.Screen name="auth/signup" options={{ title: 'Sign Up' }} />
           </Stack>
