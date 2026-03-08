@@ -3,6 +3,7 @@ import { StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react
 import { useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import * as Haptics from 'expo-haptics';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
@@ -21,16 +22,40 @@ export default function CurrentListingScreen() {
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <ThemedText type="title" style={[styles.pageTitle, { color: headerTitleColor }]}>My Listings</ThemedText>
-      </View>
+      {myListings.length > 0 && (
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+          <ThemedText type="title" style={[styles.pageTitle, { color: headerTitleColor }]}>My Listings</ThemedText>
+        </View>
+      )}
+      {myListings.length === 0 ? (
+        <View style={[styles.emptyStateCenter, { backgroundColor: screenBg }]}>
+          <View style={styles.emptyStateAbove}>
+            <ThemedText style={[styles.emptyText, { color: textColor }]}>
+              No Listings Yet
+            </ThemedText>
+          </View>
+          <View style={styles.emptyStateButtonAtCenter}>
+            <Pressable
+              style={({ pressed }) => [pressed && { opacity: 0.85 }]}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                router.replace('/(tabs)/sell');
+              }}
+            >
+              <ThemedView style={styles.sellButton}>
+                <ThemedText style={styles.sellButtonText}>Go to Sell page</ThemedText>
+              </ThemedView>
+            </Pressable>
+          </View>
+        </View>
+      ) : (
       <ScrollView
         contentContainerStyle={[styles.listContent, { paddingTop: 112 }]}
         contentInsetAdjustmentBehavior="never"
@@ -66,6 +91,7 @@ export default function CurrentListingScreen() {
           </Pressable>
         ))}
       </ScrollView>
+      )}
     </View>
   );
 }
@@ -133,5 +159,47 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  emptyStateCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  emptyStateAbove: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '50%',
+    marginBottom: 52,
+    alignItems: 'center',
+  },
+  emptyStateButtonAtCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '50%',
+    alignItems: 'center',
+    transform: [{ translateY: -30 }],
+  },
+  emptyText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  sellButton: {
+    width: 300,
+    height: 60,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#28289D',
+  },
+  sellButtonText: {
+    fontSize: 18,
+    color: '#fff',
   },
 });
