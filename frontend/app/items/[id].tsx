@@ -82,7 +82,7 @@ export default function HomeScreen() {
             styles.scrollContent,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) ? 280 : 0),
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + 280,
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -141,6 +141,16 @@ export default function HomeScreen() {
       <Pressable style={styles.offerButton} onPress={handleMakeOffer} accessibilityLabel="Make offer">
         <ThemedText type="defaultSemiBold" style={styles.cardText}>Make Offer</ThemedText>
         </Pressable>
+        </View>
+        )}
+        {isItemMine(itemData.id) && (
+        <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+          <Pressable style={styles.buyButton} onPress={() => {}} accessibilityLabel="Edit">
+            <ThemedText type="defaultSemiBold" style={styles.cardText}>Edit</ThemedText>
+          </Pressable>
+          <Pressable style={styles.removeButton} onPress={() => {}} accessibilityLabel="Remove">
+            <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
+          </Pressable>
         </View>
         )}
       </View>
@@ -271,6 +281,15 @@ const styles = StyleSheet.create({
 
   offerButton: {
     backgroundColor: colours.button,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    borderRadius: 16,
+    minWidth: 120,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  removeButton: {
+    backgroundColor: '#C44536',
     paddingVertical: 14,
     paddingHorizontal: 18,
     borderRadius: 16,
