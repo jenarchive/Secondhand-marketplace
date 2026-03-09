@@ -9,6 +9,7 @@ import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import * as Haptics from 'expo-haptics';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -176,19 +177,20 @@ export default function TabTwoScreen() {
         <View style={styles.actionBar}>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionSkip, pressed && styles.actionPressed]}
-            onPress={handleCardDismiss}
+            onPress={() => {handleCardDismiss('left'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
           >
             <Ionicons name="close" size={26} color="#FF453A" />
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionBtnBuy, styles.actionBuy, pressed && styles.actionPressed]}
-            onPress={handleSwipeUp}
+            onPress={() => {handleSwipeUp(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
           >
             <Ionicons name="bag" size={32} color="#fff" />
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={toggleLike}
+            onPress={() => {toggleLike(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
+            onLongPress={() => {toggleLike(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); spawnButterflies('right');}}
           >
             <Ionicons
               name={currentItemLiked ? 'heart' : 'heart-outline'}
