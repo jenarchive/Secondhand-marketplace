@@ -3,12 +3,17 @@ import { StyleSheet, Pressable, View, FlatList } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link, Href } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function HomeScreen() {
-  
+  const colorScheme = useColorScheme();
+  const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
+
   const Data = [
-    { id: 1, icon: require('../../assets/images/settings.png'), label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
-    { id: 2, icon: require('../../assets/images/door.png'), label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
+    { id: 0, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
+    { id: 1, iconName: 'settings-outline' as const, label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
+    { id: 2, iconName: 'log-out-outline' as const, label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
   return (
@@ -43,7 +48,7 @@ export default function HomeScreen() {
                 <ThemedView style={styles.listRow}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <View style={styles.listSide}>
-                      <Image style={styles.listIcon} source={item.icon} />
+                      <Ionicons name={item.iconName} size={30} color={iconColor} />
                     </View>
                     <View style={styles.listText}>
                       <ThemedText>{item.label}</ThemedText>

@@ -4,11 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import { useMyListings } from '@/contexts/MyListingsContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -24,9 +24,21 @@ type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
-  const [visibleItems, setVisibleItems] = useState(TestData.items);
+  const { items: contextItems, isMyListing } = useMyListings();
+  const exploreItems = useMemo(
+    () => contextItems.filter((item) => !isMyListing(item.id)),
+    [contextItems, isMyListing]
+  );
+  const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
+
+  useEffect(() => {
+    setVisibleItems((prev) => {
+      if (prev.length === 0) return [...exploreItems];
+      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
+    });
+  }, [exploreItems]);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -58,7 +70,7 @@ export default function TabTwoScreen() {
   };
 
   const resetCards = () => {
-    setVisibleItems(TestData.items);
+    setVisibleItems([...exploreItems]);
   };
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
@@ -70,14 +82,19 @@ export default function TabTwoScreen() {
   };
 
   const handleSwipeUp = () => {
-    const currentItem = visibleItems[visibleItems.length - 1];
-    if (currentItem) {
-      router.push(`/items/${currentItem.id}`);
-    }
+    const topItem = visibleItems[visibleItems.length - 1];
+    if (topItem) router.push(`/items/${topItem.id}`);
   };
 
   return (
     <View style={styles.screen}>
+      {exploreItems.length === 0 ? (
+        <View style={styles.emptyState}>
+          <ThemedText style={styles.emptyTitle}>No items to explore</ThemedText>
+          <ThemedText style={styles.emptySubtitle}>Listings will appear here when available.</ThemedText>
+        </View>
+      ) : (
+      <>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
@@ -215,6 +232,8 @@ export default function TabTwoScreen() {
           </View>
         </View>
       )}
+      </>
+      )}
     </View>
   );
 }
@@ -223,6 +242,23 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#353636',
+  },
+  emptyState: {
+    flex: 1,
+    paddingVertical: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#fff',
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    opacity: 0.8,
+    color: '#fff',
   },
   cardContainer: {
     position: 'absolute',
