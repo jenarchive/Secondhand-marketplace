@@ -57,9 +57,9 @@ export default function ParallaxScrollView({
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
         const direction = event.translationX > 0 ? 'right' : 'left';
         if (onCardDismiss) runOnJS(onCardDismiss)(direction);
-      }
-      if (onSwipeDirection) {
-        runOnJS(onSwipeDirection)(event.translationX > 0 ? 'right' : 'left');
+        if (onSwipeDirection) {
+          runOnJS(onSwipeDirection)(direction);
+        }
       }
       translateX.value = withSpring(0);
       translateY.value = withSpring(0);
