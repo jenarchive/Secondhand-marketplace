@@ -63,9 +63,10 @@ export default function HomeScreen() {
   }
 
   const Data = [
-    { id: 0, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
-    { id: 1, iconName: 'settings-outline' as const, label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
-    { id: 2, iconName: 'log-out-outline' as const, label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
+    { id: 0, iconName: 'notifications-circle-outline' as const, label: "Notification", next: require('../../assets/images/next.png'), link: "/items/notification" },
+    { id: 1, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
+    { id: 2, iconName: 'settings-outline' as const, label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
+    { id: 3, iconName: 'log-out-outline' as const, label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
   return (
