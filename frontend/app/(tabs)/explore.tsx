@@ -10,6 +10,7 @@ import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import * as Haptics from 'expo-haptics';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -17,6 +18,7 @@ const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
 const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
+
 
 const ARROW_COLOR = '#5a5a5a';
 
@@ -27,8 +29,8 @@ export default function TabTwoScreen() {
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
   const exploreItems = useMemo(
-    () => contextItems.filter((item) => !isMyListing(item.id)),
-    [contextItems, isMyListing]
+    () => contextItems.filter((item) => !isMyListing(item.id) && !isLiked(item.id)),
+    [contextItems, isMyListing, isLiked]
   );
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
@@ -37,7 +39,7 @@ export default function TabTwoScreen() {
   useEffect(() => {
     setVisibleItems((prev) => {
       if (prev.length === 0) return [...exploreItems];
-      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
+      return prev.map((item) => isLiked(item.id) ? exploreItems.find((c) => c.id === item.id) ?? item : item);
     });
   }, [exploreItems]);
 
@@ -189,8 +191,8 @@ export default function TabTwoScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={() => {toggleLike(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
-            onLongPress={() => {toggleLike(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); spawnButterflies('right');}}
+            onPress={() => {handleCardDismiss('right'); toggleLike(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
+            onLongPress={() => {handleCardDismiss('right'); toggleLike(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); spawnButterflies('right');}}
           >
             <Ionicons
               name={currentItemLiked ? 'heart' : 'heart-outline'}
