@@ -5,7 +5,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/themed-text';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-
+import { Image } from 'expo-image';
   
 
 export default function NotificationScreen() {
@@ -30,37 +30,32 @@ export default function NotificationScreen() {
             )}}
         />
         <ScrollView
-          contentContainerStyle={[styles.listContent, { paddingTop: 112 }]}
+          contentContainerStyle={[styles.listContent, { paddingTop: 50 }]}
           contentInsetAdjustmentBehavior="never"
           style={styles.listcontainer}
           showsVerticalScrollIndicator={false}
         >
-          {/* {myListings.map((item, index) => ( */}
-            <Pressable
-              onPress={async () => {
-                router.push(`/items/chat`);
-              }}
-              style={[styles.card && styles.firstCard]}
-            >
-              <View style={styles.imageWrapper}>
-                {/* <Image
-                  source={{ uri: item.image }}
-                  alt={item.title}
-                  style={[styles.imagePlaceholder, { backgroundColor: placeholderBg }]}
-                  placeholder={{ blurhash }}
-                  contentFit="cover"
-                /> */}
-              </View>
-              <View style={styles.infoContainer}>
-                <ThemedText style={[styles.productName]} numberOfLines={1}>
-                  You haved matched with user 1. 
-                </ThemedText>
-                {/* <ThemedText style={[styles.price]}>
-                  {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(300)}
-                </ThemedText> */}
-              </View>
-            </Pressable>
-          {/* ))} */}
+          <Pressable
+            onPress={async () => {
+              router.push(`/items/chat`);
+            }}
+            style={[styles.card && styles.firstCard]}
+          >
+            {/* <View style={styles.imageWrapper}>
+              <Image
+                source="https://www.istockphoto.com/photos/placeholder-image"
+                style={styles.imagePlaceholder}
+              />
+            </View> */}
+            <View style={styles.infoContainer}>
+              <ThemedText style={[styles.productName]} numberOfLines={1}>
+                You haved matched with user 1. 
+              </ThemedText>
+              <ThemedText style={[styles.price]}>
+                {/* {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(300)} */}
+              </ThemedText>
+            </View>
+          </Pressable>
         </ScrollView>
       </ThemedView>
     </SafeAreaView>
@@ -74,8 +69,8 @@ export default function NotificationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex:1,
-    // borderWidth: 1, 
-    // borderColor: "white",
+    borderWidth: 1, 
+    borderColor: "white",
   },
   listContent: {
     paddingHorizontal: 20,
@@ -92,6 +87,8 @@ const styles = StyleSheet.create({
   imageWrapper: {
     position: 'relative',
     marginRight: 16,
+    borderWidth: 1, 
+    borderColor: "white",
   },
   imagePlaceholder: {
     width: 90,
@@ -106,12 +103,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
+    borderWidth: 1, 
+    borderColor: "white",
   },
   price: {
     fontSize: 18,
     fontWeight: 'bold',
   },
   listcontainer: {
+    // flex: 1,
     // borderWidth: 1, 
     // borderColor: "white",
   },

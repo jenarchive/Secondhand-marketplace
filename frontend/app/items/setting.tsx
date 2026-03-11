@@ -21,7 +21,7 @@ export default class App extends Component<{}> {
         <ThemedText style={styles.welcome}>Change to Matching mode</ThemedText>
         {/* <ThemedText style={styles.instructions}></ThemedText> */}
         <ToggleSwitch
-          onColor="#ffffff"
+          onColor='#687076'
           isOn={this.state.isOnBlueToggleSwitch}
           onToggle={isOnBlueToggleSwitch => {
             this.setState({ isOnBlueToggleSwitch });
