@@ -69,8 +69,8 @@ export default function NotificationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex:1,
-    borderWidth: 1, 
-    borderColor: "white",
+    // borderWidth: 1, 
+    // borderColor: "white",
   },
   listContent: {
     paddingHorizontal: 20,
@@ -103,8 +103,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
-    borderWidth: 1, 
-    borderColor: "white",
+    // borderWidth: 1, 
+    // borderColor: "white",
   },
   price: {
     fontSize: 18,
