@@ -211,9 +211,9 @@ export default function TabTwoScreen() {
               <View style={styles.swipeHints} pointerEvents="none">
                 <View style={styles.hintUp}>
                   <View style={styles.hintBackdrop}>
-                    <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
+                    <Ionicons name="arrow-down" size={28} color={ARROW_COLOR} />
                     <View style={styles.hintTextUp}>
-                      <Text style={styles.hintText}>Swipe up</Text>
+                      <Text style={styles.hintText}>Swipe down</Text>
                       <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
                     </View>
                   </View>
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   },
   hintUp: {
     position: 'absolute',
-    top: 12,
+    bottom: 12,
     left: 0,
     right: 0,
     alignItems: 'center',
