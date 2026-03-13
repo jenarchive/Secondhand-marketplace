@@ -83,7 +83,7 @@
 * Beta Viva slides (rough): 
     - We were a bit rushing towards to the end of this sprint (client meeting) and this was ignored 
 
-## Sprint 3: Beta Viva
+## Sprint 3: Beta Viva and Release
 ### Reading week - Week 20 (23rd Feb - 11th Mar), Project Manager: Alex
 ### Features planned to be finish: 
 * High priority:
@@ -149,9 +149,40 @@
 ## Sprint 4: Towards Final Release 
 ### Week 21 - Easter Break - 22 (15th Mar - 15th Apr), Project Manager: Jen
 ### Features planned to be finish: 
-* 
+* High priority:
+    - Features: 
+        * Matching feature more developed and integrated, Ideas discussion
+            - Chat page
+            - Notification page 
+        * Buy button adjustment 
+        * Search bar dropdown categories 
+        * Authentication backend 
+        * Liked items page backend
+    - Repo: 
+        * Test coverage: Frontend and Backend
+        * User flow / user instruction 
+        * Poster for Client celebration day 
+        * Final Slides 
+            - Include why no / less commits in some weeks 
+            - How we implement CD and how we change it
+        * Docs 
+            - Frontend & Backend readme: How to start / run tests 
+* Low priority: 
+    - Features: 
+        * Algorithm consideration for swiping 
+            - Only if we have more time 
+        * Frontend login / signup pages 
+    - Repo: 
+        * Doc of meetings
+        * Update roadmap 
+        * Project structure update 
+        * Clean up issues 
+        * Takeover instructions - infrastructure code
 
 ### Fully Achieved: 
+* 
+
+### Over-Achieved / Unexpected feature: 
 * 
 
 ### Partially Achieved: 
@@ -160,7 +191,6 @@
 ### Postponed / Cancelled: 
 * 
 
-## Easter Break 
 
 ## Sprint 5: Final Release, Poster day 
 ### Week 23 - 24 (13th - 30th Apr), Project Manager: TBC
@@ -168,6 +198,9 @@
 * 
 
 ### Fully Achieved: 
+* 
+
+### Over-Achieved / Unexpected feature: 
 * 
 
 ### Partially Achieved: 
