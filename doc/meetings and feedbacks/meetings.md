@@ -245,3 +245,26 @@
 * PR: keep up last week's standard, ensure every of it is reviewed with comments and pictures, if applicable. 
 * User flow: navigation 
 * Equal workload: need to email Henry about Morgan is not part of our team now 
+
+## Mentor 26th Feb: 
+* For Beta Viva:
+    * Include all stakeholders briefly 
+    * How we changed from greencheckAI 
+    * Demo needs practice + show off whole product 
+    * Talk about communication method 
+    * Talk about what you would change next time 
+    * Be prepared to talk about AI, unequal work load and failed action on dev branch and why
+
+## Mentor 5th Mar: 
+* ASAP: CI and CD
+* AI: include example prompts 
+* PR: more comments and code reviews 
+* Gamification: consider about mascot 
+* VIVA: 
+    * Use "Agile" the word more
+    * Go through ILOs for slides 
+* Think about final Viva: 
+    * Finish what is started: backend and testing 
+    * Implement small new features (decide early)
+    * Spend 2-3 weeks going through presentation
+
