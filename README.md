@@ -71,39 +71,57 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 ## Project Structure
 ```text
+├── .github                            # Issues & Pr templates, CI/CD workflows
 ├── README.md                          # Main project overview
 ├── ai-tools                           # Overview of AI tools
-│   └── README.md
+│   └── README.md                      # Details of how AI is used in this project with example prompts 
 ├── backend                            # Flask API: Handles business logic and data processing
-│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings)
+│   ├── README.md                      # Backend overview and structure
+│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings, Upload Items)
+│   ├── tests                          # Unit tests for testing backend code
 │   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
-│   └── run.py                         # Server entry point: Starts the Flask development server
+│   ├── run.py                         # Server entry point: Starts the Flask development server
+│   └── .pylintrc                      # Adjustment for pylint in CI 
 ├── database                           # Data Layer: PostgreSQL configuration and scripts
+│   ├── README.md                      # Database overview and structure 
 │   ├── config.py                      # DB connection strings and environment settings
 │   ├── main.py                        # Management script for DB init and migrations
 │   └── *.sql                          # SQL scripts: Schema(Create), Seed(Insert), Ops(Queries)
 ├── frontend                           # Frontend React Native (Expo) application
+│   ├── README.md                      # Frontend overview and structure 
 │   ├── app                            # File-based Routing (Crucial for UI)
-│   │   ├── (tabs)                     # Main navigation tab screens
-│   │   │   ├── marketplace.tsx        # Main Marketplace: Item listings (Matches Figma)
+│   │   ├── (tabs)                     # Main pages for frontend
+│   │   │   ├── _layout.tsx            # Layout for navigation bar and pages
 │   │   │   ├── sell.tsx               # Sell Page: Item registration
-│   │   │   ├── profile.tsx            # User Profile: Account and history
-│   │   │   └── index.tsx              # App landing logic
+│   │   │   ├── profile.tsx            # User Profile: Account and my listings 
+│   │   │   ├── explore.tsx            # Explore Page: Swiping and gamification
+│   │   │   ├── liked-items.tsx        # Liked-items Page: Record and edit which items are liked 
+│   │   │   └── index.tsx              # App landing page - Marketplace: Item listings (Matches Figma)
 │   │   ├── auth                       # Authentication flow
 │   │   │   ├── login.tsx              # Sign-in screen
 │   │   │   └── signup.tsx             # New user registration
-│   │   ├── items                      # Item details
-│   │   │   └── [id].tsx               # Dynamic Route: Individual item detail view
+│   │   ├── items                      # Item details for sub-pages 
+│   │   │   ├── edit                   # Folder for editing details of my listing
+│   │   │   ├── transaction            # Folder for "what happens after buy button is pressed"
+│   │   │   ├── [id].tsx               # Dynamic Route: Individual item detail view
+│   │   │   ├── current-listing.tsx    # Page showing my current listing items 
+│   │   │   ├── edit-profile.tsx       # Page for editing details for user profile
+│   │   │   └── notification.tsx       # Page for showing notifications
 │   │   └── _layout.tsx                # Root layout and theme providers
 │   ├── assets                         # Images, icons, and animations
 │   ├── components                     # Reusable UI components (Headers, Buttons)
 │   ├── constants                      # Design tokens (Colours, Spacing)
+│   ├── contexts                       # Context used for checking in other pages 
 │   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
+│   ├── scripts                        # To reset project
+│   ├── store                          # Storage for test-data 
 │   ├── test-data.json                 # Mock data for frontend testing
-│   └── package.json                   # Frontend dependencies and scripts
+│   ├── __tests__                      # Tests for testing frontend code
+│   ├── package.json                   # Frontend dependencies and scripts
+│   └── *                              # Set up files for linting / testing
 ├── doc                                # Project documentation and diagrams
 │   ├── previous project               # Files related to previous project
-│   ├── others                         # Diagrams and files for explain / plan
+│   ├── others                         # Diagrams and files for explaining / planning 
 │   └── meetings and feedbacks         # Meeting notes and feedbacks for review
 └── package.json                       # Root workspace configuration
 ```
