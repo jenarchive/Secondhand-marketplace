@@ -37,7 +37,7 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 * Github Actions
 
 <p align="left">
-  <img width="918" alt="architecture image" src="doc/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="architecture image" src="docs/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
 ## Client Information 
