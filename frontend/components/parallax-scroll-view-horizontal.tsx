@@ -40,7 +40,7 @@ export default function ParallaxScrollView({
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
       translateX.value = event.translationX;
-      translateY.value = event.translationY;
+      translateY.value = event.translationY > 0 ? event.translationY : 0;
 
       if (Math.abs(event.translationX) > TRIGGER_THRESHOLD && !hasTriggeredHaptic.value) {
         hasTriggeredHaptic.value = true;

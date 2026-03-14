@@ -1,30 +1,36 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
-import { useState, useMemo } from 'react';
+import { Alert, Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
+import { useState, useMemo, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import { useMyListings } from '@/contexts/MyListingsContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
+  const { items: contextItems, isMyListing } = useMyListings();
+  const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+
+  useEffect(() => {
+    setDisplayItems([...contextItems]);
+  }, [contextItems]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return TestData.items;
-    return TestData.items.filter(i =>
+    if (!q) return displayItems;
+    return displayItems.filter(i =>
       i.title.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, displayItems]);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -52,7 +58,7 @@ export default function HomeScreen() {
         <ThemedView style={styles.flexbox}>
             {filtered.map((item) => (
               <Pressable
-                key={item.id}
+                key={`${item.id}-${item.title}`}
                 style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
                 onPress={async () => {
                   // light selection haptic and navigate
@@ -78,6 +84,10 @@ export default function HomeScreen() {
                       style={styles.likeButton}
                       onPress={(e) => {
                         e.stopPropagation?.();
+                        if (isMyListing(item.id)) {
+                          Alert.alert('', 'This is your posted product.');
+                          return;
+                        }
                         toggleLike(item.id);
                       }}
                       hitSlop={8}

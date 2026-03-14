@@ -213,3 +213,58 @@
     * Focus on gamification, animamtion and UI (simplistic) 
     * Start connecting frontend and backend now 
 * Will meet us and test our app in person on Feb 19 (Beta release)
+
+## Mentor 12th Feb: 
+* Needs urgent attention:  
+    * AI usage documentation - ASAP needed
+    * CI: Unit tests, integration tests and test coverage
+    * CD: deploy backend and database on AWS 
+    * User flow / instruction
+* Other feedback: 
+    * Include before and after issue summary 
+    * Make agreement of branch / issue naming and document it
+    * Beta Viva slides needed too 
+
+## Client 19th Feb:
+* Feedback: 
+    * Want swiping to be more reactive to the end - can keep it there and not disappear immediately 
+    * Liked about testing day feedback 
+    * Ask about the buy now and make offer button on item page: We need to decide to keep it or delete it, with a good reason and following user journey idea. 
+    * Happy with what we are having now, and think that we know what we are doing 
+* Idea proposal: Swiping creating a match if 2 users liked each other's item (Users who liked your items = User A)
+    * Increase uniqueness: pure exchange of item, can pay difference in value or other ideas 
+    * Smart recommendation: increase users A items chance to appear in explore page 
+    * Up to us to decide if we want to develop on this and how to execute 
+* Butterflies: can use testathon to try different versions of butterfly interaction and see which is better? 
+
+## Mentor 19th Feb: 
+* AI much better, need to include example prompts 
+* CD: fix the issue, consider about what was the mistake that it was pushed to dev 
+* Branches need to clean up after merging PR
+* CI: make sure it is done before next week
+* PR: keep up last week's standard, ensure every of it is reviewed with comments and pictures, if applicable. 
+* User flow: navigation 
+* Equal workload: need to email Henry about Morgan is not part of our team now 
+
+## Mentor 26th Feb: 
+* For Beta Viva:
+    * Include all stakeholders briefly 
+    * How we changed from greencheckAI 
+    * Demo needs practice + show off whole product 
+    * Talk about communication method 
+    * Talk about what you would change next time 
+    * Be prepared to talk about AI, unequal work load and failed action on dev branch and why
+
+## Mentor 5th Mar: 
+* ASAP: CI and CD
+* AI: include example prompts 
+* PR: more comments and code reviews 
+* Gamification: consider about mascot 
+* VIVA: 
+    * Use "Agile" the word more
+    * Go through ILOs for slides 
+* Think about final Viva: 
+    * Finish what is started: backend and testing 
+    * Implement small new features (decide early)
+    * Spend 2-3 weeks going through presentation
+

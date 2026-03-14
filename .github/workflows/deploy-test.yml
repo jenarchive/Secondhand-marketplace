@@ -1,0 +1,37 @@
+name: Deploy to Test Server
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - 'backend/**'
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Test Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/test/2025-SecondhandMarketplace2/backend
+            git fetch origin
+            # pull latest code from current branch
+            git checkout -B ${{ github.head_ref }} origin/${{ github.head_ref }}
+            git pull origin ${{ github.head_ref }}
+            # activate virtual environment
+            source venv/bin/activate
+            # install dependencies
+            pip install -r requirements.txt
+            # restart the flask server
+            sudo systemctl restart marketplace-test
+            sudo systemctl status marketplace-test --no-pager

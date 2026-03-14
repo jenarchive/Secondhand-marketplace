@@ -80,6 +80,7 @@ export default function TabLayout() {
         name="liked-items"
         options={{
           title: 'Likes',
+          tabBarLabel: 'Likes',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="heart.fill" color={color} />,
         }}
       />

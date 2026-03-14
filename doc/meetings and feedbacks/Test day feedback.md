@@ -1,24 +1,23 @@
 # General trend: 
 * Users liked: 
-    * UI and interface: It looks clean, modern, minimalistic and easy to access. 
-    * Swiping feature: allow users to discover, interactive and unique in online market
+    * 80% of users complimented our UI and interface: 
+        - clean, modern, minimalistic and easy to access. 
+    * 50% of users complimented our swiping feature: 
+        - allow users to discover, interactive and unique in online market
     * Easy to list things
 * Users pointed out areas that can be improved / implemented: 
     * Marketplace: 
-        - Labels for items 
+        - Labels for items, Searching can find related items & Sort by categories
         - Tapping on seller doesn't give details
-        - Searching can find related items 
         - Contact seller 
-        - Sort by categories
     * Swiping 
         - small description area
         - buy or not buy feature 
-    * Others
+    * Others: 
         - When exiting page, on the top left is (tabs) not back
+        - Empty home page
         - Liked items page
-        - Chat section 
         - Prefer webpage 
-        - Color Scheme
 * Average Score of 2.67/5 on "How different do you think this app is compare to other online market" 
 
 # Data collected: 

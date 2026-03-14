@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
@@ -6,11 +6,10 @@ import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
-import { useState } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import { useMyListings, type MyListingItem } from '@/contexts/MyListingsContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -22,14 +21,17 @@ const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
 const ARROW_COLOR = '#5a5a5a';
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
-type TestItem = (typeof TestData.items)[number];
+type TestItem = MyListingItem;
 
 export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked, likedMap } = useLikedItems();
-  const [visibleItems, setVisibleItems] = useState(() =>
-    TestData.items.filter((item) => !isLiked(item.id))
+  const { items: contextItems, isMyListing } = useMyListings();
+  const exploreItems = useMemo(
+    () => contextItems.filter((item) => !isMyListing(item.id)),
+    [contextItems, isMyListing]
   );
+  const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
   const [heartFilledId, setHeartFilledId] = useState<number | null>(null);
@@ -40,6 +42,13 @@ export default function TabTwoScreen() {
   const prevItemsLengthRef = useRef(0);
   const alreadyAddedToLikesRef = useRef(false);
   const fromItemDetailRef = useRef(false);
+
+  useEffect(() => {
+    setVisibleItems((prev) => {
+      if (prev.length === 0) return [...exploreItems];
+      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
+    });
+  }, [exploreItems]);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -62,7 +71,7 @@ export default function TabTwoScreen() {
   const handleCardDismiss = (direction?: 'left' | 'right', itemIdOverride?: number) => {
     const item =
       itemIdOverride != null
-        ? TestData.items.find((i) => i.id === itemIdOverride)
+        ? exploreItems.find((i) => i.id === itemIdOverride)
         : visibleItems[visibleItems.length - 1];
     if (direction && item) {
       pendingDismissRef.current = { direction, item };
@@ -94,26 +103,26 @@ export default function TabTwoScreen() {
   }, [visibleItems, isLiked, toggleLikeContext]);
 
   const resetCards = () => {
-    setVisibleItems(TestData.items.filter((item) => !isLiked(item.id)));
+    setVisibleItems(exploreItems.filter((item) => !isLiked(item.id)));
   };
 
   useEffect(() => {
-    const items = TestData.items.filter((item) => !likedMap[String(item.id)]);
+    const items = exploreItems.filter((item) => !likedMap[String(item.id)]);
     visibleItemsRef.current = items;
-  }, [likedMap]);
+  }, [likedMap, exploreItems]);
 
   useFocusEffect(
     useCallback(() => {
       if (fromItemDetailRef.current) {
         fromItemDetailRef.current = false;
       } else {
-        const newItems = TestData.items.filter((item) => !likedMap[String(item.id)]);
+        const newItems = exploreItems.filter((item) => !likedMap[String(item.id)]);
         visibleItemsRef.current = newItems;
         setHeartFilledId(null);
         setLikeButtonHeartFilled(false);
         setVisibleItems(newItems);
       }
-    }, [likedMap])
+    }, [likedMap, exploreItems])
   );
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
@@ -126,7 +135,7 @@ export default function TabTwoScreen() {
   const getTopItemId = () => {
     const items = visibleItemsRef.current;
     if (items.length > 0) return items[items.length - 1].id;
-    const unliked = TestData.items.find((i) => !likedMap[String(i.id)]);
+    const unliked = exploreItems.find((i) => !likedMap[String(i.id)]);
     return unliked?.id ?? null;
   };
 
@@ -165,6 +174,13 @@ export default function TabTwoScreen() {
 
   return (
     <View style={styles.screen}>
+      {exploreItems.length === 0 ? (
+        <View style={styles.emptyState}>
+          <ThemedText style={styles.emptyTitle}>No items to explore</ThemedText>
+          <ThemedText style={styles.emptySubtitle}>Listings will appear here when available.</ThemedText>
+        </View>
+      ) : (
+      <>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
         headerImage={<Image />}
@@ -301,7 +317,7 @@ export default function TabTwoScreen() {
               </Pressable>
             </Link>
           </View>
-          {!TestData.items.every((item) => isLiked(item.id)) && (
+          {!exploreItems.every((item) => isLiked(item.id)) && (
             <View style={styles.emptyStateBelow}>
               <Pressable style={styles.emptyStateReset} onPress={resetCards}>
                 <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
@@ -309,6 +325,8 @@ export default function TabTwoScreen() {
             </View>
           )}
         </View>
+      )}
+      </>
       )}
     </View>
   );
@@ -318,6 +336,23 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#353636',
+  },
+  emptyState: {
+    flex: 1,
+    paddingVertical: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#fff',
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    opacity: 0.8,
+    color: '#fff',
   },
   cardContainer: {
     position: 'absolute',

@@ -7,7 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Colors } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import TestData from '@/test-data.json';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import * as Haptics from 'expo-haptics';
@@ -73,9 +73,9 @@ export default function LikedItemsScreen() {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
   }, []);
 
-  const screenBg = '#121212';
-  const textColor = Colors.dark.text;
-  const placeholderBg = '#2c2c2e';
+  const screenBg = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const placeholderBg = useThemeColor({ light: '#e5e5e5', dark: '#2c2c2e' }, 'background');
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
@@ -140,7 +140,7 @@ export default function LikedItemsScreen() {
       />
 
       {likedItems.length === 0 ? (
-        <View style={styles.emptyStateCenter}>
+        <View style={[styles.emptyStateCenter, { backgroundColor: screenBg }]}>
           <View style={styles.emptyStateAbove}>
             <ThemedText style={[styles.emptyText, { color: textColor }]}>
               No liked items yet
@@ -286,7 +286,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     zIndex: 10,
-    backgroundColor: '#121212',
   },
   emptyStateAbove: {
     position: 'absolute',

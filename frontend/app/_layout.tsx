@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { LikedItemsProvider } from '@/contexts/LikedItemsContext';
+import { MyListingsProvider } from '@/contexts/MyListingsContext';
 
 export const unstable_settings = {
   anchor: 'tabs',
@@ -20,6 +21,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <LikedItemsProvider>
+        <MyListingsProvider>
         <ThemeProvider value={theme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -29,6 +31,7 @@ export default function RootLayout() {
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
+        </MyListingsProvider>
       </LikedItemsProvider>
     </GestureHandlerRootView>
   );

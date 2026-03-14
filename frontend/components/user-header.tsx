@@ -7,23 +7,36 @@ import { ThemedText } from './themed-text';
 import * as Haptics from 'expo-haptics';
 import TestData from '@/test-data.json'
 
-export default function ExternalLink({userId, userLocation, userRating, itemId}: {userId: number, userLocation: string, userRating: number, itemId: number}) {
-
+export default function UserHeader({
+  userId,
+  userLocation,
+  userRating,
+  itemId,
+  displayName,
+}: {
+  userId: number;
+  userLocation: string;
+  userRating: number;
+  itemId: number;
+  displayName?: string;
+}) {
   const handleUserPress = async () => {
     try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
     // TODO: implement user profile navigation
     console.log('User profile pressed', itemId);
   };
-  
+
+  const name = displayName ?? `User${userId}`;
+
   return (
     <ThemedView>
     <Pressable onPress={handleUserPress}>
     <ThemedView style={styles.userProfileContainer}>
       <ThemedView style={styles.userProfileImage}>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>U</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{name.charAt(0).toUpperCase()}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.userMeta}>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>User{userId}</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{name}</ThemedText>
         <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{userLocation}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${userRating} out of 5`}>

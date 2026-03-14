@@ -3,7 +3,7 @@ import { Pressable, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
-export default function ModalLayout() {
+export default function ItemsLayout() {
   const router = useRouter();
   const headerBg = useThemeColor({}, "background");
   const headerTint = useThemeColor({}, "text");
@@ -15,6 +15,7 @@ export default function ModalLayout() {
         headerStyle: { backgroundColor: headerBg },
         headerTintColor: headerTint,
         headerBackTitleVisible: false,
+        headerBackTitle: "",
         headerShadowVisible: false,
         headerLeft: () => (
           <Pressable
@@ -28,7 +29,15 @@ export default function ModalLayout() {
       }}
     >
       <Stack.Screen name="[id]" />
-      <Stack.Screen name="current-listing" />
+      <Stack.Screen
+        name="transaction/[id]"
+        options={{
+          headerShown: false,
+          animation: "slide_from_bottom",
+        }}
+      />
+      <Stack.Screen name="current-listing" options={{ title: "My Listings" }} />
+      <Stack.Screen name="edit" options={{ headerShown: false }} />
       <Stack.Screen name="setting" />
       <Stack.Screen name="edit-profile" />
       <Stack.Screen name="logout" />

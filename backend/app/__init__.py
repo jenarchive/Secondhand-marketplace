@@ -16,5 +16,5 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(item_listing_bp, url_prefix='/item-listing')
     app.register_blueprint(upload_bp, url_prefix='/api')
-    
+
     return app
