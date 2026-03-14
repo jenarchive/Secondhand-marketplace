@@ -1,8 +1,32 @@
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { Pressable, Platform } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useThemeColor } from "@/hooks/use-theme-color";
 
 export default function ModalLayout() {
+  const router = useRouter();
+  const headerBg = useThemeColor({}, "background");
+  const headerTint = useThemeColor({}, "text");
+
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        headerStyle: { backgroundColor: headerBg },
+        headerTintColor: headerTint,
+        headerBackTitleVisible: false,
+        headerShadowVisible: false,
+        headerLeft: () => (
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={12}
+            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1, padding: 8, marginLeft: Platform.OS === "ios" ? 0 : 4 })}
+          >
+            <Ionicons name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"} size={28} color={headerTint} />
+          </Pressable>
+        ),
+      }}
+    >
       <Stack.Screen name="[id]" />
       <Stack.Screen name="current-listing" />
       <Stack.Screen name="setting" />

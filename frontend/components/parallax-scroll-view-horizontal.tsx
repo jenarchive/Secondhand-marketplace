@@ -17,6 +17,7 @@ const SWIPE_THRESHOLD = 50;
 const TRIGGER_THRESHOLD = 10;
 
 const SWIPE_UP_THRESHOLD = 80;
+const SWIPE_DOWN_THRESHOLD = 80;
 
 type Props = PropsWithChildren<{
   headerImage?: ReactElement;
@@ -24,6 +25,7 @@ type Props = PropsWithChildren<{
   onCardDismiss?: (direction?: 'left' | 'right') => void;
   onSwipeDirection?: (direction: 'left' | 'right') => void;
   onSwipeUp?: () => void;
+  onSwipeDown?: () => void;
 }>;
 
 export default function ParallaxScrollView({
@@ -31,6 +33,7 @@ export default function ParallaxScrollView({
   onCardDismiss,
   onSwipeDirection,
   onSwipeUp,
+  onSwipeDown,
 }: Props) {
   const backgroundColor = useThemeColor({}, 'background');
   const translateX = useSharedValue(0);
@@ -52,9 +55,13 @@ export default function ParallaxScrollView({
     })
     .onEnd((event) => {
       const isSwipeUp = event.translationY < -SWIPE_UP_THRESHOLD && Math.abs(event.translationY) > Math.abs(event.translationX);
+      const isSwipeDown = event.translationY > SWIPE_DOWN_THRESHOLD && Math.abs(event.translationY) > Math.abs(event.translationX);
       const isSwipeHorizontal = Math.abs(event.translationX) > SWIPE_THRESHOLD;
 
-      if (isSwipeUp && onSwipeUp) {
+      if (isSwipeDown && onSwipeDown) {
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
+        runOnJS(onSwipeDown)();
+      } else if (isSwipeUp && onSwipeUp) {
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
         runOnJS(onSwipeUp)();
       } else if (isSwipeHorizontal) {

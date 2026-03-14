@@ -171,6 +171,7 @@ export default function TabTwoScreen() {
         onCardDismiss={handleCardDismiss}
         onSwipeDirection={handleSwipeDirection}
         onSwipeUp={handleSwipeUp}
+        onSwipeDown={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
           <ThemedView
