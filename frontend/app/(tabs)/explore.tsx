@@ -42,6 +42,10 @@ export default function TabTwoScreen() {
   const prevItemsLengthRef = useRef(0);
   const alreadyAddedToLikesRef = useRef(false);
   const fromItemDetailRef = useRef(false);
+  const likedMapRef = useRef(likedMap);
+  useEffect(() => {
+    likedMapRef.current = likedMap;
+  }, [likedMap]);
 
   useEffect(() => {
     setVisibleItems((prev) => {
@@ -116,13 +120,14 @@ export default function TabTwoScreen() {
       if (fromItemDetailRef.current) {
         fromItemDetailRef.current = false;
       } else {
-        const newItems = exploreItems.filter((item) => !likedMap[String(item.id)]);
+        const latestLikedMap = likedMapRef.current;
+        const newItems = exploreItems.filter((item) => !latestLikedMap[String(item.id)]);
         visibleItemsRef.current = newItems;
         setHeartFilledId(null);
         setLikeButtonHeartFilled(false);
         setVisibleItems(newItems);
       }
-    }, [likedMap, exploreItems])
+    }, [exploreItems])
   );
 
   const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
@@ -144,11 +149,11 @@ export default function TabTwoScreen() {
     if (direction === 'right' && itemId != null) {
       setHeartFilledId(itemId);
       setLikeButtonHeartFilled(true);
-      spawnButterflies('right');
       if (!isLiked(itemId)) {
         alreadyAddedToLikesRef.current = true;
         toggleLikeContext(itemId);
       }
+      spawnButterflies('right');
     }
   };
 

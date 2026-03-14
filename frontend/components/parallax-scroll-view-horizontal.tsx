@@ -36,8 +36,12 @@ export default function ParallaxScrollView({
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const hasTriggeredHaptic = useSharedValue(false);
+  const hasCalledDismiss = useSharedValue(false);
 
   const gesture = Gesture.Pan()
+    .onStart(() => {
+      hasCalledDismiss.value = false;
+    })
     .onUpdate((event) => {
       translateX.value = event.translationX;
       translateY.value = event.translationY > 0 ? event.translationY : 0;
@@ -57,7 +61,8 @@ export default function ParallaxScrollView({
       if (isSwipeDown && onSwipeDown) {
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
         runOnJS(onSwipeDown)();
-      } else if (isSwipeHorizontal) {
+      } else if (isSwipeHorizontal && !hasCalledDismiss.value) {
+        hasCalledDismiss.value = true;
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
         const direction = event.translationX > 0 ? 'right' : 'left';
         if (onCardDismiss) runOnJS(onCardDismiss)(direction);
