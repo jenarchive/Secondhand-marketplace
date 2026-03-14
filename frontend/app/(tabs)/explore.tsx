@@ -54,6 +54,13 @@ export default function TabTwoScreen() {
     });
   }, [exploreItems]);
 
+  useEffect(() => {
+    setVisibleItems((prev) => {
+      if (prev.length === 0) return [...exploreItems];
+      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
+    });
+  }, [exploreItems]);
+
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
