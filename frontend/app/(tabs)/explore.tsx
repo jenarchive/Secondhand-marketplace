@@ -155,13 +155,7 @@ export default function TabTwoScreen() {
   const handleLikePress = () => {
     const itemId = getTopItemId();
     if (itemId == null) return;
-    setHeartFilledId(itemId);
-    setLikeButtonHeartFilled(true);
-    fromLikeButtonRef.current = true;
-    alreadyAddedToLikesRef.current = true;
-    if (!isLiked(itemId)) toggleLikeContext(itemId);
-    spawnButterflies('right');
-    setTimeout(() => handleCardDismiss('right', itemId), 80);
+    handleCardDismiss('right', itemId);
   };
 
   const handleSwipeUp = () => {
