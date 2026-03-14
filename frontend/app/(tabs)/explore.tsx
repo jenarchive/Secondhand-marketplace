@@ -170,7 +170,6 @@ export default function TabTwoScreen() {
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
         onSwipeDirection={handleSwipeDirection}
-        onSwipeUp={handleSwipeUp}
         onSwipeDown={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
