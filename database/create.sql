@@ -2,8 +2,9 @@
 
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY, 
-    username VARCHAR(80) NOT NULL, 
-    email_address VARCHAR(100) NOT NULL
+    username VARCHAR(80) UNIQUE NOT NULL, 
+    email_address VARCHAR(100) UNIQUE NOT NULL,
+    hashed_password VARCHAR(60) NOT NULL
 ) ; 
 
 CREATE TABLE category (
