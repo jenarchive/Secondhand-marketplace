@@ -41,7 +41,7 @@ export default function TransactionScreen() {
   };
 
   const handleChatWithSeller = () => {
-    router.push({ pathname: '/items/chat/[id]', params: { id: String(id), sellerName: `User${id}` } });
+    router.push({ pathname: '/items/chat/[id]', params: { id: String(id), sellerName: `User${id}`, transactionMethod: method } });
   };
 
   return (

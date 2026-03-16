@@ -9,7 +9,7 @@ import { useMyListings } from '@/contexts/MyListingsContext';
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
 export default function ChatScreen() {
-  const params = useLocalSearchParams<{ id: string; sellerName?: string }>();
+  const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string }>();
   const router = useRouter();
   const id = Number(params.id);
   const { items } = useMyListings();
@@ -21,6 +21,7 @@ export default function ChatScreen() {
   const headerTitle = params.sellerName ?? `User${params.id}`;
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
   const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
+  const showPostage = params.transactionMethod === 'Delivery';
 
   return (
     <>
@@ -56,15 +57,17 @@ export default function ChatScreen() {
                   <Text style={[styles.productPrice, { color: '#FFFFFF' }]}>
                     {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
                   </Text>
-                  <Text style={[styles.productPostage, { color: unselectedTextColor }]}>
-                    Postage £2.50
-                  </Text>
+                  {showPostage && (
+                    <Text style={[styles.productPostage, { color: unselectedTextColor }]}>
+                      Postage £2.50
+                    </Text>
+                  )}
                 </View>
               </View>
 
               <Pressable
                 style={[styles.viewDetailsButton, { backgroundColor: borderColor }]}
-                onPress={() => router.back()}
+                onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
               >
                 <Text style={styles.viewDetailsButtonText}>View details</Text>
               </Pressable>

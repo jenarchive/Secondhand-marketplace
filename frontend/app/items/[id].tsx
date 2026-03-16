@@ -12,9 +12,10 @@ import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 export default function HomeScreen() {
-  const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
+  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
+  const fromChat = params.fromChat === 'true';
   const { items, isMyListing: isItemMine, removeItem } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
@@ -72,7 +73,7 @@ export default function HomeScreen() {
             styles.scrollContentWrap,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) ? 72 : 0),
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) && !fromChat ? 72 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -154,7 +155,7 @@ export default function HomeScreen() {
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
           </Pressable>
         </View>
-        ) : (
+        ) : !fromChat ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
             style={styles.buyNowButton}
@@ -167,7 +168,7 @@ export default function HomeScreen() {
             <ThemedText type="defaultSemiBold" style={styles.buyNowButtonText}>Buy Now</ThemedText>
           </Pressable>
         </View>
-        )}
+        ) : null}
       </View>
     </>
   );
