@@ -1,8 +1,11 @@
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View, TouchableOpacity, Text, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+
+type TransactionMethod = 'Delivery' | 'Collection';
 
 export default function TransactionScreen() {
   const params = useLocalSearchParams<{ id: string }>();
@@ -11,6 +14,11 @@ export default function TransactionScreen() {
   const titleColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const backgroundColor = useThemeColor({}, 'background');
   const backButtonBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)';
+  const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
+  const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
+  const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
+
+  const [method, setMethod] = useState<TransactionMethod>('Delivery');
 
   return (
     <>
@@ -27,6 +35,46 @@ export default function TransactionScreen() {
           <Text style={[styles.headerTitle, { color: titleColor }]} numberOfLines={1}>
             Transaction
           </Text>
+        </View>
+
+        <View style={styles.content}>
+          <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Transaction Method</Text>
+          <View style={styles.methodRow}>
+            <Pressable
+              style={[
+                styles.methodCard,
+                { backgroundColor: cardBg },
+                method === 'Delivery' && { borderWidth: 2, borderColor },
+              ]}
+              onPress={() => setMethod('Delivery')}
+            >
+              <Ionicons
+                name="bicycle-outline"
+                size={24}
+                color={method === 'Delivery' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+              />
+              <Text style={[styles.methodLabel, { color: method === 'Delivery' ? borderColor : unselectedTextColor }, method === 'Delivery' && { fontWeight: '600' }]}>
+                Delivery
+              </Text>
+            </Pressable>
+            <Pressable
+              style={[
+                styles.methodCard,
+                { backgroundColor: cardBg },
+                method === 'Collection' && { borderWidth: 2, borderColor },
+              ]}
+              onPress={() => setMethod('Collection')}
+            >
+              <Ionicons
+                name="storefront-outline"
+                size={24}
+                color={method === 'Collection' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+              />
+              <Text style={[styles.methodLabel, { color: method === 'Collection' ? borderColor : unselectedTextColor }, method === 'Collection' && { fontWeight: '600' }]}>
+                Collection
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </>
@@ -67,5 +115,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
+  },
+  content: {
+    flex: 1,
+    paddingTop: 100 + 16,
+    paddingHorizontal: 20,
+  },
+  sectionLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  methodRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  methodCard: {
+    flex: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  methodLabel: {
+    fontSize: 15,
   },
 });
