@@ -43,6 +43,7 @@ export default function ItemsLayout() {
       <Stack.Screen name="logout" />
       <Stack.Screen name="purchase-history" />
       <Stack.Screen name="notification" />
+      <Stack.Screen name="chat/[id]" options={{ title: 'Chat with seller' }} />
     </Stack>
   );
 }

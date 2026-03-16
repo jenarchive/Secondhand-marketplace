@@ -28,8 +28,21 @@ export default function TransactionScreen() {
   const [method, setMethod] = useState<TransactionMethod>('Delivery');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [collectionLocation, setCollectionLocation] = useState('');
+  const [offerPrice, setOfferPrice] = useState('');
   const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
+
+  const handleSendOffer = () => {
+    const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
+    if (itemData && !isNaN(num) && num > 0) {
+      setOfferPrice('');
+      // TODO: send offer to seller
+    }
+  };
+
+  const handleChatWithSeller = () => {
+    router.push({ pathname: '/items/chat/[id]', params: { id: String(id) } });
+  };
 
   return (
     <>
@@ -49,7 +62,7 @@ export default function TransactionScreen() {
         </View>
 
         <View style={styles.content}>
-          <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Transaction Method</Text>
+          <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Transaction method</Text>
           <View style={styles.methodRow}>
             <Pressable
               style={[
@@ -121,7 +134,7 @@ export default function TransactionScreen() {
 
           {itemData && (
             <View style={styles.orderSection}>
-              <Text style={[styles.sectionLabel, styles.orderSectionLabel, { color: '#FFFFFF' }]}>Ordered Product</Text>
+              <Text style={[styles.sectionLabel, styles.orderSectionLabel, { color: '#FFFFFF' }]}>Ordered product</Text>
               <View style={[styles.orderCard, { backgroundColor: cardBg }]}>
                 <Image
                   source={{ uri: itemData.image }}
@@ -130,14 +143,48 @@ export default function TransactionScreen() {
                   contentFit="cover"
                 />
                 <View style={styles.orderCardBody}>
-                  <Text style={[styles.orderPrice, { color: '#FFFFFF' }]}>
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                  <Text style={[styles.orderPrice, { color: '#FFFFFF' }]} numberOfLines={1}>
+                    {itemData.title}
                   </Text>
                   <Text style={[styles.orderDescription, { color: unselectedTextColor }]} numberOfLines={2}>
-                    {itemData.description || itemData.title}
+                    {itemData.description}
                   </Text>
                 </View>
               </View>
+
+              <View style={styles.actionSection}>
+                <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Adjust price</Text>
+                <View style={styles.offerRow}>
+                  <Text style={[styles.listPriceLabel, { color: unselectedTextColor }]}>
+                    List price: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                  </Text>
+                  <View style={[styles.offerInputWrap, { backgroundColor: inputBg }]}>
+                    <Text style={[styles.currencyPrefix, { color: unselectedTextColor }]}>£</Text>
+                    <TextInput
+                      style={[styles.offerInput, { color: '#FFFFFF' }]}
+                      placeholder="Your offer"
+                      placeholderTextColor={inputPlaceholderColor}
+                      value={offerPrice}
+                      onChangeText={setOfferPrice}
+                      keyboardType="decimal-pad"
+                    />
+                  </View>
+                  <Pressable
+                    style={[styles.offerButton, { backgroundColor: borderColor }]}
+                    onPress={handleSendOffer}
+                  >
+                    <Text style={styles.offerButtonText}>Send offer</Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              <Pressable
+                style={[styles.chatButton, { backgroundColor: cardBg, borderColor: borderColor }]}
+                onPress={handleChatWithSeller}
+              >
+                <Ionicons name="chatbubble-outline" size={22} color={borderColor} />
+                <Text style={[styles.chatButtonText, { color: '#FFFFFF' }]}>Chat with seller</Text>
+              </Pressable>
             </View>
           )}
         </View>
@@ -256,5 +303,55 @@ const styles = StyleSheet.create({
   orderDescription: {
     fontSize: 13,
     lineHeight: 18,
+  },
+  actionSection: {
+    marginTop: 20,
+  },
+  offerRow: {
+    gap: 10,
+    marginTop: 8,
+  },
+  listPriceLabel: {
+    fontSize: 13,
+  },
+  offerInputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+  },
+  currencyPrefix: {
+    fontSize: 15,
+    marginRight: 4,
+  },
+  offerInput: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 15,
+  },
+  offerButton: {
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  offerButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  chatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 16,
+    borderWidth: 1,
+  },
+  chatButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
