@@ -20,6 +20,7 @@ export default function TransactionScreen() {
 
   const [method, setMethod] = useState<TransactionMethod>('Delivery');
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [collectionLocation, setCollectionLocation] = useState('');
   const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
@@ -91,6 +92,22 @@ export default function TransactionScreen() {
                   onChangeText={setDeliveryAddress}
                 />
                 <Ionicons name="search-outline" size={22} color={inputPlaceholderColor} style={styles.addressInputIcon} />
+              </View>
+            </View>
+          )}
+
+          {method === 'Collection' && (
+            <View style={styles.addressSection}>
+              <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Meet-up location</Text>
+              <View style={[styles.addressInputWrap, { backgroundColor: inputBg }]}>
+                <TextInput
+                  style={[styles.addressInput, { color: '#FFFFFF' }]}
+                  placeholder="e.g. Station, cafe name"
+                  placeholderTextColor={inputPlaceholderColor}
+                  value={collectionLocation}
+                  onChangeText={setCollectionLocation}
+                />
+                <Ionicons name="location-outline" size={22} color={inputPlaceholderColor} style={styles.addressInputIcon} />
               </View>
             </View>
           )}
