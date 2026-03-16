@@ -135,7 +135,10 @@ export default function TransactionScreen() {
           {itemData && (
             <View style={styles.orderSection}>
               <Text style={[styles.sectionLabel, styles.orderSectionLabel, { color: '#FFFFFF' }]}>Ordered product</Text>
-              <View style={[styles.orderCard, { backgroundColor: cardBg }]}>
+              <Pressable
+                style={[styles.orderCard, { backgroundColor: cardBg }]}
+                onPress={() => router.push(`/items/${id}`)}
+              >
                 <Image
                   source={{ uri: itemData.image }}
                   style={styles.orderCardImage}
@@ -150,7 +153,7 @@ export default function TransactionScreen() {
                     {itemData.description}
                   </Text>
                 </View>
-              </View>
+              </Pressable>
 
               <View style={styles.actionSection}>
                 <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Adjust price</Text>
