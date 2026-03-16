@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,9 +27,19 @@ export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
   const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFFFFF';
+
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
+    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -37,10 +47,17 @@ export default function ChatScreen() {
     setMessage('');
   };
 
+  const inputBarPadding = keyboardVisible ? 6 : Math.max(insets.bottom, 12) + 12;
+  const keyboardPanelHeight = 280;
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={[styles.screen, { backgroundColor }]}>
+      <KeyboardAvoidingView
+        style={[styles.screen, { backgroundColor }]}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: backButtonBg }]}
@@ -54,97 +71,102 @@ export default function ChatScreen() {
           </Text>
         </View>
 
-        <View style={styles.content}>
-          {itemData && (
-            <>
-              <View style={styles.productRow}>
-                <Image
-                  source={{ uri: itemData.image }}
-                  style={styles.productImage}
-                  placeholder={{ blurhash }}
-                  contentFit="cover"
-                />
-                <View style={styles.productBody}>
-                  <Text style={[styles.productTitle, { color: '#FFFFFF' }]} numberOfLines={2}>
-                    {itemData.title}
-                  </Text>
-                  <Text style={[styles.productPrice, { color: '#FFFFFF' }]}>
-                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
-                  </Text>
-                  {showPostage && (
-                    <Text style={[styles.productPostage, { color: unselectedTextColor }]}>
-                      Postage £2.50
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={styles.contentWrap}>
+            <View style={styles.content}>
+            {itemData && (
+              <>
+                <View style={styles.productRow}>
+                  <Image
+                    source={{ uri: itemData.image }}
+                    style={styles.productImage}
+                    placeholder={{ blurhash }}
+                    contentFit="cover"
+                  />
+                  <View style={styles.productBody}>
+                    <Text style={[styles.productTitle, { color: '#FFFFFF' }]} numberOfLines={2}>
+                      {itemData.title}
                     </Text>
-                  )}
+                    <Text style={[styles.productPrice, { color: '#FFFFFF' }]}>
+                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                    </Text>
+                    {showPostage && (
+                      <Text style={[styles.productPostage, { color: unselectedTextColor }]}>
+                        Postage £2.50
+                      </Text>
+                    )}
+                  </View>
                 </View>
-              </View>
 
-              <Pressable
-                style={[styles.viewDetailsButton, { backgroundColor: borderColor }]}
-                onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
+                <Pressable
+                  style={[styles.viewDetailsButton, { backgroundColor: borderColor }]}
+                  onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
+                >
+                  <Text style={styles.viewDetailsButtonText}>View details</Text>
+                </Pressable>
+              </>
+            )}
+          </View>
+          {showMoreMenu && (
+            <Pressable style={styles.moreOverlay} onPress={() => setShowMoreMenu(false)} />
+          )}
+          </View>
+        </TouchableWithoutFeedback>
+
+        <View style={styles.bottomWrap}>
+          <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: inputBarPadding }]}>
+            <Pressable style={[styles.moreButton, { backgroundColor: backButtonBg }]} onPress={() => setShowMoreMenu(true)}>
+              <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+            </Pressable>
+            <TextInput
+              style={[styles.messageInput, { color: '#FFFFFF' }]}
+              placeholder="Enter your message."
+              placeholderTextColor={placeholderColor}
+              value={message}
+              onChangeText={setMessage}
+              multiline
+              maxLength={500}
+            />
+            <Pressable
+              style={[styles.sendButton, { backgroundColor: message.trim() ? borderColor : backButtonBg }]}
+              onPress={handleSend}
+            >
+              <Ionicons name="arrow-up" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+            </Pressable>
+          </View>
+
+          {showMoreMenu && (
+            <View style={[styles.keyboardPanel, { backgroundColor: menuPanelBg, height: keyboardPanelHeight, paddingBottom: insets.bottom }]}>
+              <View style={styles.keyboardPanelRow}>
+                <Pressable
+                  style={styles.keyboardPanelOption}
+                  onPress={() => { setShowMoreMenu(false); /* TODO: pick image */ }}
+                >
+                  <View style={[styles.keyboardPanelIconCircle, { backgroundColor: backButtonBg }]}>
+                    <Ionicons name="image-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+                  </View>
+                  <Text style={[styles.keyboardPanelLabel, { color: textColor }]}>Send photo</Text>
+                </Pressable>
+                <Pressable
+                  style={styles.keyboardPanelOption}
+                  onPress={() => { setShowMoreMenu(false); /* TODO: pick video */ }}
+                >
+                  <View style={[styles.keyboardPanelIconCircle, { backgroundColor: backButtonBg }]}>
+                    <Ionicons name="videocam-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+                  </View>
+                  <Text style={[styles.keyboardPanelLabel, { color: textColor }]}>Send video</Text>
+                </Pressable>
+              </View>
+              <TouchableOpacity
+                style={[styles.moreCloseButton, { backgroundColor: backButtonBg }]}
+                onPress={() => setShowMoreMenu(false)}
               >
-                <Text style={styles.viewDetailsButtonText}>View details</Text>
-              </Pressable>
-            </>
+                <Ionicons name="close" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+              </TouchableOpacity>
+            </View>
           )}
         </View>
-
-        {showMoreMenu && (
-          <>
-            <Pressable
-              style={[styles.moreOverlay, { bottom: 56 + Math.max(insets.bottom, 12) + 12 }]}
-              onPress={() => setShowMoreMenu(false)}
-            />
-            <View style={[styles.morePanelWrap, { bottom: 56 + Math.max(insets.bottom, 12) + 12 }]}>
-              <View style={[styles.morePanel, { backgroundColor: menuPanelBg }]}>
-                <View style={styles.moreOptionRow}>
-                  <Pressable
-                    style={[styles.moreOptionItem, { backgroundColor: backButtonBg }]}
-                    onPress={() => { setShowMoreMenu(false); /* TODO: pick image */ }}
-                  >
-                    <Ionicons name="image-outline" size={28} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-                    <Text style={[styles.moreOptionLabel, { color: textColor }]}>Send photo</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.moreOptionItem, { backgroundColor: backButtonBg }]}
-                    onPress={() => { setShowMoreMenu(false); /* TODO: pick video */ }}
-                  >
-                    <Ionicons name="videocam-outline" size={28} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-                    <Text style={[styles.moreOptionLabel, { color: textColor }]}>Send video</Text>
-                  </Pressable>
-                </View>
-                <TouchableOpacity
-                  style={[styles.moreCloseButton, { backgroundColor: backButtonBg }]}
-                  onPress={() => setShowMoreMenu(false)}
-                >
-                  <Ionicons name="close" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        )}
-
-        <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: Math.max(insets.bottom, 12) + 12 }]}>
-          <Pressable style={[styles.moreButton, { backgroundColor: backButtonBg }]} onPress={() => setShowMoreMenu(true)}>
-            <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-          </Pressable>
-          <TextInput
-            style={[styles.messageInput, { color: '#FFFFFF' }]}
-            placeholder="Enter your message."
-            placeholderTextColor={placeholderColor}
-            value={message}
-            onChangeText={setMessage}
-            multiline
-            maxLength={500}
-          />
-          <Pressable
-            style={[styles.sendButton, { backgroundColor: message.trim() ? borderColor : backButtonBg }]}
-            onPress={handleSend}
-          >
-            <Ionicons name="arrow-up" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-          </Pressable>
-        </View>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 }
@@ -183,6 +205,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
+  },
+  contentWrap: {
+    flex: 1,
   },
   content: {
     flex: 1,
@@ -262,53 +287,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   moreOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.35)',
     zIndex: 200,
   },
-  morePanelWrap: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    zIndex: 201,
+  bottomWrap: {
+    zIndex: 300,
   },
-  morePanel: {
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingTop: 20,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
+  keyboardPanel: {
+    paddingTop: 24,
+    paddingHorizontal: 24,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 8,
   },
-  moreOptionRow: {
+  keyboardPanelRow: {
     flexDirection: 'row',
-    gap: 20,
-    marginBottom: 16,
+    gap: 32,
+    marginBottom: 24,
   },
-  moreOptionItem: {
-    flex: 1,
+  keyboardPanelOption: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 14,
-    paddingHorizontal: 8,
-    borderRadius: 12,
+    gap: 10,
   },
-  moreOptionLabel: {
+  keyboardPanelIconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  keyboardPanelLabel: {
     fontSize: 13,
   },
   moreCloseButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
