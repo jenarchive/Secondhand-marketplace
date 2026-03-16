@@ -1,15 +1,22 @@
 import { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput } from 'react-native';
+import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useMyListings } from '@/contexts/MyListingsContext';
 
 type TransactionMethod = 'Delivery' | 'Collection';
 
+const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
 export default function TransactionScreen() {
   const params = useLocalSearchParams<{ id: string }>();
+  const id = Number(params.id);
   const router = useRouter();
+  const { items } = useMyListings();
+  const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const titleColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const backgroundColor = useThemeColor({}, 'background');
@@ -111,6 +118,28 @@ export default function TransactionScreen() {
               </View>
             </View>
           )}
+
+          {itemData && (
+            <View style={styles.orderSection}>
+              <Text style={[styles.sectionLabel, styles.orderSectionLabel, { color: '#FFFFFF' }]}>Ordered Product</Text>
+              <View style={[styles.orderCard, { backgroundColor: cardBg }]}>
+                <Image
+                  source={{ uri: itemData.image }}
+                  style={styles.orderCardImage}
+                  placeholder={{ blurhash }}
+                  contentFit="cover"
+                />
+                <View style={styles.orderCardBody}>
+                  <Text style={[styles.orderPrice, { color: '#FFFFFF' }]}>
+                    {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                  </Text>
+                  <Text style={[styles.orderDescription, { color: unselectedTextColor }]} numberOfLines={2}>
+                    {itemData.description || itemData.title}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </>
@@ -195,5 +224,37 @@ const styles = StyleSheet.create({
   },
   addressInputIcon: {
     marginLeft: 4,
+  },
+  orderSection: {
+    marginTop: 28,
+  },
+  orderSectionLabel: {
+    marginBottom: 12,
+  },
+  orderCard: {
+    flexDirection: 'row',
+    borderRadius: 16,
+    overflow: 'hidden',
+    padding: 12,
+    gap: 12,
+  },
+  orderCardImage: {
+    width: 72,
+    height: 72,
+    borderRadius: 12,
+  },
+  orderCardBody: {
+    flex: 1,
+    justifyContent: 'center',
+    minWidth: 0,
+  },
+  orderPrice: {
+    fontSize: 17,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  orderDescription: {
+    fontSize: 13,
+    lineHeight: 18,
   },
 });
