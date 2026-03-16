@@ -26,8 +26,10 @@ export default function ChatScreen() {
   const showPostage = params.transactionMethod === 'Delivery';
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
+  const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFFFFF';
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -85,14 +87,45 @@ export default function ChatScreen() {
               </Pressable>
             </>
           )}
-
-          <Text style={[styles.placeholder, { color: textColor }]}>
-            Chat — coming soon
-          </Text>
         </View>
 
+        {showMoreMenu && (
+          <>
+            <Pressable
+              style={[styles.moreOverlay, { bottom: 56 + Math.max(insets.bottom, 12) + 12 }]}
+              onPress={() => setShowMoreMenu(false)}
+            />
+            <View style={[styles.morePanelWrap, { bottom: 56 + Math.max(insets.bottom, 12) + 12 }]}>
+              <View style={[styles.morePanel, { backgroundColor: menuPanelBg }]}>
+                <View style={styles.moreOptionRow}>
+                  <Pressable
+                    style={[styles.moreOptionItem, { backgroundColor: backButtonBg }]}
+                    onPress={() => { setShowMoreMenu(false); /* TODO: pick image */ }}
+                  >
+                    <Ionicons name="image-outline" size={28} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+                    <Text style={[styles.moreOptionLabel, { color: textColor }]}>Send photo</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.moreOptionItem, { backgroundColor: backButtonBg }]}
+                    onPress={() => { setShowMoreMenu(false); /* TODO: pick video */ }}
+                  >
+                    <Ionicons name="videocam-outline" size={28} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+                    <Text style={[styles.moreOptionLabel, { color: textColor }]}>Send video</Text>
+                  </Pressable>
+                </View>
+                <TouchableOpacity
+                  style={[styles.moreCloseButton, { backgroundColor: backButtonBg }]}
+                  onPress={() => setShowMoreMenu(false)}
+                >
+                  <Ionicons name="close" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
+        )}
+
         <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: Math.max(insets.bottom, 12) + 12 }]}>
-          <Pressable style={[styles.moreButton, { backgroundColor: backButtonBg }]} onPress={() => {}}>
+          <Pressable style={[styles.moreButton, { backgroundColor: backButtonBg }]} onPress={() => setShowMoreMenu(true)}>
             <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
           </Pressable>
           <TextInput
@@ -197,16 +230,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
   },
-  placeholder: {
-    fontSize: 15,
-    textAlign: 'center',
-  },
   inputBar: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     paddingHorizontal: 12,
     paddingTop: 12,
     gap: 8,
+    zIndex: 300,
   },
   moreButton: {
     width: 40,
@@ -228,6 +258,57 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moreOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    zIndex: 200,
+  },
+  morePanelWrap: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    zIndex: 201,
+  },
+  morePanel: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  moreOptionRow: {
+    flexDirection: 'row',
+    gap: 20,
+    marginBottom: 16,
+  },
+  moreOptionItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+  },
+  moreOptionLabel: {
+    fontSize: 13,
+  },
+  moreCloseButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
