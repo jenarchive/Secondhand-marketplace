@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -19,6 +19,9 @@ export default function TransactionScreen() {
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
 
   const [method, setMethod] = useState<TransactionMethod>('Delivery');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
+  const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
   return (
     <>
@@ -32,7 +35,7 @@ export default function TransactionScreen() {
           >
             <Ionicons name="arrow-back" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: titleColor }]} numberOfLines={1}>
+          <Text style={[styles.headerTitle, { color: '#FFFFFF' }]} numberOfLines={1}>
             Transaction
           </Text>
         </View>
@@ -75,6 +78,22 @@ export default function TransactionScreen() {
               </Text>
             </Pressable>
           </View>
+
+          {method === 'Delivery' && (
+            <View style={styles.addressSection}>
+              <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Delivery address</Text>
+              <View style={[styles.addressInputWrap, { backgroundColor: inputBg }]}>
+                <TextInput
+                  style={[styles.addressInput, { color: '#FFFFFF' }]}
+                  placeholder="Enter postcode"
+                  placeholderTextColor={inputPlaceholderColor}
+                  value={deliveryAddress}
+                  onChangeText={setDeliveryAddress}
+                />
+                <Ionicons name="search-outline" size={22} color={inputPlaceholderColor} style={styles.addressInputIcon} />
+              </View>
+            </View>
+          )}
         </View>
       </View>
     </>
@@ -141,5 +160,23 @@ const styles = StyleSheet.create({
   },
   methodLabel: {
     fontSize: 15,
+  },
+  addressSection: {
+    marginTop: 24,
+  },
+  addressInputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    paddingRight: 12,
+  },
+  addressInput: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    fontSize: 15,
+  },
+  addressInputIcon: {
+    marginLeft: 4,
   },
 });
