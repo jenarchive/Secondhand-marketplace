@@ -72,7 +72,7 @@ export default function HomeScreen() {
             styles.scrollContentWrap,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12),
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) ? 72 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -125,7 +125,7 @@ export default function HomeScreen() {
       </ThemedView>
           </View>
         </ScrollView>
-        {isItemMine(itemData.id) && (
+        {isItemMine(itemData.id) ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable style={styles.buyButton} onPress={() => router.push(`/items/edit/${itemData.id}`)} accessibilityLabel="Edit">
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Edit</ThemedText>
@@ -152,6 +152,19 @@ export default function HomeScreen() {
             accessibilityLabel="Remove"
           >
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
+          </Pressable>
+        </View>
+        ) : (
+        <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+          <Pressable
+            style={styles.buyNowButton}
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push(`/items/transaction/${id}`);
+            }}
+            accessibilityLabel="Buy Now"
+          >
+            <ThemedText type="defaultSemiBold" style={styles.buyNowButtonText}>Buy Now</ThemedText>
           </Pressable>
         </View>
         )}
@@ -280,6 +293,19 @@ const styles = StyleSheet.create({
     minWidth: 120,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buyNowButton: {
+    backgroundColor: '#0047AB',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 16,
+    minWidth: 160,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buyNowButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
   },
 
   offerButton: {
