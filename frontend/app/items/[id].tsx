@@ -1,18 +1,15 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRef, useCallback } from 'react';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function HomeScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
@@ -49,43 +46,9 @@ export default function HomeScreen() {
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
 
   const insets = useSafeAreaInsets();
-  const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
-  const buyNowColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const router = useRouter();
-  const isFocused = useIsFocused();
-  const isFocusedRef = useRef(isFocused);
-  isFocusedRef.current = isFocused;
-  const hasNavigatedToTransaction = useRef(false);
-  const scrollYAtDragStart = useRef(0);
-
-  useFocusEffect(
-    useCallback(() => {
-      hasNavigatedToTransaction.current = false;
-    }, []),
-  );
-
-  const handleScrollBeginDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollYAtDragStart.current = e.nativeEvent.contentOffset.y;
-  };
-
-  const checkAndNavigateToTransaction = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!isFocusedRef.current) return;
-    if (isItemMine(itemData.id) || hasNavigatedToTransaction.current) return;
-    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
-    const paddingToBottom = 80;
-    const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - paddingToBottom;
-    const scrolledDownThisGesture = contentOffset.y > scrollYAtDragStart.current;
-    if (isAtBottom && scrolledDownThisGesture) {
-      hasNavigatedToTransaction.current = true;
-      router.push(`/items/transaction/${id}`);
-    }
-  };
-
-  const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    checkAndNavigateToTransaction(e);
-  };
 
   return (
     <>
@@ -109,14 +72,10 @@ export default function HomeScreen() {
             styles.scrollContentWrap,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (isItemMine(itemData.id) ? 280 : 0),
+              paddingBottom: 24 + Math.max(insets.bottom, 12),
             },
           ]}
           showsVerticalScrollIndicator={false}
-          onScrollBeginDrag={handleScrollBeginDrag}
-          onMomentumScrollEnd={handleScrollEnd}
-          onScrollEndDrag={handleScrollEnd}
-          scrollEventThrottle={16}
         >
           <View style={styles.detailSection}>
       <ThemedView style={styles.listingContainer}>
@@ -164,18 +123,6 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
       </ThemedView>
-          {!isItemMine(itemData.id) && (
-          <Pressable
-            style={styles.scrollHint}
-            onPress={() => {
-              hasNavigatedToTransaction.current = true;
-              router.push(`/items/transaction/${id}`);
-            }}
-          >
-            <Ionicons name="chevron-down" size={28} color={buyNowColor} />
-            <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: buyNowColor }]}>Buy Now</ThemedText>
-          </Pressable>
-          )}
           </View>
         </ScrollView>
         {isItemMine(itemData.id) && (
@@ -255,15 +202,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   detailSection: {},
-  scrollHint: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 24,
-    gap: 0,
-  },
-  scrollHintText: {
-    fontSize: 16,
-  },
   listingContainer: {
     gap: 12,
   },
