@@ -1,7 +1,9 @@
-import { StyleSheet, View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
@@ -22,6 +24,16 @@ export default function ChatScreen() {
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
   const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const showPostage = params.transactionMethod === 'Delivery';
+  const insets = useSafeAreaInsets();
+  const [message, setMessage] = useState('');
+  const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
+  const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
+
+  const handleSend = () => {
+    if (!message.trim()) return;
+    // TODO: send message
+    setMessage('');
+  };
 
   return (
     <>
@@ -78,6 +90,27 @@ export default function ChatScreen() {
             Chat — coming soon
           </Text>
         </View>
+
+        <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: Math.max(insets.bottom, 12) + 12 }]}>
+          <Pressable style={[styles.moreButton, { backgroundColor: backButtonBg }]} onPress={() => {}}>
+            <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+          </Pressable>
+          <TextInput
+            style={[styles.messageInput, { color: '#FFFFFF' }]}
+            placeholder="Enter your message."
+            placeholderTextColor={placeholderColor}
+            value={message}
+            onChangeText={setMessage}
+            multiline
+            maxLength={500}
+          />
+          <Pressable
+            style={[styles.sendButton, { backgroundColor: message.trim() ? borderColor : backButtonBg }]}
+            onPress={handleSend}
+          >
+            <Ionicons name="arrow-up" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+          </Pressable>
+        </View>
       </View>
     </>
   );
@@ -122,6 +155,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 100 + 16,
     paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   productRow: {
     flexDirection: 'row',
@@ -166,5 +200,35 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: 15,
     textAlign: 'center',
+  },
+  inputBar: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    gap: 8,
+  },
+  moreButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  messageInput: {
+    flex: 1,
+    minHeight: 40,
+    maxHeight: 100,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    fontSize: 15,
+  },
+  sendButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
