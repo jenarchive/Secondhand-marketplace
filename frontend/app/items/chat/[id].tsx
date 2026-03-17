@@ -194,7 +194,7 @@ export default function ChatScreen() {
                 <View style={styles.morePanelRow}>
                   <Pressable
                     style={styles.morePanelOption}
-                    onPress={() => { handleCloseMore(); /* TODO: pick image */ }}
+                    onPress={handleCloseMore}
                   >
                     <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="image-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
@@ -203,7 +203,7 @@ export default function ChatScreen() {
                   </Pressable>
                   <Pressable
                     style={styles.morePanelOption}
-                    onPress={() => { handleCloseMore(); /* TODO: pick video */ }}
+                    onPress={handleCloseMore}
                   >
                     <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="videocam-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />

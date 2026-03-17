@@ -22,7 +22,6 @@ export default function UserHeader({
 }) {
   const handleUserPress = async () => {
     try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
-    // TODO: implement user profile navigation
     console.log('User profile pressed', itemId);
   };
 
