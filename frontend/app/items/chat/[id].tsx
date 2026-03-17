@@ -130,37 +130,37 @@ export default function ChatScreen() {
                   </View>
 
                   <Pressable
-                    style={[styles.viewDetailsButton, { backgroundColor: borderColor }]}
+                    style={[styles.viewDetailsButton, { backgroundColor: '#2563EB' }]}
                     onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
                   >
                     <Text style={styles.viewDetailsButtonText}>View details</Text>
                   </Pressable>
-
-                  {params.offerPrice && !Number.isNaN(Number(params.offerPrice)) && (
-                    <View style={styles.messagesContainer}>
-                      <View style={styles.offerCard}>
-                        <Text style={styles.offerCardTitle}>Offer</Text>
-                        <Text style={styles.offerCardBody}>
-                          {new Intl.NumberFormat('en-GB', {
-                            style: 'currency',
-                            currency: 'GBP',
-                          }).format(Number(params.offerPrice))}
-                        </Text>
-                      </View>
-                    </View>
-                  )}
                 </>
               )}
 
-              {messages.length > 0 && (
+              {(params.offerPrice && !Number.isNaN(Number(params.offerPrice))) || messages.length > 0 ? (
                 <View style={styles.messagesContainer}>
+                  {params.offerPrice && !Number.isNaN(Number(params.offerPrice)) && (
+                    <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
+                      <Text style={styles.offerCardTitle}>
+                        (Username) has made an offer.
+                      </Text>
+                      <Text style={styles.offerCardBody}>
+                        {new Intl.NumberFormat('en-GB', {
+                          style: 'currency',
+                          currency: 'GBP',
+                        }).format(Number(params.offerPrice))}
+                      </Text>
+                    </View>
+                  )}
+
                   {messages.map((m, index) => (
                     <View key={`${index}-${m}`} style={styles.messageBubbleMe}>
                       <Text style={styles.messageText}>{m}</Text>
                     </View>
                   ))}
                 </View>
-              )}
+              ) : null}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -373,30 +373,29 @@ const styles = StyleSheet.create({
   },
   messagesContainer: {
     flexGrow: 1,
-    paddingTop: 4,
-    paddingBottom: 4,
-    gap: 6,
+    paddingTop: 0,
+    paddingBottom: 0,
+    gap: 8,
     alignItems: 'flex-end',
   },
   offerCard: {
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#2563EB',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   offerCardTitle: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#BFDBFE',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   offerCardBody: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: '#FFFFFF',
   },
