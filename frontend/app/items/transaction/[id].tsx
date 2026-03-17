@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,9 +35,12 @@ export default function TransactionScreen() {
 
   const handleSendOffer = () => {
     const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
-    if (itemData && !isNaN(num) && num > 0) {
-      router.push({ pathname: '/items/transaction/offer-sent/[id]', params: { id: String(id) } });
+    if (!itemData || isNaN(num) || num <= 0) return;
+    if (num === itemData.price) {
+      Alert.alert('Same as list price', 'Your offer is the same as the list price. Please enter a different amount.');
+      return;
     }
+    router.push({ pathname: '/items/transaction/offer-sent/[id]', params: { id: String(id) } });
   };
 
   const handleChatWithSeller = () => {
