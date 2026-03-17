@@ -277,6 +277,9 @@ export default function TransactionScreen() {
 
               <View style={styles.totalSection}>
                 <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment amount</Text>
+                <Text style={[styles.totalHelperText, { color: unselectedTextColor }]}>
+                  The price will update once the seller agrees
+                </Text>
                 <View style={[styles.totalCard, { backgroundColor: cardBg }]}>
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
                     <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Item price</Text>
@@ -304,6 +307,15 @@ export default function TransactionScreen() {
                   </View>
                 </View>
               </View>
+
+              <Pressable
+                style={[styles.payButton, { backgroundColor: borderColor }]}
+                onPress={() => {}}
+              >
+                <Text style={styles.payButtonText}>
+                  {paymentMethod === 'inPerson' ? 'Reserve item' : 'Pay now'}
+                </Text>
+              </Pressable>
             </View>
           )}
           </ScrollView>
@@ -358,9 +370,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   sectionLabel: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '600',
-    marginBottom: 12,
+    marginBottom: 8,
   },
   methodRow: {
     flexDirection: 'row',
@@ -467,12 +479,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  totalHelperText: {
+    fontSize: 13,
+    marginTop: 2,
+    marginBottom: 2,
+  },
+  payButton: {
+    marginTop: 24,
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  payButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   actionSection: {
     marginTop: 20,
   },
   offerRow: {
     gap: 10,
-    marginTop: 8,
+    marginTop: 4,
   },
   listPriceLabel: {
     fontSize: 13,

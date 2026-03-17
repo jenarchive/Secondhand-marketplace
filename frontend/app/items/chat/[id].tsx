@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   offerCardTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: '#FACC15',
     marginBottom: 4,
   },
   offerCardBody: {
