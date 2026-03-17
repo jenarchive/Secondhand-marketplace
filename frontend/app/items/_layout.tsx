@@ -49,7 +49,12 @@ export default function ItemsLayout() {
         ),
       }}
     >
-      <Stack.Screen name="[id]" />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          animation: "none",
+        }}
+      />
       <Stack.Screen
         name="transaction/[id]"
         options={{

@@ -59,7 +59,7 @@ export default function HomeScreen() {
       <View style={[styles.customHeader, { backgroundColor }]}>
         <TouchableOpacity
           style={[styles.customHeaderBackButton, { backgroundColor: BACK_BUTTON_BG }]}
-          onPress={() => router.back()}
+          onPress={() => router.replace('/(tabs)')}
           activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />

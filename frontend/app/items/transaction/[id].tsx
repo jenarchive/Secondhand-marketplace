@@ -91,7 +91,7 @@ export default function TransactionScreen() {
         <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-            onPress={() => router.back()}
+            onPress={() => router.replace(`/items/${id}`)}
             activeOpacity={0.8}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
