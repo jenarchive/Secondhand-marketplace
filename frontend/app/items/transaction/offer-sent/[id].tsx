@@ -78,6 +78,7 @@ export default function OfferSentScreen() {
                     sellerName: `User${params.id}`,
                     transactionMethod: params.transactionMethod,
                     offerPrice: params.offerPrice,
+                    fromOfferSent: 'true',
                   },
                 })
               }

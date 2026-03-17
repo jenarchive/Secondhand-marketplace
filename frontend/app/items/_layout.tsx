@@ -54,7 +54,7 @@ export default function ItemsLayout() {
         name="transaction/[id]"
         options={{
           headerShown: false,
-          animation: "slide_from_bottom",
+          animation: "none",
         }}
       />
       <Stack.Screen

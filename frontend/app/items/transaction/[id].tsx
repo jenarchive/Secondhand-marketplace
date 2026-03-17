@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import { getOfferForItem, setOfferForItem } from '@/store/transactionStore';
 
 type TransactionMethod = 'Delivery' | 'Collection';
 type PaymentMethod = 'card' | 'inPerson';
@@ -31,10 +32,17 @@ export default function TransactionScreen() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [collectionLocation, setCollectionLocation] = useState('');
-  const [offerPrice, setOfferPrice] = useState('');
+  const [offerPrice, setOfferPrice] = useState(() => getOfferForItem(id));
   const insets = useSafeAreaInsets();
   const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
+
+  const handleOfferPriceChange = (value: string) => {
+    setOfferPrice(value);
+    if (itemData) {
+      setOfferForItem(id, value);
+    }
+  };
 
   const handleSendOffer = () => {
     const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
@@ -116,7 +124,7 @@ export default function TransactionScreen() {
                 color={method === 'Delivery' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
               />
               <Text style={[styles.methodLabel, { color: method === 'Delivery' ? borderColor : unselectedTextColor }, method === 'Delivery' && { fontWeight: '600' }]}>
-                Parcel
+                Delivery
               </Text>
             </Pressable>
             <Pressable
@@ -206,7 +214,7 @@ export default function TransactionScreen() {
                       placeholder="Your offer"
                       placeholderTextColor={inputPlaceholderColor}
                       value={offerPrice}
-                      onChangeText={setOfferPrice}
+                      onChangeText={handleOfferPriceChange}
                       keyboardType="decimal-pad"
                     />
                   </View>

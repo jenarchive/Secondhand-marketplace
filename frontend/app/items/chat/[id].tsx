@@ -13,7 +13,7 @@ const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWX
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function ChatScreen() {
-  const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string }>();
+  const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string; fromOfferSent?: string }>();
   const router = useRouter();
   const id = Number(params.id);
   const { items } = useMyListings();
@@ -83,7 +83,13 @@ export default function ChatScreen() {
         <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-            onPress={() => router.back()}
+            onPress={() => {
+              if (params.fromOfferSent === 'true' && params.id) {
+                router.replace({ pathname: '/items/transaction/[id]', params: { id: String(id) } });
+              } else {
+                router.back();
+              }
+            }}
             activeOpacity={0.8}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
