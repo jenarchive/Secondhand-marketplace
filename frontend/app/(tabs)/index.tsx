@@ -32,7 +32,14 @@ export default function HomeScreen() {
   const filtered = useMemo(() => {
     let list = displayItems;
     if (selectedCategory) {
-      list = list.filter((i) => (i.category || '') === selectedCategory);
+      const sel = selectedCategory.toLowerCase();
+      list = list.filter((i) => {
+        const cat = (i.category || '').toLowerCase();
+        if (cat.includes(sel)) return true;
+        if (sel === 'home' && cat.includes('furniture')) return true;
+        if (sel === 'entertainment' && (cat.includes('musical') || cat.includes('entertainment'))) return true;
+        return false;
+      });
     }
     const q = query.trim().toLowerCase();
     if (!q) return list;
