@@ -9,6 +9,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
 
 type TransactionMethod = 'Delivery' | 'Collection';
+type PaymentMethod = 'card' | 'inPerson';
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
@@ -27,6 +28,7 @@ export default function TransactionScreen() {
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
 
   const [method, setMethod] = useState<TransactionMethod>('Delivery');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [collectionLocation, setCollectionLocation] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
@@ -207,6 +209,46 @@ export default function TransactionScreen() {
                 <Text style={[styles.chatButtonText, { color: '#FFFFFF' }]}>Chat with seller</Text>
               </Pressable>
 
+              <View style={styles.paymentMethodSection}>
+                <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment method</Text>
+                <View style={styles.methodRow}>
+                  <Pressable
+                    style={[
+                      styles.methodCard,
+                      { backgroundColor: cardBg },
+                      paymentMethod === 'card' && { borderWidth: 2, borderColor },
+                    ]}
+                    onPress={() => setPaymentMethod('card')}
+                  >
+                    <Ionicons
+                      name="card-outline"
+                      size={24}
+                      color={paymentMethod === 'card' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+                    />
+                    <Text style={[styles.methodLabel, { color: paymentMethod === 'card' ? borderColor : unselectedTextColor }, paymentMethod === 'card' && { fontWeight: '600' }]}>
+                      Card
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={[
+                      styles.methodCard,
+                      { backgroundColor: cardBg },
+                      paymentMethod === 'inPerson' && { borderWidth: 2, borderColor },
+                    ]}
+                    onPress={() => setPaymentMethod('inPerson')}
+                  >
+                    <Ionicons
+                      name="wallet-outline"
+                      size={24}
+                      color={paymentMethod === 'inPerson' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+                    />
+                    <Text style={[styles.methodLabel, { color: paymentMethod === 'inPerson' ? borderColor : unselectedTextColor }, paymentMethod === 'inPerson' && { fontWeight: '600' }]}>
+                      Pay in-person
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+
               <View style={styles.totalSection}>
                 <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment amount</Text>
                 <View style={[styles.totalCard, { backgroundColor: cardBg }]}>
@@ -359,6 +401,9 @@ const styles = StyleSheet.create({
   orderDescription: {
     fontSize: 13,
     lineHeight: 18,
+  },
+  paymentMethodSection: {
+    marginTop: 24,
   },
   totalSection: {
     marginTop: 24,
