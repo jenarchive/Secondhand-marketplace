@@ -11,6 +11,7 @@ import { useMyListings } from '@/contexts/MyListingsContext';
 type TransactionMethod = 'Delivery' | 'Collection';
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function TransactionScreen() {
   const params = useLocalSearchParams<{ id: string }>();
@@ -19,9 +20,7 @@ export default function TransactionScreen() {
   const { items } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
-  const titleColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const backgroundColor = useThemeColor({}, 'background');
-  const backButtonBg = 'rgba(0,0,0,0.4)';
   const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
   const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
@@ -55,7 +54,7 @@ export default function TransactionScreen() {
       >
         <View style={styles.header}>
           <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: backButtonBg }]}
+            style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
             onPress={() => router.back()}
             activeOpacity={0.8}
           >

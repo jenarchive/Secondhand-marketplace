@@ -10,6 +10,7 @@ import { useMyListings } from '@/contexts/MyListingsContext';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function CurrentListingScreen() {
   const router = useRouter();
@@ -18,14 +19,13 @@ export default function CurrentListingScreen() {
   const screenBg = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const placeholderBg = useThemeColor({ light: '#e5e5e5', dark: '#2c2c2e' }, 'background');
-  const backButtonBg = 'rgba(0,0,0,0.4)';
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: backButtonBg }]}
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >

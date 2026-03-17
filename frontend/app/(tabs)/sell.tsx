@@ -25,11 +25,11 @@ const categories = [
   { id: '5', name: 'Sports' },
   { id: '6', name: 'Collectables' },
   { id: '7', name: 'Other' },
-]
+];
+
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
-  const backButtonBg = 'rgba(0,0,0,0.4)';
-
   // form variables
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -313,7 +313,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         {/* back button */}
         <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: backButtonBg }]}
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >

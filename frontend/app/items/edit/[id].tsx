@@ -28,6 +28,7 @@ const columns = 3;
 const gapSpace = gapSize * (columns - 1);
 const availableSpace = screenWidth - padding - gapSpace - 64;
 const photoSize = Math.floor(availableSpace / columns);
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 const categories = [
   { id: '1', name: 'Clothing' },
@@ -57,7 +58,6 @@ export default function EditItemScreen() {
   const itemData = getItemById(id);
   const headerTitleColor = useThemeColor({}, 'text');
   const labelColor = useThemeColor({}, 'text');
-  const backButtonBg = 'rgba(0,0,0,0.4)';
 
   const [title, setTitle] = useState(itemData?.title ?? '');
   const [description, setDescription] = useState(itemData?.description ?? '');
@@ -305,7 +305,7 @@ export default function EditItemScreen() {
 
       <View style={styles.header}>
         <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: backButtonBg }]}
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >

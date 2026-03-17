@@ -11,6 +11,8 @@ import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+
 export default function HomeScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string }>();
   const id = Number(params.id);
@@ -50,14 +52,13 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
-  const backButtonBg = 'rgba(0,0,0,0.4)';
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.customHeader}>
         <TouchableOpacity
-          style={[styles.customHeaderBackButton, { backgroundColor: backButtonBg }]}
+          style={[styles.customHeaderBackButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >

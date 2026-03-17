@@ -2,11 +2,13 @@ import { Stack, useRouter } from "expo-router";
 import { Platform, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/use-theme-color";
+
+const BACK_BUTTON_BG = "rgba(0,0,0,0.4)";
+
 export default function ItemsLayout() {
   const router = useRouter();
   const headerBg = useThemeColor({}, "background");
   const headerTint = useThemeColor({}, "text");
-  const backButtonBg = "rgba(0,0,0,0.4)";
 
   return (
     <Stack
@@ -25,7 +27,7 @@ export default function ItemsLayout() {
               onPress={() => router.back()}
               activeOpacity={0.8}
               style={{
-                backgroundColor: backButtonBg,
+                backgroundColor: BACK_BUTTON_BG,
                 padding: 4,
                 height: 40,
                 width: 40,

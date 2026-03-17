@@ -9,6 +9,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function ChatScreen() {
   const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string }>();
@@ -18,7 +19,6 @@ export default function ChatScreen() {
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
-  const backButtonBg = 'rgba(0,0,0,0.4)';
   const headerTitle = params.sellerName ?? `User${params.id}`;
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
   const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
@@ -78,7 +78,7 @@ export default function ChatScreen() {
       <View style={[styles.screen, { backgroundColor, paddingBottom: bottomPadding }]}>
         <View style={styles.header}>
           <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: backButtonBg }]}
+            style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
             onPress={() => router.back()}
             activeOpacity={0.8}
           >
@@ -133,7 +133,7 @@ export default function ChatScreen() {
 
         <View style={styles.bottomWrap}>
           <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: inputBarPadding, paddingTop: 12 }]}>
-            <Pressable style={[styles.moreButton, { backgroundColor: backButtonBg }]} onPress={handleMorePress}>
+            <Pressable style={[styles.moreButton, { backgroundColor: BACK_BUTTON_BG }]} onPress={handleMorePress}>
               <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
             </Pressable>
             <TextInput
@@ -162,7 +162,7 @@ export default function ChatScreen() {
                     style={styles.morePanelOption}
                     onPress={() => { handleCloseMore(); /* TODO: pick image */ }}
                   >
-                    <View style={[styles.morePanelIconCircle, { backgroundColor: backButtonBg }]}>
+                    <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="image-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
                     </View>
                     <Text style={[styles.morePanelLabel, { color: unselectedTextColor }]}>Send photo</Text>
@@ -171,7 +171,7 @@ export default function ChatScreen() {
                     style={styles.morePanelOption}
                     onPress={() => { handleCloseMore(); /* TODO: pick video */ }}
                   >
-                    <View style={[styles.morePanelIconCircle, { backgroundColor: backButtonBg }]}>
+                    <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="videocam-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
                     </View>
                     <Text style={[styles.morePanelLabel, { color: unselectedTextColor }]}>Send video</Text>

@@ -1,16 +1,16 @@
 import { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated, Easing, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+
 export default function OfferSentScreen() {
-  const params = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const subtextColor = useThemeColor({}, 'tabIconDefault');
-  const backButtonBg = 'rgba(0,0,0,0.4)';
 
   const translateY = useRef(new Animated.Value(40)).current;
   const translateX = useRef(new Animated.Value(-24)).current;
@@ -60,7 +60,7 @@ export default function OfferSentScreen() {
       <View style={[styles.screen, { backgroundColor }]}>
         <View style={styles.header}>
           <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: backButtonBg }]}
+            style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
             onPress={() => router.back()}
             activeOpacity={0.8}
           >
