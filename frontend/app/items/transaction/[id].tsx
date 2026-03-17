@@ -51,7 +51,18 @@ export default function TransactionScreen() {
   };
 
   const handleChatWithSeller = () => {
-    router.push({ pathname: '/items/chat/[id]', params: { id: String(id), sellerName: `User${id}`, transactionMethod: method } });
+    const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
+    const hasValidOffer = !isNaN(num) && num > 0;
+
+    router.push({
+      pathname: '/items/chat/[id]',
+      params: {
+        id: String(id),
+        sellerName: `User${id}`,
+        transactionMethod: method,
+        offerPrice: hasValidOffer ? String(num) : undefined,
+      },
+    });
   };
 
   return (
