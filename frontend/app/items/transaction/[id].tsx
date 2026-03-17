@@ -111,12 +111,12 @@ export default function TransactionScreen() {
               onPress={() => setMethod('Delivery')}
             >
               <Ionicons
-                name="bicycle-outline"
+                name="cube-outline"
                 size={24}
                 color={method === 'Delivery' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
               />
               <Text style={[styles.methodLabel, { color: method === 'Delivery' ? borderColor : unselectedTextColor }, method === 'Delivery' && { fontWeight: '600' }]}>
-                Delivery
+                Parcel
               </Text>
             </Pressable>
             <Pressable
@@ -128,12 +128,12 @@ export default function TransactionScreen() {
               onPress={() => setMethod('Collection')}
             >
               <Ionicons
-                name="storefront-outline"
+                name="people-outline"
                 size={24}
                 color={method === 'Collection' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
               />
               <Text style={[styles.methodLabel, { color: method === 'Collection' ? borderColor : unselectedTextColor }, method === 'Collection' && { fontWeight: '600' }]}>
-                Collection
+                Meet-up
               </Text>
             </Pressable>
           </View>

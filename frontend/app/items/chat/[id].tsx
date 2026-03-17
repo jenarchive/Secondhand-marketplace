@@ -133,14 +133,12 @@ export default function ChatScreen() {
                   {params.offerPrice && !Number.isNaN(Number(params.offerPrice)) && (
                     <View style={styles.messagesContainer}>
                       <View style={styles.offerCard}>
-                        <Text style={styles.offerCardTitle}>Offer sent</Text>
+                        <Text style={styles.offerCardTitle}>Offer</Text>
                         <Text style={styles.offerCardBody}>
-                          You offered{' '}
                           {new Intl.NumberFormat('en-GB', {
                             style: 'currency',
                             currency: 'GBP',
-                          }).format(Number(params.offerPrice))}{' '}
-                          for this item.
+                          }).format(Number(params.offerPrice))}
                         </Text>
                       </View>
                     </View>
@@ -372,23 +370,28 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 4,
     gap: 6,
+    alignItems: 'flex-end',
   },
   offerCard: {
-    alignSelf: 'stretch',
-    borderRadius: 12,
-    paddingHorizontal: 14,
+    width: 120,
+    height: 120,
+    borderRadius: 20,
+    paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: '#2563EB',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 4,
   },
   offerCardTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: '#BFDBFE',
     marginBottom: 4,
   },
   offerCardBody: {
-    fontSize: 13,
+    fontSize: 18,
+    fontWeight: '700',
     color: '#FFFFFF',
   },
   messageBubbleMe: {
