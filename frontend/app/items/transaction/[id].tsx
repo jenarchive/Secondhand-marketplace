@@ -35,7 +35,11 @@ export default function TransactionScreen() {
 
   const handleSendOffer = () => {
     const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
-    if (!itemData || isNaN(num) || num <= 0) return;
+    if (!itemData) return;
+    if (!offerPrice.trim() || isNaN(num) || num <= 0) {
+      Alert.alert('Enter your offer', 'Please enter a price for your offer.');
+      return;
+    }
     if (num === itemData.price) {
       Alert.alert('Same as list price', 'Your offer is the same as the list price. Please enter a different amount.');
       return;
