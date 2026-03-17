@@ -6,6 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { ThemedText } from '@/components/themed-text';
 import { useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import { CATEGORIES } from '@/constants/categories';
 // dimension variables
 const screenWidth = Dimensions.get('window').width;
 const padding = 32;
@@ -15,17 +16,6 @@ const columns = 3;
 const gapSpace = gapSize * (columns - 1);
 const availableSpace = screenWidth - padding - gapSpace - 64;
 const photoSize = Math.floor(availableSpace / columns);
-
-// list of options for the category input
-const categories = [
-  { id: '1', name: 'Clothing' },
-  { id: '2', name: 'Electronics' },
-  { id: '3', name: 'Home' },
-  { id: '4', name: 'Entertainment' },
-  { id: '5', name: 'Sports' },
-  { id: '6', name: 'Collectables' },
-  { id: '7', name: 'Other' },
-];
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -139,7 +129,7 @@ export default function HomeScreen() {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('price', price);
-        formData.append('category', categories.find(c => c.name === category));
+        formData.append('category', category);
 
         images.forEach((uri, index) => {
           formData.append('images', {
@@ -345,7 +335,7 @@ export default function HomeScreen() {
             </View>
 
             <FlatList
-              data={categories}
+              data={CATEGORIES}
               keyExtractor={(item) => item.id}
               renderItem={({item}) => (
                 <TouchableOpacity

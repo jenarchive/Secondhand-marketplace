@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
+import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity } from 'react-native';
 import { useState, useMemo, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,10 +11,13 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import { CATEGORIES } from '@/constants/categories';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
@@ -25,12 +28,18 @@ export default function HomeScreen() {
   }, [contextItems]);
 
   const filtered = useMemo(() => {
+    let list = displayItems;
+    if (selectedCategory) {
+      list = list.filter((i) => (i.category || '') === selectedCategory);
+    }
     const q = query.trim().toLowerCase();
-    if (!q) return displayItems;
-    return displayItems.filter(i =>
-      i.title.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q)
+    if (!q) return list;
+    return list.filter((i) =>
+      i.title.toLowerCase().includes(q) ||
+      i.description.toLowerCase().includes(q) ||
+      (i.category || '').toLowerCase().includes(q)
     );
-  }, [query, displayItems]);
+  }, [query, selectedCategory, displayItems]);
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -40,10 +49,16 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#191C1F' }}
       headerImage={<Image />}>
       <ThemedView>
-        {/* Search bar (Apple-native like) */}
-        <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}> 
+        {/* Search bar: category (left), input, search icon (right) */}
+        <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
           <View style={styles.searchInner}>
-            <Ionicons name="search" size={18} color="#888" style={styles.searchIcon} />
+            <Pressable
+              onPress={() => setCategoryModalVisible(true)}
+              hitSlop={8}
+              style={styles.categoryIconWrap}
+            >
+              <Ionicons name="pricetag-outline" size={20} color="#888" />
+            </Pressable>
             <TextInput
               value={query}
               onChangeText={setQuery}
@@ -53,8 +68,49 @@ export default function HomeScreen() {
               returnKeyType="search"
               clearButtonMode="while-editing"
             />
+            <Ionicons name="search" size={18} color="#888" style={styles.searchIconRight} />
           </View>
         </View>
+
+        <Modal
+          visible={categoryModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setCategoryModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setCategoryModalVisible(false)} />
+            <View style={styles.categoryModalContent}>
+              <View style={styles.categoryModalHeader}>
+                <ThemedText type="subtitle">Select category</ThemedText>
+                <Pressable onPress={() => setCategoryModalVisible(false)} hitSlop={12}>
+                  <Ionicons name="close" size={24} color="#888" />
+                </Pressable>
+              </View>
+              <Pressable onPress={() => { setSelectedCategory(null); setCategoryModalVisible(false); }} style={styles.categoryOption}>
+                <ThemedText style={styles.categoryOptionText}>All</ThemedText>
+                {!selectedCategory && <Ionicons name="checkmark" size={20} color="#0A84FF" />}
+              </Pressable>
+              <FlatList
+                data={CATEGORIES}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.categoryOption}
+                    onPress={() => {
+                      setSelectedCategory(item.name);
+                      setCategoryModalVisible(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <ThemedText style={styles.categoryOptionText}>{item.name}</ThemedText>
+                    {selectedCategory === item.name && <Ionicons name="checkmark" size={20} color="#0A84FF" />}
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </View>
+        </Modal>
         <ThemedView style={styles.flexbox}>
             {filtered.map((item) => (
               <Pressable
@@ -184,14 +240,50 @@ const styles = StyleSheet.create({
     })
   },
 
-  searchIcon: {
-    marginRight: 8
+  categoryIconWrap: {
+    marginRight: 8,
+    padding: 4,
   },
-
   searchInput: {
     flex: 1,
     padding: 0,
     margin: 0,
-    color: '#111'
-  }
+    color: '#111',
+  },
+  searchIconRight: {
+    marginLeft: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  categoryModalContent: {
+    backgroundColor: DarkTheme.colors.card,
+    borderRadius: 12,
+    maxHeight: '70%',
+    overflow: 'hidden',
+  },
+  categoryModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: DarkTheme.colors.border,
+  },
+  categoryOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: DarkTheme.colors.border,
+  },
+  categoryOptionText: {
+    fontSize: 16,
+    color: '#fff',
+  },
 });
