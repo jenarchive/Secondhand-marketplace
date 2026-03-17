@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
@@ -25,9 +25,23 @@ export default function ChatScreen() {
   const showPostage = params.transactionMethod === 'Delivery';
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
-  const inputBarPadding = Math.max(insets.bottom, 12) + 12;
+  const fullPadding = Math.max(insets.bottom, 12) + 12;
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const show = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
+    const hide = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, []);
+
+  const inputBarPadding = keyboardVisible ? 8 : fullPadding;
 
   const handleSend = () => {
     if (!message.trim()) return;
