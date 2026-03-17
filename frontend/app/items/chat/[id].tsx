@@ -26,6 +26,7 @@ export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [messages, setMessages] = useState<string[]>([]);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
@@ -67,8 +68,9 @@ export default function ChatScreen() {
   };
 
   const handleSend = () => {
-    if (!message.trim()) return;
-    // TODO: send message
+    const trimmed = message.trim();
+    if (!trimmed) return;
+    setMessages((prev) => [...prev, trimmed]);
     setMessage('');
   };
 
@@ -95,39 +97,49 @@ export default function ChatScreen() {
               <Pressable style={styles.moreOverlay} onPress={handleCloseMore} />
             )}
             <View style={styles.content}>
-            {itemData && (
-              <>
-                <View style={styles.productRow}>
-                  <Image
-                    source={{ uri: itemData.image }}
-                    style={styles.productImage}
-                    placeholder={{ blurhash }}
-                    contentFit="cover"
-                  />
-                  <View style={styles.productBody}>
-                    <Text style={[styles.productTitle, { color: '#FFFFFF' }]} numberOfLines={2}>
-                      {itemData.title}
-                    </Text>
-                    <Text style={[styles.productPrice, { color: '#FFFFFF' }]}>
-                      {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
-                    </Text>
-                    {showPostage && (
-                      <Text style={[styles.productPostage, { color: unselectedTextColor }]}>
-                        Postage £2.50
+              {itemData && (
+                <>
+                  <View style={styles.productRow}>
+                    <Image
+                      source={{ uri: itemData.image }}
+                      style={styles.productImage}
+                      placeholder={{ blurhash }}
+                      contentFit="cover"
+                    />
+                    <View style={styles.productBody}>
+                      <Text style={[styles.productTitle, { color: '#FFFFFF' }]} numberOfLines={1}>
+                        {itemData.title}
                       </Text>
-                    )}
+                      <Text style={[styles.productPrice, { color: '#FFFFFF' }]}>
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                      </Text>
+                      {showPostage && (
+                        <Text style={[styles.productPostage, { color: unselectedTextColor }]}>
+                          Postage £2.50
+                        </Text>
+                      )}
+                    </View>
                   </View>
-                </View>
 
-                <Pressable
-                  style={[styles.viewDetailsButton, { backgroundColor: borderColor }]}
-                  onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
-                >
-                  <Text style={styles.viewDetailsButtonText}>View details</Text>
-                </Pressable>
-              </>
-            )}
-          </View>
+                  <Pressable
+                    style={[styles.viewDetailsButton, { backgroundColor: borderColor }]}
+                    onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
+                  >
+                    <Text style={styles.viewDetailsButtonText}>View details</Text>
+                  </Pressable>
+                </>
+              )}
+
+              {messages.length > 0 && (
+                <View style={styles.messagesContainer}>
+                  {messages.map((m, index) => (
+                    <View key={`${index}-${m}`} style={styles.messageBubbleMe}>
+                      <Text style={styles.messageText}>{m}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
           </View>
         </TouchableWithoutFeedback>
 
@@ -147,7 +159,7 @@ export default function ChatScreen() {
               maxLength={500}
             />
             <Pressable
-              style={[styles.sendButton, { backgroundColor: message.trim() ? borderColor : backButtonBg }]}
+              style={[styles.sendButton, { backgroundColor: message.trim() ? borderColor : BACK_BUTTON_BG }]}
               onPress={handleSend}
             >
               <Ionicons name="arrow-up" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
@@ -228,19 +240,19 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingTop: 100 + 16,
+    paddingTop: 100 + 12,
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
   productRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   productImage: {
-    width: 72,
-    height: 72,
+    width: 56,
+    height: 56,
     borderRadius: 8,
   },
   productBody: {
@@ -262,14 +274,14 @@ const styles = StyleSheet.create({
   },
   viewDetailsButton: {
     alignSelf: 'flex-start',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    marginBottom: 24,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    marginBottom: 12,
   },
   viewDetailsButtonText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
   },
   inputBar: {
@@ -336,5 +348,25 @@ const styles = StyleSheet.create({
   },
   morePanelLabel: {
     fontSize: 13,
+  },
+  messagesContainer: {
+    flexGrow: 1,
+    paddingTop: 8,
+    paddingBottom: 4,
+    gap: 6,
+  },
+  messageBubbleMe: {
+    alignSelf: 'flex-end',
+    maxWidth: '80%',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    borderBottomRightRadius: 4,
+    backgroundColor: '#2563EB',
+  },
+  messageText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    lineHeight: 18,
   },
 });
