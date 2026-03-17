@@ -1,12 +1,12 @@
 import { Stack, useRouter } from "expo-router";
-import { Pressable, Platform } from "react-native";
+import { Platform, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks/use-theme-color";
-
 export default function ItemsLayout() {
   const router = useRouter();
   const headerBg = useThemeColor({}, "background");
   const headerTint = useThemeColor({}, "text");
+  const backButtonBg = "rgba(0,0,0,0.4)";
 
   return (
     <Stack
@@ -17,14 +17,33 @@ export default function ItemsLayout() {
         headerBackTitleVisible: false,
         headerBackTitle: "",
         headerShadowVisible: false,
+        headerBackVisible: false,
+        headerLeftContainerStyle: { borderWidth: 0, backgroundColor: "transparent" },
         headerLeft: () => (
-          <Pressable
-            onPress={() => router.back()}
-            hitSlop={12}
-            style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1, padding: 8, marginLeft: Platform.OS === "ios" ? 0 : 4 })}
-          >
-            <Ionicons name={Platform.OS === "ios" ? "chevron-back" : "arrow-back"} size={28} color={headerTint} />
-          </Pressable>
+          <View style={{ marginLeft: Platform.OS === "ios" ? 0 : 4, marginTop: 8 }}>
+            <TouchableOpacity
+              onPress={() => router.back()}
+              activeOpacity={0.8}
+              style={{
+                backgroundColor: backButtonBg,
+                padding: 4,
+                height: 40,
+                width: 40,
+                borderRadius: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 0,
+                overflow: "hidden",
+                shadowColor: "transparent",
+                shadowOpacity: 0,
+                shadowRadius: 0,
+                shadowOffset: { width: 0, height: 0 },
+                elevation: 0,
+              }}
+            >
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         ),
       }}
     >
@@ -34,6 +53,13 @@ export default function ItemsLayout() {
         options={{
           headerShown: false,
           animation: "slide_from_bottom",
+        }}
+      />
+      <Stack.Screen
+        name="transaction/offer-sent/[id]"
+        options={{
+          headerShown: false,
+          animation: "slide_from_right",
         }}
       />
       <Stack.Screen name="current-listing" options={{ title: "My Listings" }} />

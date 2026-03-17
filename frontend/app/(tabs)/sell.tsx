@@ -6,7 +6,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { ThemedText } from '@/components/themed-text';
 import { useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-
 // dimension variables
 const screenWidth = Dimensions.get('window').width;
 const padding = 32;
@@ -29,6 +28,8 @@ const categories = [
 ]
 
 export default function HomeScreen() {
+  const backButtonBg = 'rgba(0,0,0,0.4)';
+
   // form variables
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -312,8 +313,9 @@ export default function HomeScreen() {
       <View style={styles.header}>
         {/* back button */}
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: backButtonBg }]}
           onPress={() => router.back()}
+          activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
@@ -391,8 +393,8 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
     borderRadius: 20,
+    marginTop: 8,
   },
   pageTitle: {
     fontSize: 18,

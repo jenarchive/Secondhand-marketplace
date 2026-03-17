@@ -21,7 +21,7 @@ export default function TransactionScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const titleColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const backgroundColor = useThemeColor({}, 'background');
-  const backButtonBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)';
+  const backButtonBg = 'rgba(0,0,0,0.4)';
   const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
   const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
@@ -37,8 +37,7 @@ export default function TransactionScreen() {
   const handleSendOffer = () => {
     const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
     if (itemData && !isNaN(num) && num > 0) {
-      setOfferPrice('');
-      // TODO: send offer to seller
+      router.push({ pathname: '/items/transaction/offer-sent/[id]', params: { id: String(id) } });
     }
   };
 
@@ -60,7 +59,7 @@ export default function TransactionScreen() {
             onPress={() => router.back()}
             activeOpacity={0.8}
           >
-            <Ionicons name="arrow-back" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+            <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: '#FFFFFF' }]} numberOfLines={1}>
             Transaction
@@ -219,12 +218,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 100,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     zIndex: 100,
     paddingHorizontal: 20,
-    paddingBottom: 12,
   },
   headerTitle: {
     position: 'absolute',
@@ -237,12 +234,16 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 0,
     padding: 4,
     height: 40,
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
+    marginTop: 8,
   },
   scrollView: {
     flex: 1,

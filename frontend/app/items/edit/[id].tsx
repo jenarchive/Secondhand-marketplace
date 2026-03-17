@@ -57,6 +57,7 @@ export default function EditItemScreen() {
   const itemData = getItemById(id);
   const headerTitleColor = useThemeColor({}, 'text');
   const labelColor = useThemeColor({}, 'text');
+  const backButtonBg = 'rgba(0,0,0,0.4)';
 
   const [title, setTitle] = useState(itemData?.title ?? '');
   const [description, setDescription] = useState(itemData?.description ?? '');
@@ -304,8 +305,9 @@ export default function EditItemScreen() {
 
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: backButtonBg }]}
           onPress={() => router.back()}
+          activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
@@ -397,8 +399,8 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
     borderRadius: 20,
+    marginTop: 8,
   },
   delistButton: {
     position: 'absolute',

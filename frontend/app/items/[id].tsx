@@ -50,13 +50,14 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
+  const backButtonBg = 'rgba(0,0,0,0.4)';
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.customHeader}>
         <TouchableOpacity
-          style={styles.customHeaderBackButton}
+          style={[styles.customHeaderBackButton, { backgroundColor: backButtonBg }]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >
@@ -199,8 +200,8 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
     borderRadius: 20,
+    marginTop: 8,
   },
   customHeaderTitle: {
     fontSize: 18,

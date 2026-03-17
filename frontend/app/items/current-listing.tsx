@@ -18,13 +18,14 @@ export default function CurrentListingScreen() {
   const screenBg = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const placeholderBg = useThemeColor({ light: '#e5e5e5', dark: '#2c2c2e' }, 'background');
+  const backButtonBg = 'rgba(0,0,0,0.4)';
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: backButtonBg }]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    marginTop: 8,
     borderRadius: 20,
   },
   pageTitle: {
