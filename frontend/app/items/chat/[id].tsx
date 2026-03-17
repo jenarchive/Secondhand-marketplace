@@ -51,7 +51,7 @@ export default function ChatScreen() {
   }, []);
 
   const inputBarPadding = (keyboardVisible || showMoreMenu) ? 8 : fullPadding;
-  const bottomPadding = keyboardVisible ? keyboardHeight : 0;
+  const bottomPadding = keyboardVisible && !showMoreMenu ? keyboardHeight : 0;
 
   const handleMorePress = () => {
     Keyboard.dismiss();

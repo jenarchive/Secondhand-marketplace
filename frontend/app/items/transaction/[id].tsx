@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
@@ -29,6 +30,7 @@ export default function TransactionScreen() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [collectionLocation, setCollectionLocation] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const insets = useSafeAreaInsets();
   const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
@@ -47,7 +49,11 @@ export default function TransactionScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={[styles.screen, { backgroundColor }]}>
+      <KeyboardAvoidingView
+        style={[styles.screen, { backgroundColor }]}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
         <View style={styles.header}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: backButtonBg }]}
@@ -61,7 +67,13 @@ export default function TransactionScreen() {
           </Text>
         </View>
 
-        <View style={styles.content}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={[styles.content, { paddingBottom: 24 + Math.max(insets.bottom, 12) }]}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
           <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Transaction method</Text>
           <View style={styles.methodRow}>
             <Pressable
@@ -190,8 +202,9 @@ export default function TransactionScreen() {
               </Pressable>
             </View>
           )}
-        </View>
-      </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </>
   );
 }
@@ -231,8 +244,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  content: {
     paddingTop: 100 + 16,
     paddingHorizontal: 20,
   },
