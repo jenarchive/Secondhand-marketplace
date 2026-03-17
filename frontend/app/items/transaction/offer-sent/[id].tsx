@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated, Easing, TouchableOpacity } from 'react-native';
-import { useRouter, Stack } from 'expo-router';
+import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function OfferSentScreen() {
+  const params = useLocalSearchParams<{ id: string; offerPrice?: string; transactionMethod?: string }>();
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
@@ -66,6 +67,25 @@ export default function OfferSentScreen() {
           >
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
+          {params.id && (
+            <TouchableOpacity
+              style={[styles.chatIconButton, { backgroundColor: BACK_BUTTON_BG }]}
+              onPress={() =>
+                router.push({
+                  pathname: '/items/chat/[id]',
+                  params: {
+                    id: String(params.id),
+                    sellerName: `User${params.id}`,
+                    transactionMethod: params.transactionMethod,
+                    offerPrice: params.offerPrice,
+                  },
+                })
+              }
+              activeOpacity={0.8}
+            >
+              <Ionicons name="chatbubble-ellipses-outline" size={28} color="#5BA3FF" />
+            </TouchableOpacity>
+          )}
           <Text style={[styles.headerTitle, { color: '#FFFFFF' }]} numberOfLines={1}>
             Offer sent
           </Text>
@@ -83,13 +103,13 @@ export default function OfferSentScreen() {
               ],
             }]}
         >
-          <Ionicons name="paper-plane-outline" size={72} color="#5BA3FF" />
+          <Ionicons name="paper-plane-outline" size={72} color="#CCF1FF" />
         </Animated.View>
         <Text style={[styles.message, { color: textColor }]}>
           The seller has received your offer
         </Text>
         <Text style={[styles.hint, { color: subtextColor }]}>
-          You can chat with the seller or wait for their response.
+          Message the seller or wait for a reply.
         </Text>
       </View>
       </View>
@@ -118,6 +138,18 @@ const styles = StyleSheet.create({
     left: 20,
     bottom: 0,
     padding: 4,
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginTop: 8,
+  },
+  chatIconButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 0,
+    padding: 6,
     height: 40,
     width: 40,
     justifyContent: 'center',

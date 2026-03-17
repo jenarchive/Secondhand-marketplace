@@ -47,7 +47,14 @@ export default function TransactionScreen() {
       Alert.alert('Same as list price', 'Your offer is the same as the list price. Please enter a different amount.');
       return;
     }
-    router.push({ pathname: '/items/transaction/offer-sent/[id]', params: { id: String(id) } });
+    router.push({
+      pathname: '/items/transaction/offer-sent/[id]',
+      params: {
+        id: String(id),
+        offerPrice: String(num),
+        transactionMethod: method,
+      },
+    });
   };
 
   const handleChatWithSeller = () => {
