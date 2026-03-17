@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
@@ -18,7 +18,6 @@ export default function ChatScreen() {
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
   const backButtonBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)';
   const headerTitle = params.sellerName ?? `User${params.id}`;
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
@@ -26,20 +25,9 @@ export default function ChatScreen() {
   const showPostage = params.transactionMethod === 'Delivery';
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
-  const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFFFFF';
-
-  useEffect(() => {
-    const show = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
-    const hide = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, []);
+  const inputBarPadding = Math.max(insets.bottom, 12) + 12;
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -47,16 +35,13 @@ export default function ChatScreen() {
     setMessage('');
   };
 
-  const inputBarPadding = keyboardVisible ? 6 : Math.max(insets.bottom, 12) + 12;
-  const keyboardPanelHeight = 280;
-
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <KeyboardAvoidingView
         style={[styles.screen, { backgroundColor }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        keyboardVerticalOffset={0}
       >
         <View style={styles.header}>
           <TouchableOpacity
@@ -107,17 +92,14 @@ export default function ChatScreen() {
               </>
             )}
           </View>
-          {showMoreMenu && (
-            <Pressable style={styles.moreOverlay} onPress={() => setShowMoreMenu(false)} />
-          )}
           </View>
         </TouchableWithoutFeedback>
 
         <View style={styles.bottomWrap}>
-          <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: inputBarPadding }]}>
-            <Pressable style={[styles.moreButton, { backgroundColor: backButtonBg }]} onPress={() => setShowMoreMenu(true)}>
+          <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: inputBarPadding, paddingTop: 12 }]}>
+            <View style={[styles.moreButton, { backgroundColor: backButtonBg }]}>
               <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-            </Pressable>
+            </View>
             <TextInput
               style={[styles.messageInput, { color: '#FFFFFF' }]}
               placeholder="Enter your message."
@@ -134,37 +116,6 @@ export default function ChatScreen() {
               <Ionicons name="arrow-up" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
             </Pressable>
           </View>
-
-          {showMoreMenu && (
-            <View style={[styles.keyboardPanel, { backgroundColor: menuPanelBg, height: keyboardPanelHeight, paddingBottom: insets.bottom }]}>
-              <View style={styles.keyboardPanelRow}>
-                <Pressable
-                  style={styles.keyboardPanelOption}
-                  onPress={() => { setShowMoreMenu(false); /* TODO: pick image */ }}
-                >
-                  <View style={[styles.keyboardPanelIconCircle, { backgroundColor: backButtonBg }]}>
-                    <Ionicons name="image-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-                  </View>
-                  <Text style={[styles.keyboardPanelLabel, { color: textColor }]}>Send photo</Text>
-                </Pressable>
-                <Pressable
-                  style={styles.keyboardPanelOption}
-                  onPress={() => { setShowMoreMenu(false); /* TODO: pick video */ }}
-                >
-                  <View style={[styles.keyboardPanelIconCircle, { backgroundColor: backButtonBg }]}>
-                    <Ionicons name="videocam-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-                  </View>
-                  <Text style={[styles.keyboardPanelLabel, { color: textColor }]}>Send video</Text>
-                </Pressable>
-              </View>
-              <TouchableOpacity
-                style={[styles.moreCloseButton, { backgroundColor: backButtonBg }]}
-                onPress={() => setShowMoreMenu(false)}
-              >
-                <Ionicons name="close" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
       </KeyboardAvoidingView>
     </>
@@ -286,44 +237,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  moreOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    zIndex: 200,
-  },
   bottomWrap: {
     zIndex: 300,
-  },
-  keyboardPanel: {
-    paddingTop: 24,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-  },
-  keyboardPanelRow: {
-    flexDirection: 'row',
-    gap: 32,
-    marginBottom: 24,
-  },
-  keyboardPanelOption: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  keyboardPanelIconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  keyboardPanelLabel: {
-    fontSize: 13,
-  },
-  moreCloseButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
