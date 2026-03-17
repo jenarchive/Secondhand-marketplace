@@ -12,6 +12,7 @@ type TransactionMethod = 'Delivery' | 'Collection';
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+const DELIVERY_POSTAGE = 2.5;
 
 export default function TransactionScreen() {
   const params = useLocalSearchParams<{ id: string }>();
@@ -59,7 +60,7 @@ export default function TransactionScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
             onPress={() => router.back()}
@@ -205,6 +206,36 @@ export default function TransactionScreen() {
                 <Ionicons name="chatbubble-outline" size={22} color={borderColor} />
                 <Text style={[styles.chatButtonText, { color: '#FFFFFF' }]}>Chat with seller</Text>
               </Pressable>
+
+              <View style={styles.totalSection}>
+                <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment amount</Text>
+                <View style={[styles.totalCard, { backgroundColor: cardBg }]}>
+                  <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
+                    <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Item price</Text>
+                    <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>
+                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                    </Text>
+                  </View>
+                  <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
+                    <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Delivery fee</Text>
+                    <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>
+                      {method === 'Delivery'
+                        ? new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(DELIVERY_POSTAGE)
+                        : 'Free'}
+                    </Text>
+                  </View>
+                  <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
+                    <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Service fee</Text>
+                    <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>Free</Text>
+                  </View>
+                  <View style={styles.totalCardRowLast}>
+                    <Text style={[styles.totalCardTotalLabel, { color: '#FFFFFF' }]}>Total payment</Text>
+                    <Text style={[styles.totalCardTotalAmount, { color: '#FFFFFF' }]}>
+                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(method === 'Delivery' ? itemData.price + DELIVERY_POSTAGE : itemData.price)}
+                    </Text>
+                  </View>
+                </View>
+              </View>
             </View>
           )}
           </ScrollView>
@@ -328,6 +359,42 @@ const styles = StyleSheet.create({
   orderDescription: {
     fontSize: 13,
     lineHeight: 18,
+  },
+  totalSection: {
+    marginTop: 24,
+  },
+  totalCard: {
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    marginTop: 8,
+  },
+  totalCardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  totalCardRowLast: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 14,
+  },
+  totalCardLabel: {
+    fontSize: 15,
+  },
+  totalCardAmount: {
+    fontSize: 15,
+  },
+  totalCardTotalLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  totalCardTotalAmount: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   actionSection: {
     marginTop: 20,

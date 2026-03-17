@@ -56,7 +56,7 @@ export default function HomeScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.customHeader}>
+      <View style={[styles.customHeader, { backgroundColor }]}>
         <TouchableOpacity
           style={[styles.customHeaderBackButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}

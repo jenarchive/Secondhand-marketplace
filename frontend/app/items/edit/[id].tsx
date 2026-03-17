@@ -58,6 +58,7 @@ export default function EditItemScreen() {
   const itemData = getItemById(id);
   const headerTitleColor = useThemeColor({}, 'text');
   const labelColor = useThemeColor({}, 'text');
+  const headerBg = useThemeColor({}, 'background');
 
   const [title, setTitle] = useState(itemData?.title ?? '');
   const [description, setDescription] = useState(itemData?.description ?? '');
@@ -303,7 +304,7 @@ export default function EditItemScreen() {
         </View>
       </ParallaxScrollView>
 
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: headerBg }]}>
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}

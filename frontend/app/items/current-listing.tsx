@@ -23,7 +23,7 @@ export default function CurrentListingScreen() {
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: screenBg }]}>
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}

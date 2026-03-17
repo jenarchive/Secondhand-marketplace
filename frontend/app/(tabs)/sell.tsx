@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/themed-text';
 import { useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { CATEGORIES } from '@/constants/categories';
+import { useThemeColor } from '@/hooks/use-theme-color';
 // dimension variables
 const screenWidth = Dimensions.get('window').width;
 const padding = 32;
@@ -20,6 +21,7 @@ const photoSize = Math.floor(availableSpace / columns);
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
+  const headerBg = useThemeColor({}, 'background');
   // form variables
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -300,7 +302,7 @@ export default function HomeScreen() {
       </ParallaxScrollView>
       
       {/* header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: headerBg }]}>
         {/* back button */}
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}

@@ -58,7 +58,7 @@ export default function OfferSentScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.screen, { backgroundColor }]}>
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
             onPress={() => router.back()}
