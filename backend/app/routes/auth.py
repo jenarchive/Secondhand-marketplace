@@ -42,7 +42,7 @@ def register():
         cur.close()
 
         return jsonify({"message": "User registered successfully", "user_id": new_user_id}), 201
-    except psycopg2.UniqueViolation:
+    except psycopg2.errors.UniqueViolation:
         if conn:
             conn.rollback()
         return jsonify({"error": "Email or username already exists"}), 409

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Pressable, View, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, Pressable, View, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -43,6 +43,7 @@ export default function LoginScreen() {
   }
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>Log In</ThemedText>
 
@@ -74,6 +75,7 @@ export default function LoginScreen() {
         }
       </Pressable>
     </ThemedView>
+    </KeyboardAvoidingView>
   );
 }
 

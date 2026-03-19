@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Pressable, TextInput, ActivityIndicator } from 'react-native';
+import { StyleSheet, Pressable, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -41,6 +41,7 @@ export default function SignUpScreen() {
   }
 
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>Sign Up</ThemedText>
 
@@ -81,6 +82,7 @@ export default function SignUpScreen() {
         }
       </Pressable>
     </ThemedView>
+    </KeyboardAvoidingView>
   );
 }
 
