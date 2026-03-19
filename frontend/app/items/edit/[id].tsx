@@ -28,6 +28,7 @@ const columns = 3;
 const gapSpace = gapSize * (columns - 1);
 const availableSpace = screenWidth - padding - gapSpace - 64;
 const photoSize = Math.floor(availableSpace / columns);
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 const categories = [
   { id: '1', name: 'Clothing' },
@@ -57,6 +58,7 @@ export default function EditItemScreen() {
   const itemData = getItemById(id);
   const headerTitleColor = useThemeColor({}, 'text');
   const labelColor = useThemeColor({}, 'text');
+  const headerBg = useThemeColor({}, 'background');
 
   const [title, setTitle] = useState(itemData?.title ?? '');
   const [description, setDescription] = useState(itemData?.description ?? '');
@@ -302,10 +304,11 @@ export default function EditItemScreen() {
         </View>
       </ParallaxScrollView>
 
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: headerBg }]}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}
+          activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
@@ -397,8 +400,8 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
     borderRadius: 20,
+    marginTop: 8,
   },
   delistButton: {
     position: 'absolute',

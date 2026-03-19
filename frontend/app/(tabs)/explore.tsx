@@ -1,14 +1,15 @@
+import { useRef, useEffect, useCallback, useState, useMemo } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useState, useEffect, useMemo } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
-import { useMyListings } from '@/contexts/MyListingsContext';
+import { useMyListings, type MyListingItem } from '@/contexts/MyListingsContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -20,10 +21,11 @@ const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
 const ARROW_COLOR = '#5a5a5a';
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
+type TestItem = MyListingItem;
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
+  const { toggleLike: toggleLikeContext, isLiked, likedMap } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
   const exploreItems = useMemo(
     () => contextItems.filter((item) => !isMyListing(item.id)),
@@ -32,6 +34,25 @@ export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
+  const [heartFilledId, setHeartFilledId] = useState<number | null>(null);
+  const [likeButtonHeartFilled, setLikeButtonHeartFilled] = useState(false);
+  const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
+  const fromLikeButtonRef = useRef(false);
+  const visibleItemsRef = useRef<TestItem[]>([]);
+  const prevItemsLengthRef = useRef(0);
+  const alreadyAddedToLikesRef = useRef(false);
+  const fromItemDetailRef = useRef(false);
+  const likedMapRef = useRef(likedMap);
+  useEffect(() => {
+    likedMapRef.current = likedMap;
+  }, [likedMap]);
+
+  useEffect(() => {
+    setVisibleItems((prev) => {
+      if (prev.length === 0) return [...exploreItems];
+      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
+    });
+  }, [exploreItems]);
 
   useEffect(() => {
     setVisibleItems((prev) => {
@@ -46,7 +67,7 @@ export default function TabTwoScreen() {
   const spawnButterflies = (direction: 'left' | 'right') => {
     if (direction !== 'right') return;
     const baseId = Date.now();
-    const count = 3 + Math.floor(Math.random() * 2);
+    const count = 2 + Math.floor(Math.random() * 2);
     const newOnes: ButterflyInstance[] = Array.from({ length: count }, (_, i) => ({
       id: baseId + i,
       direction: direction,
@@ -58,32 +79,103 @@ export default function TabTwoScreen() {
     setButterflies((prev) => prev.filter((b) => b.id !== id));
   };
 
-  const handleCardDismiss = (direction?: 'left' | 'right') => {
-    setVisibleItems(prev => prev.slice(0, -1));
+  const handleCardDismiss = (direction?: 'left' | 'right', itemIdOverride?: number) => {
+    const item =
+      itemIdOverride != null
+        ? exploreItems.find((i) => i.id === itemIdOverride)
+        : visibleItems[visibleItems.length - 1];
+    if (direction && item) {
+      pendingDismissRef.current = { direction, item };
+    }
+    const nextItems = visibleItems.slice(0, -1);
+    visibleItemsRef.current = nextItems;
+    setVisibleItems(nextItems);
+  };
+
+  useEffect(() => {
+    const prevLen = prevItemsLengthRef.current;
+    prevItemsLengthRef.current = visibleItems.length;
+    if (prevLen > visibleItems.length && pendingDismissRef.current) {
+      const { direction, item } = pendingDismissRef.current;
+      pendingDismissRef.current = null;
+      const fromLikeButton = fromLikeButtonRef.current;
+      fromLikeButtonRef.current = false;
+      const alreadyAdded = alreadyAddedToLikesRef.current;
+      alreadyAddedToLikesRef.current = false;
+      if (direction === 'right') {
+        if (!alreadyAdded) spawnButterflies('right');
+        if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
+        setHeartFilledId(null);
+        setLikeButtonHeartFilled(false);
+      } else {
+        setHeartFilledId(null);
+      }
+    }
+  }, [visibleItems, isLiked, toggleLikeContext]);
+
+  const resetCards = () => {
+    setVisibleItems(exploreItems.filter((item) => !isLiked(item.id)));
+  };
+
+  useEffect(() => {
+    const items = exploreItems.filter((item) => !likedMap[String(item.id)]);
+    visibleItemsRef.current = items;
+  }, [likedMap, exploreItems]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (fromItemDetailRef.current) {
+        fromItemDetailRef.current = false;
+      } else {
+        const latestLikedMap = likedMapRef.current;
+        const newItems = exploreItems.filter((item) => !latestLikedMap[String(item.id)]);
+        visibleItemsRef.current = newItems;
+        setHeartFilledId(null);
+        setLikeButtonHeartFilled(false);
+        setVisibleItems(newItems);
+      }
+    }, [exploreItems])
+  );
+
+  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
+  visibleItemsRef.current = visibleItems;
+
+  const currentItemLiked = currentItem
+    ? isLiked(currentItem.id) || heartFilledId === currentItem.id || likeButtonHeartFilled
+    : false;
+
+  const getTopItemId = () => {
+    const items = visibleItemsRef.current;
+    if (items.length > 0) return items[items.length - 1].id;
+    const unliked = exploreItems.find((i) => !likedMap[String(i.id)]);
+    return unliked?.id ?? null;
   };
 
   const handleSwipeDirection = (direction: 'left' | 'right') => {
-    spawnButterflies(direction);
-    if (direction === 'right' && currentItem) {
-      toggleLikeContext(currentItem.id);
+    const itemId = getTopItemId();
+    if (direction === 'right' && itemId != null) {
+      setHeartFilledId(itemId);
+      setLikeButtonHeartFilled(true);
+      if (!isLiked(itemId)) {
+        alreadyAddedToLikesRef.current = true;
+        toggleLikeContext(itemId);
+      }
+      spawnButterflies('right');
     }
   };
 
-  const resetCards = () => {
-    setVisibleItems([...exploreItems]);
-  };
-
-  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
-  const currentItemLiked = currentItem ? isLiked(currentItem.id) : false;
-
-  const toggleLike = () => {
-    if (!currentItem) return;
-    toggleLikeContext(currentItem.id);
+  const handleLikePress = () => {
+    const itemId = getTopItemId();
+    if (itemId == null) return;
+    handleCardDismiss('right', itemId);
   };
 
   const handleSwipeUp = () => {
-    const topItem = visibleItems[visibleItems.length - 1];
-    if (topItem) router.push(`/items/${topItem.id}`);
+    const currentItem = visibleItems[visibleItems.length - 1];
+    if (currentItem) {
+      fromItemDetailRef.current = true;
+      router.push(`/items/${currentItem.id}`);
+    }
   };
 
   return (
@@ -100,7 +192,7 @@ export default function TabTwoScreen() {
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
         onSwipeDirection={handleSwipeDirection}
-        onSwipeUp={handleSwipeUp}
+        onSwipeDown={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
           <ThemedView
@@ -140,28 +232,34 @@ export default function TabTwoScreen() {
                 {hintsVisible && (
               <View style={styles.swipeHints} pointerEvents="none">
                 <View style={styles.hintUp}>
-                  <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
-                  <View style={styles.hintTextUp}>
-                    <Text style={styles.hintText}>Swipe up</Text>
-                    <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                  <View style={styles.hintBackdrop}>
+                    <Ionicons name="arrow-down" size={28} color={ARROW_COLOR} />
+                    <View style={styles.hintTextUp}>
+                      <Text style={styles.hintText}>Swipe down</Text>
+                      <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.hintLeft}>
-                  <View style={styles.arrowLeft}>
-                    <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
-                  </View>
-                  <View style={styles.hintTextLeft}>
-                    <Text style={styles.hintText}>Swipe left</Text>
-                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropLeft]}>
+                    <View style={styles.arrowLeft}>
+                      <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextLeft}>
+                      <Text style={styles.hintText}>Swipe left</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.hintRight}>
-                  <View style={styles.arrowRight}>
-                    <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
-                  </View>
-                  <View style={styles.hintTextRight}>
-                    <Text style={styles.hintText}>Swipe right</Text>
-                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropRight]}>
+                    <View style={styles.arrowRight}>
+                      <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextRight}>
+                      <Text style={styles.hintText}>Swipe right</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -176,7 +274,7 @@ export default function TabTwoScreen() {
         <View style={styles.actionBar}>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionSkip, pressed && styles.actionPressed]}
-            onPress={handleCardDismiss}
+            onPress={() => handleCardDismiss('left')}
           >
             <Ionicons name="close" size={26} color="#FF453A" />
           </Pressable>
@@ -188,7 +286,7 @@ export default function TabTwoScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={toggleLike}
+            onPress={handleLikePress}
           >
             <Ionicons
               name={currentItemLiked ? 'heart' : 'heart-outline'}
@@ -225,11 +323,13 @@ export default function TabTwoScreen() {
               </Pressable>
             </Link>
           </View>
-          <View style={styles.emptyStateBelow}>
-            <Pressable style={styles.emptyStateReset} onPress={resetCards}>
-              <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
-            </Pressable>
-          </View>
+          {!exploreItems.every((item) => isLiked(item.id)) && (
+            <View style={styles.emptyStateBelow}>
+              <Pressable style={styles.emptyStateReset} onPress={resetCards}>
+                <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
+              </Pressable>
+            </View>
+          )}
         </View>
       )}
       </>
@@ -329,7 +429,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.55)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -345,7 +445,7 @@ const styles = StyleSheet.create({
   },
   hintUp: {
     position: 'absolute',
-    top: 12,
+    bottom: 12,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -378,6 +478,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   hintTextRight: {
+    alignItems: 'flex-end',
+  },
+  hintBackdrop: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hintBackdropLeft: {
+    alignItems: 'flex-start',
+  },
+  hintBackdropRight: {
     alignItems: 'flex-end',
   },
   hintText: {

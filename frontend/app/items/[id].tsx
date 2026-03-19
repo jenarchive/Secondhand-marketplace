@@ -1,23 +1,23 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRef, useCallback } from 'react';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
-  const params = useLocalSearchParams<{ id: string; fromMyListings?: string }>();
+  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
+  const fromChat = params.fromChat === 'true';
   const { items, isMyListing: isItemMine, removeItem } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
@@ -49,51 +49,17 @@ export default function HomeScreen() {
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
 
   const insets = useSafeAreaInsets();
-  const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
-  const buyNowColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const router = useRouter();
-  const isFocused = useIsFocused();
-  const isFocusedRef = useRef(isFocused);
-  isFocusedRef.current = isFocused;
-  const hasNavigatedToTransaction = useRef(false);
-  const scrollYAtDragStart = useRef(0);
-
-  useFocusEffect(
-    useCallback(() => {
-      hasNavigatedToTransaction.current = false;
-    }, []),
-  );
-
-  const handleScrollBeginDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollYAtDragStart.current = e.nativeEvent.contentOffset.y;
-  };
-
-  const checkAndNavigateToTransaction = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!isFocusedRef.current) return;
-    if (isItemMine(itemData.id) || hasNavigatedToTransaction.current) return;
-    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
-    const paddingToBottom = 80;
-    const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - paddingToBottom;
-    const scrolledDownThisGesture = contentOffset.y > scrollYAtDragStart.current;
-    if (isAtBottom && scrolledDownThisGesture) {
-      hasNavigatedToTransaction.current = true;
-      router.push(`/items/transaction/${id}`);
-    }
-  };
-
-  const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    checkAndNavigateToTransaction(e);
-  };
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.customHeader}>
+      <View style={[styles.customHeader, { backgroundColor }]}>
         <TouchableOpacity
-          style={styles.customHeaderBackButton}
-          onPress={() => router.back()}
+          style={[styles.customHeaderBackButton, { backgroundColor: BACK_BUTTON_BG }]}
+          onPress={() => router.replace('/(tabs)')}
           activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -109,14 +75,10 @@ export default function HomeScreen() {
             styles.scrollContentWrap,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (isItemMine(itemData.id) ? 280 : 0),
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) && !fromChat ? 72 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
-          onScrollBeginDrag={handleScrollBeginDrag}
-          onMomentumScrollEnd={handleScrollEnd}
-          onScrollEndDrag={handleScrollEnd}
-          scrollEventThrottle={16}
         >
           <View style={styles.detailSection}>
       <ThemedView style={styles.listingContainer}>
@@ -164,21 +126,9 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
       </ThemedView>
-          {!isItemMine(itemData.id) && (
-          <Pressable
-            style={styles.scrollHint}
-            onPress={() => {
-              hasNavigatedToTransaction.current = true;
-              router.push(`/items/transaction/${id}`);
-            }}
-          >
-            <Ionicons name="chevron-down" size={28} color={buyNowColor} />
-            <ThemedText type="defaultSemiBold" style={[styles.scrollHintText, { color: buyNowColor }]}>Buy Now</ThemedText>
-          </Pressable>
-          )}
           </View>
         </ScrollView>
-        {isItemMine(itemData.id) && (
+        {isItemMine(itemData.id) ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable style={styles.buyButton} onPress={() => router.push(`/items/edit/${itemData.id}`)} accessibilityLabel="Edit">
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Edit</ThemedText>
@@ -207,7 +157,20 @@ export default function HomeScreen() {
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
           </Pressable>
         </View>
-        )}
+        ) : !fromChat ? (
+        <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+          <Pressable
+            style={styles.buyNowButton}
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push(`/items/transaction/${id}`);
+            }}
+            accessibilityLabel="Buy Now"
+          >
+            <ThemedText type="defaultSemiBold" style={styles.buyNowButtonText}>Buy Now</ThemedText>
+          </Pressable>
+        </View>
+        ) : null}
       </View>
     </>
   );
@@ -238,8 +201,8 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
     borderRadius: 20,
+    marginTop: 8,
   },
   customHeaderTitle: {
     fontSize: 18,
@@ -255,15 +218,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   detailSection: {},
-  scrollHint: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 24,
-    gap: 0,
-  },
-  scrollHintText: {
-    fontSize: 16,
-  },
   listingContainer: {
     gap: 12,
   },
@@ -342,6 +296,19 @@ const styles = StyleSheet.create({
     minWidth: 120,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buyNowButton: {
+    backgroundColor: '#0047AB',
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 16,
+    minWidth: 160,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buyNowButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
   },
 
   offerButton: {
