@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Pressable, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Pressable, View, TextInput, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -41,57 +41,59 @@ export default function SignUpScreen() {
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-    <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>Sign Up</ThemedText>
+    <ThemedView style={styles.screen}>
+      <View style={styles.form}>
+        <ThemedText type="title" style={styles.title}>Sign Up</ThemedText>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        placeholderTextColor="#888"
-        autoCapitalize="none"
-        value={username}
-        onChangeText={setUsername}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#888"
+          autoCapitalize="none"
+          value={username}
+          onChangeText={setUsername}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#888"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#888"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#888"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#888"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      {error ? <ThemedText style={styles.error}>{error}</ThemedText> : null}
+        {error ? <ThemedText style={styles.error}>{error}</ThemedText> : null}
 
-      <Pressable style={styles.button} onPress={handleSignUp} disabled={loading}>
-        {loading
-          ? <ActivityIndicator color="#fff" />
-          : <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>Sign Up</ThemedText>
-        }
-      </Pressable>
+        <Pressable style={styles.button} onPress={handleSignUp} disabled={loading}>
+          {loading
+            ? <ActivityIndicator color="#fff" />
+            : <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>Sign Up</ThemedText>
+          }
+        </Pressable>
+      </View>
     </ThemedView>
-    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingTop: '20%',
+  },
+  form: {
     gap: 16,
-    justifyContent: 'center',
   },
   title: {
     textAlign: 'center',
