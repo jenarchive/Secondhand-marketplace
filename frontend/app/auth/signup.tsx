@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
-const FLASK_SERVER_ADDRESS = 'http://18.133.255.151';
+const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 
 export default function SignUpScreen() {
   const router = useRouter();

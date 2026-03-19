@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/contexts/AuthContext';
 
-const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test-api';
+const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 
 export default function LoginScreen() {
   const router = useRouter();
