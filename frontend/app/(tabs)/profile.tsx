@@ -5,10 +5,38 @@ import { ThemedView } from '@/components/themed-view';
 import { Link, Href } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuth } from '@/contexts/AuthContext';
+
+function AuthGate() {
+  return (
+    <ThemedView style={gateStyles.contentContainer}>
+      <ThemedView style={gateStyles.headerContainer}>
+        <ThemedText type="title">Welcome</ThemedText>
+      </ThemedView>
+      <View style={gateStyles.authContainer}>
+        <Link href="../auth/login" asChild>
+          <Pressable style={gateStyles.secondaryButton}>
+            <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>Log In</ThemedText>
+          </Pressable>
+        </Link>
+        <Link href="../auth/signup" asChild>
+          <Pressable style={gateStyles.primaryButton}>
+            <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>Sign Up</ThemedText>
+          </Pressable>
+        </Link>
+      </View>
+    </ThemedView>
+  );
+}
 
 export default function HomeScreen() {
+  const { isLoggedIn } = useAuth();
   const colorScheme = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
+
+  if (!isLoggedIn) {
+    return <AuthGate />;
+  }
 
   const Data = [
     { id: 0, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
@@ -67,6 +95,40 @@ export default function HomeScreen() {
 
   );
 }
+
+const gateStyles = StyleSheet.create({
+  contentContainer: {
+    flex: 1,
+    padding: 24,
+    gap: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerContainer: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  authContainer: {
+    gap: 16,
+    width: '100%',
+  },
+  primaryButton: {
+    backgroundColor: '#28289D',
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  secondaryButton: {
+    backgroundColor: '#25282B',
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+});
 
 const colours = {
   container: '#191C1F',
