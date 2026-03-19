@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from extensions import jwt, cors
+from app.extensions import jwt, cors
 import psycopg2
 import bcrypt
 
