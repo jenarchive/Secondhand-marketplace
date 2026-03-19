@@ -268,3 +268,49 @@
     * Implement small new features (decide early)
     * Spend 2-3 weeks going through presentation
 
+## Client 11th Mar: 
+* Happy about overall look and design 
+* Feedback: 
+    * Transaction page: What do we plan to put on? 
+        - Don't put too much, maybe no new page needed. 
+        - Maybe confetti and butterflies for pressing buy button - items considered sold and remove from marketplace etc. 
+        - No need to think of payment / transaction details 
+        - Unusual swipe to buy - prefer clicking 
+    * Light mode app looks weird 
+    * Matching idea: Up to us to decide 
+        - Keep it simple, switch not needed - separate too much 
+        - Integrate it with swiping (triggers auto) 
+    * Category in marketplace: up to us to think how to implement 
+        - Think that side bar would break the streamline experience 
+        - Maybe put this in search bar (which is currently working) - Drop down auto? Discussion needed
+        - Show similar things in same category - Maybe it is more towards backend algo? Might not be prioritized 
+    * Swiping page: 
+        - Swipe down to buy is prefered 
+* Final release: Up to us again, ddl: 30th Apr
+    * Prioritize frontend and matching feature over backend algorithm 
+    * Keep up UX 
+* Client celebration day: most likely not 
+* Next meeting: 15th Apr (end of next sprint)
+
+# Mentor 12th Mar: 
+* Commits: 
+    * Make it more even 
+    * Be prepare to answer why in certain weeks commits are not high (Put in slides before they ask) 
+    * Commit names need to explain what and why changes are made - can refer to SEP guide for commit message
+* Remove user flow if we are not going to implement - bring down readme marks
+* Project structure need to be updated 
+* doc renamed into docs 
+* Branch need to clean up after merging 
+* Issues clean up too - either link to branches or link to other issues 
+* **Test Coverage** main focus now: include frontend and backend 
+* Put CD in slides: how me implement it and how it iterate 
+* Docs: 
+    * Missing: 
+        - Frontend and backend readme: how to start, how to run, how to test 
+        - How does architecture works
+    * Can consider, might not in repo: client takeover
+        - Instructions on how to maintain / start 
+        - Script to auto set up aws 
+        - Infrastructure code: easy to set up database (I think we have some part of this in CD for deploying backend on AWS)
+
+

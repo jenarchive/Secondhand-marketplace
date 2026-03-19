@@ -83,8 +83,8 @@
 * Beta Viva slides (rough): 
     - We were a bit rushing towards to the end of this sprint (client meeting) and this was ignored 
 
-## Sprint 3: Beta Viva
-### Reading week - Week 19 (23rd Feb - 6th Mar), Project Manager: Alex
+## Sprint 3: Beta Viva and Release
+### Reading week - Week 20 (23rd Feb - 11th Mar), Project Manager: Alex
 ### Features planned to be finish: 
 * High priority:
     - Features: 
@@ -106,7 +106,84 @@
         * Github naming conventions 
 
 ### Fully Achieved: 
-* Documentation of meetings, roadmap and research findings 
+* High Priority: 
+    - Sketch and discuss about client's idea [#196](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/196) 
+        * It is still in PR now but we aimed to have a rough prototype to discuss with client so it is fully done
+    - Swiping feature (more intuitive, like/dislike button) [#157](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/157)
+    - Beta Viva slides (full) 
+        * Finished and submitted to blackboard in [#128](https://github.com/spe-uob/2025-SecondhandMarketplace2/issues/128)
+        * Documented in [#201](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/201) 
+    - Frontend CI and unit tests [#183](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/183)
+    - Backend CI and unit tests [#188](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/188)
+    - CD for backend 
+        * Started with [#152](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/152)
+        * Fixed bugs at [#172](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/172)
+* Low Priority: 
+    - Backend code formating (to pass pylint CI) [#188](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/188)
+    - Documentation of meetings, roadmap and research findings [#174](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/174)
+    - Github naming conventions [#190](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/190)
+        * Only included Branch naming convention, others not needed after discussion
+
+### Over-Achieved / Unexpected feature: 
+* Make offer and Buy button [#192](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/192) 
+    - Client mentioned, forgot to add at the start. Was reminded by testathon user feedback. 
+* My Listing Page [#192](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/192)
+    - Mentioned by testathon user feedback and decided to implement 
+* Testathon user feedback collect and documentation [#190](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/190) 
+    - We didn't plan at the start and we went to collect more feedback for our current app 
+
+### Partially Achieved: 
+* Liked-items page backend [#170](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/170)
+    - Delayed and still ongoing 
+    - Facing issues on not knowing if the script is working 
+    - Planning to achieve by writing pytest, should be done next sprint
+
+### Postponed / Cancelled: 
+* Light theme: 
+    - No one mentioned and this got cancelled. Might be mentioned in future at end of sprint 4. 
+* User flow: [#129](https://github.com/spe-uob/2025-SecondhandMarketplace2/issues/129)
+    - Facing issue, it is an Apple / Android app which is not deployed yet. Some delays happened too 
+    - Plan to finish before next sprint, or delete it
+
+
+## Sprint 4: Towards Final Release 
+### Week 21 - Easter Break - 22 (15th Mar - 15th Apr), Project Manager: Jen
+### Features planned to be finish: 
+* High priority:
+    - Features: 
+        * Matching feature more developed and integrated, Ideas discussion
+            - Chat page
+            - Notification page 
+        * Buy button adjustment 
+        * Search bar dropdown categories 
+        * Authentication backend 
+        * Liked items page backend
+    - Repo: 
+        * Test coverage: Frontend and Backend
+        * User flow / user instruction 
+        * Poster for Client celebration day 
+        * Final Slides 
+            - Include why no / less commits in some weeks 
+            - How we implement CD and how we change it
+        * Docs 
+            - Frontend & Backend readme: How to start / run tests 
+* Low priority: 
+    - Features: 
+        * Algorithm consideration for swiping 
+            - Only if we have more time 
+        * Frontend login / signup pages 
+    - Repo: 
+        * Doc of meetings
+        * Update roadmap 
+        * Project structure update 
+        * Clean up issues 
+        * Takeover instructions - infrastructure code
+
+### Fully Achieved: 
+* 
+
+### Over-Achieved / Unexpected feature: 
+* 
 
 ### Partially Achieved: 
 * 
@@ -115,28 +192,15 @@
 * 
 
 
-## Sprint 4: TBC 
-### Week 20 - 21 (9th - 20th Mar), Project Manager: TBC
+## Sprint 5: Final Release, Poster day 
+### Week 23 - 24 (13th - 30th Apr), Project Manager: TBC
 ### Features planned to be finish: 
 * 
 
 ### Fully Achieved: 
 * 
 
-### Partially Achieved: 
-* 
-
-### Postponed / Cancelled: 
-* 
-
-## Easter Break 
-
-## Sprint 5: Final Release, Poster day
-### Week 22 - 24 (13th - 30th Apr), Project Manager: TBC
-### Features planned to be finish: 
-* 
-
-### Fully Achieved: 
+### Over-Achieved / Unexpected feature: 
 * 
 
 ### Partially Achieved: 
