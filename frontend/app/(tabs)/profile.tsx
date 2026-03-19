@@ -6,6 +6,9 @@ import { Link, Href } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect } from 'react';
+
+const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 
 function AuthGate() {
   return (
@@ -30,9 +33,24 @@ function AuthGate() {
 }
 
 export default function HomeScreen() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, token } = useAuth();
   const colorScheme = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    if (!isLoggedIn || !token) return;
+    fetch(`${FLASK_SERVER_ADDRESS}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.username) setUsername(data.username);
+        if (data.email) setEmail(data.email);
+      })
+      .catch(() => {});
+  }, [isLoggedIn, token]);
 
   if (!isLoggedIn) {
     return <AuthGate />;
@@ -53,11 +71,11 @@ export default function HomeScreen() {
           <Pressable style={styles.profileFrame}>
             <ThemedView style={styles.userProfileContainer}>
                 <ThemedView style={styles.userProfileImage}>
-                  <ThemedText type="defaultSemiBold">U</ThemedText>
+                  <ThemedText type="defaultSemiBold">{username ? username[0].toUpperCase() : 'U'}</ThemedText>
                 </ThemedView>
                 <ThemedView style={styles.userMeta}>
-                  <ThemedText type="defaultSemiBold">Username</ThemedText>
-                  <ThemedText type="defaultSemiBold">Email</ThemedText>
+                  <ThemedText type="defaultSemiBold">{username}</ThemedText>
+                  <ThemedText type="defaultSemiBold">{email}</ThemedText>
                 </ThemedView>
             </ThemedView>
           </Pressable>

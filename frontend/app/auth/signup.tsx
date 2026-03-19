@@ -3,11 +3,13 @@ import { StyleSheet, Pressable, View, TextInput, ActivityIndicator } from 'react
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useAuth } from '@/contexts/AuthContext';
 
 const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 
 export default function SignUpScreen() {
   const router = useRouter();
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,7 +34,18 @@ export default function SignUpScreen() {
         setError(data.error ?? 'Registration failed.');
         return;
       }
-      router.replace('../auth/login');
+      const loginRes = await fetch(`${FLASK_SERVER_ADDRESS}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const loginData = await loginRes.json();
+      if (!loginRes.ok) {
+        setError(loginData.error ?? 'Login failed.');
+        return;
+      }
+      login(loginData.access_token);
+      router.replace('/(tabs)/profile');
     } catch {
       setError('Network error. Please try again.');
     } finally {

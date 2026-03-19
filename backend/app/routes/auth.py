@@ -56,6 +56,31 @@ def register():
         if conn:
             conn.close()
 
+# send data to profile page frontend
+@auth_bp.get("/me")
+@jwt_required()
+def me():
+    conn = None
+
+    try:
+        user_id = get_jwt_identity()
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("SELECT username, email_address FROM users WHERE user_id = %s;", (user_id,))
+        user = cur.fetchone()
+        cur.close()
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        return jsonify({"username": user[0], "email": user[1]}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    finally:
+        if conn:
+            conn.close()
+
 @auth_bp.post("/login")
 def login():
     conn = None
