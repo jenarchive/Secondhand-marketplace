@@ -39,13 +39,19 @@ export default function HomeScreen() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
+  const { logout } = useAuth();
+
   useEffect(() => {
     if (!isLoggedIn || !token) return;
     fetch(`${FLASK_SERVER_ADDRESS}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === 401) { logout(); return null; }
+        return res.json();
+      })
       .then((data) => {
+        if (!data) return;
         if (data.username) setUsername(data.username);
         if (data.email) setEmail(data.email);
       })
