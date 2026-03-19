@@ -33,7 +33,7 @@ def register():
         cur = conn.cursor()
 
         cur.execute(
-            "INSERT INTO users (email, password_hash, username) VALUES (%s, %s, %s) RETURNING id;",
+            "INSERT INTO users (email_address, hashed_password, username) VALUES (%s, %s, %s) RETURNING user_id;",
             (email, password_hash, username)
         )
 
