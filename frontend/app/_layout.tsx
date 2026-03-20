@@ -7,6 +7,8 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { LikedItemsProvider } from '@/contexts/LikedItemsContext';
 import { MyListingsProvider } from '@/contexts/MyListingsContext';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 export const unstable_settings = {
   anchor: 'tabs',
@@ -20,6 +22,8 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <KeyboardProvider>
+      <AuthProvider>
       <LikedItemsProvider>
         <MyListingsProvider>
         <ThemeProvider value={theme}>
@@ -33,6 +37,8 @@ export default function RootLayout() {
         </ThemeProvider>
         </MyListingsProvider>
       </LikedItemsProvider>
+      </AuthProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }
