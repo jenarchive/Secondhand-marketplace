@@ -17,14 +17,6 @@ function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
   return stored !== undefined && stored === Number(offerPrice);
 }
 
-/** 예전 수락 시 chatStore에 넣던 말풍선 문구 — 카드와 중복되어 UI에서 제외 */
-const LEGACY_OFFER_ACCEPTED_BUBBLE =
-  'Offer accepted. You can continue in your transaction.';
-
-function getChatMessagesForDisplay(itemId: number): string[] {
-  return getMessagesForItem(itemId).filter((m) => m !== LEGACY_OFFER_ACCEPTED_BUBBLE);
-}
-
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -43,7 +35,7 @@ export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [messages, setMessages] = useState<string[]>(() => getChatMessagesForDisplay(id));
+  const [messages, setMessages] = useState<string[]>(() => getMessagesForItem(id));
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [offerAccepted, setOfferAccepted] = useState(() => isOfferAcceptedForItem(id, params.offerPrice));
@@ -51,7 +43,7 @@ export default function ChatScreen() {
   useFocusEffect(
     useCallback(() => {
       setOfferAccepted(isOfferAcceptedForItem(id, params.offerPrice));
-      setMessages(getChatMessagesForDisplay(id));
+      setMessages(getMessagesForItem(id));
     }, [id, params.offerPrice])
   );
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
@@ -87,8 +79,6 @@ export default function ChatScreen() {
   const handleCloseMore = () => {
     setShowMoreMenu(false);
   };
-
-  const handleInputFocus = () => {};
 
   const handleSend = () => {
     const trimmed = message.trim();
@@ -166,7 +156,12 @@ export default function ChatScreen() {
 
                   <Pressable
                     style={[styles.viewDetailsButton, { backgroundColor: '#2563EB' }]}
-                    onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/items/[id]',
+                        params: { id: String(id), fromChat: 'true' },
+                      })
+                    }
                   >
                     <Text style={styles.viewDetailsButtonText}>View details</Text>
                   </Pressable>
@@ -238,7 +233,6 @@ export default function ChatScreen() {
               placeholderTextColor={placeholderColor}
               value={message}
               onChangeText={setMessage}
-              onFocus={handleInputFocus}
               multiline
               maxLength={500}
             />
@@ -251,7 +245,7 @@ export default function ChatScreen() {
           </View>
 
           {showMoreMenu && (
-            <View style={[styles.morePanelWrap, { height: panelHeight, backgroundColor: menuPanelBg }]}>
+            <View style={{ height: panelHeight, backgroundColor: menuPanelBg }}>
               <View style={styles.morePanelInner}>
                 <View style={styles.morePanelRow}>
                   <Pressable
@@ -407,7 +401,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.35)',
     zIndex: 200,
   },
-  morePanelWrap: {},
   morePanelInner: {
     paddingTop: 24,
     paddingHorizontal: 24,

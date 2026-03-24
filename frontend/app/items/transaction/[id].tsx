@@ -85,7 +85,6 @@ export default function TransactionScreen() {
   const handleChatWithSeller = () => {
     const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
     const hasValidOffer = !isNaN(num) && num > 0;
-    const accepted = acceptedItemPrice;
 
     router.push({
       pathname: '/items/chat/[id]',
@@ -94,7 +93,11 @@ export default function TransactionScreen() {
         sellerName: `User${id}`,
         transactionMethod: method,
         offerPrice:
-          accepted !== undefined ? String(accepted) : hasValidOffer ? String(num) : undefined,
+          acceptedItemPrice !== undefined
+            ? String(acceptedItemPrice)
+            : hasValidOffer
+              ? String(num)
+              : undefined,
       },
     });
   };

@@ -10,8 +10,6 @@ const AUTO_NAV_MS = 5000;
 const BUTTERFLY_DURATION = 4200;
 const TITLE_ORANGE = '#FF9500';
 
-type ButterflyRow = { id: number; direction: 'left' | 'right' };
-
 export default function OfferAcceptedScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -19,16 +17,13 @@ export default function OfferAcceptedScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const subtextColor = useThemeColor({}, 'tabIconDefault');
 
-  const [butterflies, setButterflies] = useState<ButterflyRow[]>(() => {
+  const [butterflyIds, setButterflyIds] = useState(() => {
     const base = Date.now();
-    return Array.from({ length: 4 }, (_, i) => ({
-      id: base + i,
-      direction: 'right' as const,
-    }));
+    return [base, base + 1, base + 2, base + 3];
   });
 
   const removeButterfly = useCallback((bid: number) => {
-    setButterflies((prev) => prev.filter((b) => b.id !== bid));
+    setButterflyIds((prev) => prev.filter((x) => x !== bid));
   }, []);
 
   useEffect(() => {
@@ -51,12 +46,12 @@ export default function OfferAcceptedScreen() {
         </View>
 
         <View style={styles.butterflyOverlay} pointerEvents="none">
-          {butterflies.map((b, i) => (
+          {butterflyIds.map((bid, i) => (
             <Butterfly
-              key={b.id}
-              direction={b.direction}
+              key={bid}
+              direction="right"
               startY={CENTER_Y}
-              onFinish={() => removeButterfly(b.id)}
+              onFinish={() => removeButterfly(bid)}
               clusterIndex={i}
               duration={BUTTERFLY_DURATION}
             />
