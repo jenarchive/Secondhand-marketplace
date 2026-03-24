@@ -76,6 +76,9 @@ export default function HomeScreen() {
     : isPendingMeetupReservation(itemData.id)
       ? 'PENDING'
       : null;
+  const buyNowLocked = listingStampLabel !== null;
+  const buyNowLabel =
+    listingStampLabel === 'SOLD' ? 'Sold' : listingStampLabel === 'PENDING' ? 'Pending' : 'Buy Now';
   const stampInset = 4 * detailStampScale;
   const stampRectStyle = {
     paddingHorizontal: 5 * detailStampScale,
@@ -202,14 +205,15 @@ export default function HomeScreen() {
         ) : !fromChat ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
-            style={styles.buyNowButton}
+            style={[styles.buyNowButton, buyNowLocked && styles.buyNowButtonStatusLocked]}
             onPress={async () => {
+              if (buyNowLocked) return;
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               router.push(`/items/transaction/${id}`);
             }}
-            accessibilityLabel="Buy Now"
+            accessibilityLabel={buyNowLabel}
           >
-            <ThemedText type="defaultSemiBold" style={styles.buyNowButtonText}>Buy Now</ThemedText>
+            <ThemedText type="defaultSemiBold" style={styles.buyNowButtonText}>{buyNowLabel}</ThemedText>
           </Pressable>
         </View>
         ) : null}
@@ -366,6 +370,9 @@ const styles = StyleSheet.create({
     minWidth: 160,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buyNowButtonStatusLocked: {
+    backgroundColor: '#C44536',
   },
   buyNowButtonText: {
     color: '#FFFFFF',
