@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
+import { useMemo, useSyncExternalStore } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
@@ -10,6 +11,12 @@ import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import {
+  subscribePendingMeetup,
+  getPendingMeetupVersion,
+  isPendingMeetupReservation,
+  isItemSoldOnMarketplace,
+} from '@/store/pendingMeetupStore';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -22,6 +29,17 @@ export default function HomeScreen() {
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
   const liked = itemData ? isLiked(itemData.id) : false;
+
+  useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
+
+  const { width: windowWidth } = useWindowDimensions();
+  /** Match stamp-to-image ratio vs marketplace (~48% column minus card padding). */
+  const detailStampScale = useMemo(() => {
+    const detailImageWidth = Math.max(1, windowWidth - 48);
+    const cardImageApproxWidth = Math.max(1, windowWidth * 0.44);
+    const r = detailImageWidth / cardImageApproxWidth;
+    return Math.min(2.5, Math.max(1.2, r));
+  }, [windowWidth]);
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -52,6 +70,23 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
+
+  const listingStampLabel = isItemSoldOnMarketplace(itemData.id)
+    ? 'SOLD'
+    : isPendingMeetupReservation(itemData.id)
+      ? 'PENDING'
+      : null;
+  const stampInset = 4 * detailStampScale;
+  const stampRectStyle = {
+    paddingHorizontal: 5 * detailStampScale,
+    paddingVertical: 3 * detailStampScale,
+    borderRadius: 4 * detailStampScale,
+    borderWidth: Math.min(3, Math.max(1.5, 2 * (detailStampScale / 1.85))),
+  };
+  const stampTextStyle = {
+    fontSize: 9 * detailStampScale,
+    letterSpacing: 0.45 * detailStampScale,
+  };
 
   return (
     <>
@@ -97,6 +132,13 @@ export default function HomeScreen() {
             contentFit="cover"
             source={{ uri: MyData.image }}
           />
+          {listingStampLabel && (
+            <View style={[styles.pendingStampWrap, { top: stampInset, left: stampInset }]}>
+              <View style={[styles.pendingStampRect, stampRectStyle]}>
+                <Text style={[styles.pendingStampText, stampTextStyle]}>{listingStampLabel}</Text>
+              </View>
+            </View>
+          )}
           {!isItemMine(itemData.id) && (
           <Pressable
             style={styles.likeButton}
@@ -232,12 +274,31 @@ const styles = StyleSheet.create({
 
   imageWrapper: {
     position: 'relative',
+    borderRadius: 16,
+    overflow: 'hidden',
   },
 
   image: {
     width: '100%',
     borderRadius: 16,
     aspectRatio: 1,
+  },
+
+  pendingStampWrap: {
+    position: 'absolute',
+    zIndex: 2,
+    maxWidth: '55%',
+  },
+  pendingStampRect: {
+    borderColor: '#EF1111',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+  },
+  pendingStampText: {
+    color: '#EF1111',
+    fontWeight: '800',
   },
 
   likeButton: {
