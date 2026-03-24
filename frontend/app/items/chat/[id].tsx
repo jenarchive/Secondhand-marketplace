@@ -64,9 +64,7 @@ export default function ChatScreen() {
     setShowMoreMenu(false);
   };
 
-  const handleInputFocus = () => {
-    // Panel closes when keyboard actually shows (in listener), so bar position stays fixed
-  };
+  const handleInputFocus = () => {};
 
   const handleSend = () => {
     const trimmed = message.trim();
@@ -151,6 +149,9 @@ export default function ChatScreen() {
                           currency: 'GBP',
                         }).format(Number(params.offerPrice))}
                       </Text>
+                      <Pressable style={styles.acceptOfferButton} onPress={() => {}}>
+                        <Text style={styles.acceptOfferButtonText}>Accept offer</Text>
+                      </Pressable>
                     </View>
                   )}
 
@@ -379,25 +380,38 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   offerCard: {
-    width: 140,
-    height: 140,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignSelf: 'flex-end',
+    width: 156,
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
     marginBottom: 2,
+    gap: 10,
   },
   offerCardTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#FACC15',
-    marginBottom: 4,
+    lineHeight: 18,
   },
   offerCardBody: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+  acceptOfferButton: {
+    alignSelf: 'stretch',
+    backgroundColor: '#C44536',
+    paddingVertical: 11,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  acceptOfferButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
   },
   messageBubbleMe: {
     alignSelf: 'flex-end',
