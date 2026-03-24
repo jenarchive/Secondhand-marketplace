@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -30,6 +30,14 @@ export default function TransactionScreen() {
 
   const [method, setMethod] = useState<TransactionMethod>('Delivery');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
+
+  useEffect(() => {
+    if (method === 'Delivery') {
+      setPaymentMethod('card');
+    } else {
+      setPaymentMethod('inPerson');
+    }
+  }, [method]);
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [collectionLocation, setCollectionLocation] = useState('');
   const [offerPrice, setOfferPrice] = useState(() => getOfferForItem(id));
@@ -239,36 +247,78 @@ export default function TransactionScreen() {
                 <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment method</Text>
                 <View style={styles.methodRow}>
                   <Pressable
+                    disabled={method === 'Collection'}
                     style={[
                       styles.methodCard,
                       { backgroundColor: cardBg },
                       paymentMethod === 'card' && { borderWidth: 2, borderColor },
+                      method === 'Collection' && styles.paymentMethodDisabled,
                     ]}
                     onPress={() => setPaymentMethod('card')}
                   >
                     <Ionicons
                       name="card-outline"
                       size={24}
-                      color={paymentMethod === 'card' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+                      color={
+                        method === 'Collection'
+                          ? (colorScheme === 'dark' ? '#666' : '#999')
+                          : paymentMethod === 'card'
+                            ? borderColor
+                            : (colorScheme === 'dark' ? '#999' : '#666')
+                      }
                     />
-                    <Text style={[styles.methodLabel, { color: paymentMethod === 'card' ? borderColor : unselectedTextColor }, paymentMethod === 'card' && { fontWeight: '600' }]}>
+                    <Text
+                      style={[
+                        styles.methodLabel,
+                        {
+                          color:
+                            method === 'Collection'
+                              ? (colorScheme === 'dark' ? '#666' : '#999')
+                              : paymentMethod === 'card'
+                                ? borderColor
+                                : unselectedTextColor,
+                        },
+                        paymentMethod === 'card' && method !== 'Collection' && { fontWeight: '600' },
+                      ]}
+                    >
                       Card
                     </Text>
                   </Pressable>
                   <Pressable
+                    disabled={method === 'Delivery'}
                     style={[
                       styles.methodCard,
                       { backgroundColor: cardBg },
                       paymentMethod === 'inPerson' && { borderWidth: 2, borderColor },
+                      method === 'Delivery' && styles.paymentMethodDisabled,
                     ]}
                     onPress={() => setPaymentMethod('inPerson')}
                   >
                     <Ionicons
                       name="wallet-outline"
                       size={24}
-                      color={paymentMethod === 'inPerson' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+                      color={
+                        method === 'Delivery'
+                          ? (colorScheme === 'dark' ? '#666' : '#999')
+                          : paymentMethod === 'inPerson'
+                            ? borderColor
+                            : (colorScheme === 'dark' ? '#999' : '#666')
+                      }
                     />
-                    <Text style={[styles.methodLabel, { color: paymentMethod === 'inPerson' ? borderColor : unselectedTextColor }, paymentMethod === 'inPerson' && { fontWeight: '600' }]}>
+                    <Text
+                      style={[
+                        styles.methodLabel,
+                        {
+                          color:
+                            method === 'Delivery'
+                              ? (colorScheme === 'dark' ? '#666' : '#999')
+                              : paymentMethod === 'inPerson'
+                                ? borderColor
+                                : unselectedTextColor,
+                        },
+                        paymentMethod === 'inPerson' && method !== 'Delivery' && { fontWeight: '600' },
+                      ]}
+                    >
                       Pay in-person
                     </Text>
                   </Pressable>
@@ -442,6 +492,9 @@ const styles = StyleSheet.create({
   },
   paymentMethodSection: {
     marginTop: 24,
+  },
+  paymentMethodDisabled: {
+    opacity: 0.45,
   },
   totalSection: {
     marginTop: 24,
