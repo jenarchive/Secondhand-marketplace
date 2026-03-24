@@ -151,8 +151,10 @@ export default function HomeScreen() {
                       source={{ uri: item.image }}
                     />
                     {isPendingMeetupReservation(item.id) && (
-                      <View style={styles.pendingBadge}>
-                        <Text style={styles.pendingBadgeText}>Pending</Text>
+                      <View style={styles.pendingStampWrap}>
+                        <View style={styles.pendingStampRect}>
+                          <Text style={styles.pendingStampText}>PENDING</Text>
+                        </View>
                       </View>
                     )}
                     <Pressable
@@ -212,21 +214,32 @@ const styles = StyleSheet.create({
   imageWrapper: {
     position: 'relative',
     marginBottom: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
-  pendingBadge: {
+  pendingStampWrap: {
     position: 'absolute',
-    top: 8,
-    left: 8,
-    backgroundColor: '#DC2626',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
+    top: 4,
+    left: 4,
+    zIndex: 2,
+    maxWidth: '55%',
   },
-  pendingBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.3,
+  pendingStampRect: {
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: '#EF1111',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+  },
+  pendingStampText: {
+    color: '#EF1111',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.45,
   },
   likeButton: {
     position: 'absolute',
