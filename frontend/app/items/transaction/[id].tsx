@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
-import { getOfferForItem, setOfferForItem } from '@/store/transactionStore';
+import { getOfferForItem, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
 import { markItemPaidSold, markPendingMeetupReservation } from '@/store/pendingMeetupStore';
 
 type TransactionMethod = 'Delivery' | 'Collection';
@@ -42,7 +43,14 @@ export default function TransactionScreen() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [collectionLocation, setCollectionLocation] = useState('');
   const [offerPrice, setOfferPrice] = useState(() => getOfferForItem(id));
+  const [acceptedItemPrice, setAcceptedItemPrice] = useState<number | undefined>(() => getAcceptedOfferItemPrice(id));
   const insets = useSafeAreaInsets();
+
+  useFocusEffect(
+    useCallback(() => {
+      setAcceptedItemPrice(getAcceptedOfferItemPrice(id));
+    }, [id])
+  );
   const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
@@ -100,6 +108,8 @@ export default function TransactionScreen() {
       router.replace('/(tabs)');
     }
   };
+
+  const paymentItemPrice = itemData && (acceptedItemPrice ?? itemData.price);
 
   return (
     <>
@@ -347,7 +357,7 @@ export default function TransactionScreen() {
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
                     <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Item price</Text>
                     <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>
-                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(paymentItemPrice ?? itemData.price)}
                     </Text>
                   </View>
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
@@ -365,7 +375,11 @@ export default function TransactionScreen() {
                   <View style={styles.totalCardRowLast}>
                     <Text style={[styles.totalCardTotalLabel, { color: '#FFFFFF' }]}>Total payment</Text>
                     <Text style={[styles.totalCardTotalAmount, { color: '#FFFFFF' }]}>
-                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(method === 'Delivery' ? itemData.price + DELIVERY_POSTAGE : itemData.price)}
+                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(
+                        method === 'Delivery'
+                          ? (paymentItemPrice ?? itemData.price) + DELIVERY_POSTAGE
+                          : (paymentItemPrice ?? itemData.price)
+                      )}
                     </Text>
                   </View>
                 </View>

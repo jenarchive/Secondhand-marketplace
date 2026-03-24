@@ -8,6 +8,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { getMessagesForItem, addMessageForItem } from '@/store/chatStore';
+import { setAcceptedOfferItemPrice, setOfferForItem } from '@/store/transactionStore';
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
@@ -72,6 +73,14 @@ export default function ChatScreen() {
     addMessageForItem(id, trimmed);
     setMessages((prev) => [...prev, trimmed]);
     setMessage('');
+  };
+
+  const handleAcceptOffer = () => {
+    const offerNum = Number(params.offerPrice);
+    if (!Number.isFinite(offerNum) || offerNum <= 0) return;
+    setAcceptedOfferItemPrice(id, offerNum);
+    setOfferForItem(id, String(offerNum));
+    router.replace({ pathname: '/items/transaction/[id]', params: { id: String(id) } });
   };
 
   return (
@@ -149,7 +158,7 @@ export default function ChatScreen() {
                           currency: 'GBP',
                         }).format(Number(params.offerPrice))}
                       </Text>
-                      <Pressable style={styles.acceptOfferButton} onPress={() => {}}>
+                      <Pressable style={styles.acceptOfferButton} onPress={handleAcceptOffer}>
                         <Text style={styles.acceptOfferButtonText}>Accept offer</Text>
                       </Pressable>
                     </View>
