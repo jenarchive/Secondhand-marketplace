@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { useState, useMemo, useEffect } from 'react';
+import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -12,6 +12,11 @@ import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { CATEGORIES } from '@/constants/categories';
+import {
+  subscribePendingMeetup,
+  getPendingMeetupVersion,
+  isPendingMeetupReservation,
+} from '@/store/pendingMeetupStore';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -22,6 +27,8 @@ export default function HomeScreen() {
   const { toggleLike, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+
+  useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
 
   useEffect(() => {
     setDisplayItems([...contextItems]);
@@ -143,6 +150,11 @@ export default function HomeScreen() {
                       contentFit="cover"
                       source={{ uri: item.image }}
                     />
+                    {isPendingMeetupReservation(item.id) && (
+                      <View style={styles.pendingBadge}>
+                        <Text style={styles.pendingBadgeText}>Pending</Text>
+                      </View>
+                    )}
                     <Pressable
                       style={styles.likeButton}
                       onPress={(e) => {
@@ -201,7 +213,21 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: 12,
   },
-
+  pendingBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  pendingBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
   likeButton: {
     position: 'absolute',
     right: 8,

@@ -8,6 +8,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { getOfferForItem, setOfferForItem } from '@/store/transactionStore';
+import { markPendingMeetupReservation } from '@/store/pendingMeetupStore';
 
 type TransactionMethod = 'Delivery' | 'Collection';
 type PaymentMethod = 'card' | 'inPerson';
@@ -86,6 +87,14 @@ export default function TransactionScreen() {
         offerPrice: hasValidOffer ? String(num) : undefined,
       },
     });
+  };
+
+  const handlePayOrReserve = () => {
+    if (method === 'Collection' && paymentMethod === 'inPerson') {
+      markPendingMeetupReservation(id);
+      router.replace('/(tabs)');
+      return;
+    }
   };
 
   return (
@@ -360,7 +369,7 @@ export default function TransactionScreen() {
 
               <Pressable
                 style={[styles.payButton, { backgroundColor: borderColor }]}
-                onPress={() => {}}
+                onPress={handlePayOrReserve}
               >
                 <Text style={styles.payButtonText}>
                   {paymentMethod === 'inPerson' ? 'Reserve item' : 'Pay now'}
