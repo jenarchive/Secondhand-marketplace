@@ -12,11 +12,7 @@ import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { CATEGORIES } from '@/constants/categories';
-import {
-  LISTING_STAMP_PENDING_COLOR,
-  LISTING_STAMP_PENDING_FILL,
-  LISTING_STAMP_SOLD_COLOR,
-} from '@/constants/listing-stamp';
+import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
 import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
@@ -168,15 +164,7 @@ export default function HomeScreen() {
                     )}
                     {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
                       <View style={styles.pendingStampWrap}>
-                        <View
-                          style={[
-                            styles.pendingStampRect,
-                            {
-                              borderColor: LISTING_STAMP_PENDING_COLOR,
-                              backgroundColor: LISTING_STAMP_PENDING_FILL,
-                            },
-                          ]}
-                        >
+                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
                           <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
                             PENDING
                           </Text>

@@ -17,11 +17,7 @@ import {
   isPendingMeetupReservation,
   isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
-import {
-  LISTING_STAMP_PENDING_COLOR,
-  LISTING_STAMP_PENDING_FILL,
-  LISTING_STAMP_SOLD_COLOR,
-} from '@/constants/listing-stamp';
+import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -152,7 +148,6 @@ export default function HomeScreen() {
                   styles.pendingStampRect,
                   stampRectStyle,
                   { borderColor: stampAccentColor },
-                  listingStampLabel === 'PENDING' && { backgroundColor: LISTING_STAMP_PENDING_FILL },
                 ]}
               >
                 <Text style={[styles.pendingStampText, stampTextStyle, { color: stampAccentColor }]}>

@@ -1,5 +1,3 @@
 export const LISTING_STAMP_SOLD_COLOR = '#EF1111';
 
-export const LISTING_STAMP_PENDING_COLOR = '#3B82F6';
-
-export const LISTING_STAMP_PENDING_FILL = 'rgba(255, 255, 255, 0.28)';
+export const LISTING_STAMP_PENDING_COLOR = '#EA580C';
