@@ -17,6 +17,7 @@ import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
   isPendingMeetupReservation,
+  isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
 
 export default function HomeScreen() {
@@ -156,7 +157,14 @@ export default function HomeScreen() {
                       contentFit="cover"
                       source={{ uri: item.image }}
                     />
-                    {isPendingMeetupReservation(item.id) && (
+                    {isItemSoldOnMarketplace(item.id) && (
+                      <View style={styles.pendingStampWrap}>
+                        <View style={styles.pendingStampRect}>
+                          <Text style={styles.pendingStampText}>SOLD</Text>
+                        </View>
+                      </View>
+                    )}
+                    {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
                       <View style={styles.pendingStampWrap}>
                         <View style={styles.pendingStampRect}>
                           <Text style={styles.pendingStampText}>PENDING</Text>

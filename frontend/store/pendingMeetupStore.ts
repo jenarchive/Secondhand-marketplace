@@ -1,4 +1,5 @@
 const pendingIds = new Set<number>();
+const soldIds = new Set<number>();
 const listeners = new Set<() => void>();
 let version = 0;
 
@@ -21,7 +22,19 @@ export function isPendingMeetupReservation(itemId: number): boolean {
 }
 
 export function markPendingMeetupReservation(itemId: number): void {
+  if (soldIds.has(itemId)) return;
   if (pendingIds.has(itemId)) return;
   pendingIds.add(itemId);
+  notify();
+}
+
+export function isItemSoldOnMarketplace(itemId: number): boolean {
+  return soldIds.has(itemId);
+}
+
+export function markItemPaidSold(itemId: number): void {
+  pendingIds.delete(itemId);
+  if (soldIds.has(itemId)) return;
+  soldIds.add(itemId);
   notify();
 }

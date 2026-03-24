@@ -8,7 +8,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { getOfferForItem, setOfferForItem } from '@/store/transactionStore';
-import { markPendingMeetupReservation } from '@/store/pendingMeetupStore';
+import { markItemPaidSold, markPendingMeetupReservation } from '@/store/pendingMeetupStore';
 
 type TransactionMethod = 'Delivery' | 'Collection';
 type PaymentMethod = 'card' | 'inPerson';
@@ -94,6 +94,10 @@ export default function TransactionScreen() {
       markPendingMeetupReservation(id);
       router.replace('/(tabs)');
       return;
+    }
+    if (paymentMethod === 'card') {
+      markItemPaidSold(id);
+      router.replace('/(tabs)');
     }
   };
 
