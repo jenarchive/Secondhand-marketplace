@@ -80,7 +80,10 @@ export default function ChatScreen() {
     if (!Number.isFinite(offerNum) || offerNum <= 0) return;
     setAcceptedOfferItemPrice(id, offerNum);
     setOfferForItem(id, String(offerNum));
-    router.replace({ pathname: '/items/transaction/[id]', params: { id: String(id) } });
+    router.replace({
+      pathname: '/items/transaction/offer-accepted/[id]',
+      params: { id: String(id) },
+    });
   };
 
   return (
