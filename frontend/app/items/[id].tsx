@@ -38,7 +38,6 @@ export default function HomeScreen() {
   useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
 
   const { width: windowWidth } = useWindowDimensions();
-  /** Match stamp-to-image ratio vs marketplace (~48% column minus card padding). */
   const detailStampScale = useMemo(() => {
     const detailImageWidth = Math.max(1, windowWidth - 48);
     const cardImageApproxWidth = Math.max(1, windowWidth * 0.44);

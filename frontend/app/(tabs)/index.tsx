@@ -8,7 +8,6 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
@@ -26,7 +25,6 @@ import {
 } from '@/store/pendingMeetupStore';
 
 export default function HomeScreen() {
-  const colourScheme = useColorScheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -72,7 +70,6 @@ export default function HomeScreen() {
       headerImage={<Image />}>
       
       <ThemedView>
-        {/* Search bar: category (left), input, search icon (right) */}
         <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
           <View style={styles.searchInner}>
             <Pressable

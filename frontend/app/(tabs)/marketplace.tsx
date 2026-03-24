@@ -69,7 +69,6 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#191C1F' }}
       headerImage={<Image />}>
       <ThemedView>
-        {/* Search bar: category (left), input, search icon (right) */}
         <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
           <View style={styles.searchInner}>
             <Pressable
@@ -137,12 +136,10 @@ export default function HomeScreen() {
                 key={`${item.id}-${item.title}`}
                 style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
                 onPress={async () => {
-                  // light selection haptic and navigate
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   router.push(`/items/${item.id}`);
                 }}
                 onLongPress={async () => {
-                  // stronger feedback on long press
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                   router.push(`/items/${item.id}`);
                 }}
@@ -219,7 +216,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#25282B",
   },
 
-  //each item is 48% width 2 items per row
   listingLink: {
     flexBasis: '48%',
     maxWidth: '48%',
@@ -274,7 +270,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  //wraps children into two columns
   flexbox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -300,7 +295,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderWidth: 6,
     borderColor: DarkTheme.colors.border,
-    //iOS-like shadow
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
       android: { elevation: 2 }
