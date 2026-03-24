@@ -85,6 +85,7 @@ export default function TransactionScreen() {
   const handleChatWithSeller = () => {
     const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
     const hasValidOffer = !isNaN(num) && num > 0;
+    const accepted = acceptedItemPrice;
 
     router.push({
       pathname: '/items/chat/[id]',
@@ -92,7 +93,8 @@ export default function TransactionScreen() {
         id: String(id),
         sellerName: `User${id}`,
         transactionMethod: method,
-        offerPrice: hasValidOffer ? String(num) : undefined,
+        offerPrice:
+          accepted !== undefined ? String(accepted) : hasValidOffer ? String(num) : undefined,
       },
     });
   };
@@ -110,6 +112,7 @@ export default function TransactionScreen() {
   };
 
   const paymentItemPrice = itemData && (acceptedItemPrice ?? itemData.price);
+  const isOfferAccepted = acceptedItemPrice !== undefined;
 
   return (
     <>
@@ -249,20 +252,31 @@ export default function TransactionScreen() {
                       keyboardType="decimal-pad"
                     />
                   </View>
-                  <Pressable
-                    style={[styles.offerButton, { backgroundColor: borderColor }]}
-                    onPress={handleSendOffer}
-                  >
-                    <Text style={styles.offerButtonText}>Send offer</Text>
-                  </Pressable>
+                  {!isOfferAccepted && (
+                    <Pressable
+                      style={[styles.offerButton, { backgroundColor: borderColor }]}
+                      onPress={handleSendOffer}
+                    >
+                      <Text style={styles.offerButtonText}>Send offer</Text>
+                    </Pressable>
+                  )}
                 </View>
               </View>
 
               <Pressable
-                style={[styles.chatButton, { backgroundColor: cardBg, borderColor: borderColor }]}
+                style={[
+                  styles.chatButton,
+                  isOfferAccepted
+                    ? { backgroundColor: borderColor, borderWidth: 0 }
+                    : { backgroundColor: cardBg, borderWidth: 1, borderColor },
+                ]}
                 onPress={handleChatWithSeller}
               >
-                <Ionicons name="chatbubble-outline" size={22} color={borderColor} />
+                <Ionicons
+                  name="chatbubble-outline"
+                  size={22}
+                  color={isOfferAccepted ? '#FFFFFF' : borderColor}
+                />
                 <Text style={[styles.chatButtonText, { color: '#FFFFFF' }]}>Chat with seller</Text>
               </Pressable>
 
@@ -619,7 +633,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     marginTop: 16,
-    borderWidth: 1,
   },
   chatButtonText: {
     fontSize: 15,

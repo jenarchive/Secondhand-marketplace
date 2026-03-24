@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Image } from 'expo-image';
+import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,7 +9,13 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { getMessagesForItem, addMessageForItem } from '@/store/chatStore';
-import { setAcceptedOfferItemPrice, setOfferForItem } from '@/store/transactionStore';
+import { setAcceptedOfferItemPrice, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
+
+function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
+  if (!offerPrice || Number.isNaN(Number(offerPrice))) return false;
+  const stored = getAcceptedOfferItemPrice(itemId);
+  return stored !== undefined && stored === Number(offerPrice);
+}
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
@@ -31,6 +38,13 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<string[]>(() => getMessagesForItem(id));
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [offerAccepted, setOfferAccepted] = useState(() => isOfferAcceptedForItem(id, params.offerPrice));
+
+  useFocusEffect(
+    useCallback(() => {
+      setOfferAccepted(isOfferAcceptedForItem(id, params.offerPrice));
+    }, [id, params.offerPrice])
+  );
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
   const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFF';
@@ -76,14 +90,18 @@ export default function ChatScreen() {
   };
 
   const handleAcceptOffer = () => {
+    if (offerAccepted) return;
     const offerNum = Number(params.offerPrice);
     if (!Number.isFinite(offerNum) || offerNum <= 0) return;
+    setOfferAccepted(true);
     setAcceptedOfferItemPrice(id, offerNum);
     setOfferForItem(id, String(offerNum));
-    router.replace({
-      pathname: '/items/transaction/offer-accepted/[id]',
-      params: { id: String(id) },
-    });
+    setTimeout(() => {
+      router.replace({
+        pathname: '/items/transaction/offer-accepted/[id]',
+        params: { id: String(id) },
+      });
+    }, 550);
   };
 
   return (
@@ -151,20 +169,44 @@ export default function ChatScreen() {
               {(params.offerPrice && !Number.isNaN(Number(params.offerPrice))) || messages.length > 0 ? (
                 <View style={styles.messagesContainer}>
                   {params.offerPrice && !Number.isNaN(Number(params.offerPrice)) && (
-                    <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
-                      <Text style={styles.offerCardTitle}>
-                        (Username) has made an offer.
-                      </Text>
-                      <Text style={styles.offerCardBody}>
-                        {new Intl.NumberFormat('en-GB', {
-                          style: 'currency',
-                          currency: 'GBP',
-                        }).format(Number(params.offerPrice))}
-                      </Text>
-                      <Pressable style={styles.acceptOfferButton} onPress={handleAcceptOffer}>
-                        <Text style={styles.acceptOfferButtonText}>Accept offer</Text>
-                      </Pressable>
-                    </View>
+                    <>
+                      <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
+                        <Text style={styles.offerCardTitle}>
+                          (Username) has made an offer.
+                        </Text>
+                        <Text style={styles.offerCardBody}>
+                          {new Intl.NumberFormat('en-GB', {
+                            style: 'currency',
+                            currency: 'GBP',
+                          }).format(Number(params.offerPrice))}
+                        </Text>
+                        <Pressable
+                          style={[
+                            styles.acceptOfferButton,
+                            offerAccepted && styles.acceptOfferButtonDisabled,
+                          ]}
+                          onPress={handleAcceptOffer}
+                          disabled={offerAccepted}
+                        >
+                          <Text
+                            style={[
+                              styles.acceptOfferButtonText,
+                              offerAccepted && styles.acceptOfferButtonTextDisabled,
+                            ]}
+                          >
+                            {offerAccepted ? 'Accepted' : 'Accept offer'}
+                          </Text>
+                        </Pressable>
+                      </View>
+                      {offerAccepted && (
+                        <View style={[styles.offerAcceptedCard, { backgroundColor: inputBarBg }]}>
+                          <Text style={styles.offerAcceptedCardTitle}>Offer accepted</Text>
+                          <Text style={styles.offerAcceptedCardBody}>
+                            This offer has been accepted. You can continue in your transaction.
+                          </Text>
+                        </View>
+                      )}
+                    </>
                   )}
 
                   {messages.map((m, index) => (
@@ -420,10 +462,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 2,
   },
+  acceptOfferButtonDisabled: {
+    backgroundColor: '#000000',
+  },
   acceptOfferButtonText: {
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '600',
+  },
+  acceptOfferButtonTextDisabled: {
+    color: '#888888',
+  },
+  offerAcceptedCard: {
+    alignSelf: 'flex-end',
+    maxWidth: '92%',
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    marginBottom: 2,
+    gap: 6,
+  },
+  offerAcceptedCardTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FACC15',
+    lineHeight: 18,
+  },
+  offerAcceptedCardBody: {
+    fontSize: 13,
+    fontWeight: '500',
+    lineHeight: 18,
+    color: '#FFFFFF',
   },
   messageBubbleMe: {
     alignSelf: 'flex-end',
