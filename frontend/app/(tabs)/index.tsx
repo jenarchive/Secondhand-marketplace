@@ -14,6 +14,11 @@ import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { CATEGORIES } from '@/constants/categories';
 import {
+  LISTING_STAMP_PENDING_COLOR,
+  LISTING_STAMP_PENDING_FILL,
+  LISTING_STAMP_SOLD_COLOR,
+} from '@/constants/listing-stamp';
+import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
   isPendingMeetupReservation,
@@ -159,15 +164,25 @@ export default function HomeScreen() {
                     />
                     {isItemSoldOnMarketplace(item.id) && (
                       <View style={styles.pendingStampWrap}>
-                        <View style={styles.pendingStampRect}>
-                          <Text style={styles.pendingStampText}>SOLD</Text>
+                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_SOLD_COLOR }]}>
+                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_SOLD_COLOR }]}>SOLD</Text>
                         </View>
                       </View>
                     )}
                     {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
                       <View style={styles.pendingStampWrap}>
-                        <View style={styles.pendingStampRect}>
-                          <Text style={styles.pendingStampText}>PENDING</Text>
+                        <View
+                          style={[
+                            styles.pendingStampRect,
+                            {
+                              borderColor: LISTING_STAMP_PENDING_COLOR,
+                              backgroundColor: LISTING_STAMP_PENDING_FILL,
+                            },
+                          ]}
+                        >
+                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
+                            PENDING
+                          </Text>
                         </View>
                       </View>
                     )}
@@ -240,14 +255,12 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 4,
     borderWidth: 2,
-    borderColor: '#EF1111',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
     alignSelf: 'flex-start',
   },
   pendingStampText: {
-    color: '#EF1111',
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.45,

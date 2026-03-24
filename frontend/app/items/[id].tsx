@@ -17,6 +17,11 @@ import {
   isPendingMeetupReservation,
   isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
+import {
+  LISTING_STAMP_PENDING_COLOR,
+  LISTING_STAMP_PENDING_FILL,
+  LISTING_STAMP_SOLD_COLOR,
+} from '@/constants/listing-stamp';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -79,6 +84,12 @@ export default function HomeScreen() {
   const buyNowLocked = listingStampLabel !== null;
   const buyNowLabel =
     listingStampLabel === 'SOLD' ? 'Sold' : listingStampLabel === 'PENDING' ? 'Pending' : 'Buy Now';
+  const stampAccentColor =
+    listingStampLabel === 'SOLD'
+      ? LISTING_STAMP_SOLD_COLOR
+      : listingStampLabel === 'PENDING'
+        ? LISTING_STAMP_PENDING_COLOR
+        : LISTING_STAMP_SOLD_COLOR;
   const stampInset = 4 * detailStampScale;
   const stampRectStyle = {
     paddingHorizontal: 5 * detailStampScale,
@@ -137,8 +148,17 @@ export default function HomeScreen() {
           />
           {listingStampLabel && (
             <View style={[styles.pendingStampWrap, { top: stampInset, left: stampInset }]}>
-              <View style={[styles.pendingStampRect, stampRectStyle]}>
-                <Text style={[styles.pendingStampText, stampTextStyle]}>{listingStampLabel}</Text>
+              <View
+                style={[
+                  styles.pendingStampRect,
+                  stampRectStyle,
+                  { borderColor: stampAccentColor },
+                  listingStampLabel === 'PENDING' && { backgroundColor: LISTING_STAMP_PENDING_FILL },
+                ]}
+              >
+                <Text style={[styles.pendingStampText, stampTextStyle, { color: stampAccentColor }]}>
+                  {listingStampLabel}
+                </Text>
               </View>
             </View>
           )}
@@ -294,14 +314,12 @@ const styles = StyleSheet.create({
     maxWidth: '55%',
   },
   pendingStampRect: {
-    borderColor: '#EF1111',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
     alignSelf: 'flex-start',
   },
   pendingStampText: {
-    color: '#EF1111',
     fontWeight: '800',
   },
 
