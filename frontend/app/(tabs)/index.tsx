@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
-import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
+import { Alert, StyleSheet, Pressable, TextInput, View } from 'react-native';
+import { useState, useMemo, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -66,7 +66,8 @@ export default function HomeScreen() {
       headerImage={<Image />}>
       
       <ThemedView>
-        <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
+        {/* Search bar (Apple-native like) */}
+        <View style={[styles.searchContainer, { paddingTop: Math.max(4, insets.top - 20) }]}> 
           <View style={styles.searchInner}>
             <Pressable
               onPress={() => setCategoryModalVisible(true)}
@@ -272,23 +273,27 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 0,
-    paddingVertical: 16,
-    backgroundColor: 'transparent'
+    paddingVertical: 8,
+    marginBottom: 14,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: DarkTheme.colors.text,
-    opacity: 0.95,
+    opacity: 1,
     borderRadius: 99,
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderWidth: 6,
-    borderColor: DarkTheme.colors.border,
-    ...Platform.select({
-      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
-      android: { elevation: 2 }
-    })
+    borderColor: '#25282B',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+    overflow: 'hidden',
   },
   categoryIconWrap: {
     marginRight: 8,

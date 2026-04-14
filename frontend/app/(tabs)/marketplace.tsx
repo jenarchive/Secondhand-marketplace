@@ -269,22 +269,25 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: 0,
     paddingVertical: 16,
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: DarkTheme.colors.text,
-    opacity: 0.95,
+    opacity: 1,
     borderRadius: 99,
     paddingHorizontal: 12,
     paddingVertical: 12,
-    borderWidth: 6,
-    borderColor: DarkTheme.colors.border,
-    ...Platform.select({
-      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
-      android: { elevation: 2 }
-    })
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+    borderWidth: 0,
+    borderColor: 'transparent',
+    overflow: 'hidden',
   },
 
   categoryIconWrap: {
