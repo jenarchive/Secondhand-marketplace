@@ -193,7 +193,15 @@ export default function TabTwoScreen() {
                               {selected && (
                                 <Pressable
                                   style={styles.matchInlineConfirmButton}
-                                  onPress={() => setMatchPickerVisible(false)}
+                                  onPress={() =>
+                                    router.push({
+                                      pathname: '/items/match-preview',
+                                      params: {
+                                        targetId: String(item.id),
+                                        myId: String(myItem.id),
+                                      },
+                                    })
+                                  }
                                 >
                                   <Text style={styles.matchInlineConfirmButtonText}>Confirm</Text>
                                 </Pressable>
