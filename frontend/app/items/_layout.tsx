@@ -78,7 +78,12 @@ export default function ItemsLayout() {
       />
       <Stack.Screen name="current-listing" options={{ title: "My Listings" }} />
       <Stack.Screen name="edit" options={{ headerShown: false }} />
-      <Stack.Screen name="setting" />
+      <Stack.Screen
+        name="setting"
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name="edit-profile" />
       <Stack.Screen name="logout" />
       <Stack.Screen name="purchase-history" />
