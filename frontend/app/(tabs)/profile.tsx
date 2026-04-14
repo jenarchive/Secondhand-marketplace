@@ -73,7 +73,6 @@ export default function HomeScreen() {
     <ThemedView style={styles.screen}>
       <View style={styles.mainContainer}>
 
-        {/* avatar, name and email (with link to change) */}
         <Link href="../items/edit-profile" asChild>
           <Pressable style={styles.profileFrame}>
             <ThemedView style={styles.userProfileContainer}>
@@ -99,7 +98,6 @@ export default function HomeScreen() {
           </Pressable>
         </Link>
 
-        {/* bottom list of icons and link */}
         <FlatList
           data={Data}
           scrollEnabled={false}
@@ -191,9 +189,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
   },
-  profileLeftHalf: {
-    alignItems: 'center',
-  },
   userProfileContainer: {
     width: '88%',
     flexDirection: 'row',
@@ -261,10 +256,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  listIcon: {
-    height: 30,
-    width: 30,
   },
   listText: {
     flex: 4,

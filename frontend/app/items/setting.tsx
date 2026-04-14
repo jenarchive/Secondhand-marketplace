@@ -6,8 +6,6 @@ import { Component } from 'react';
 
 export default class App extends Component<{}> {
   state = {
-    isOnDefaultToggleSwitch: true,
-    isOnLargeToggleSwitch: false,
     isOnBlueToggleSwitch: false
   };
 
@@ -19,7 +17,6 @@ export default class App extends Component<{}> {
     return (
       <ThemedView style={styles.container}>
         <ThemedText style={styles.welcome}>Change to Matching mode</ThemedText>
-        {/* <ThemedText style={styles.instructions}></ThemedText> */}
         <ToggleSwitch
           onColor='#687076'
           isOn={this.state.isOnBlueToggleSwitch}
@@ -43,9 +40,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "center",
     margin: 10
-  },
-  instructions: {
-    textAlign: "center",
-    marginBottom: 5
   }
 });

@@ -1,78 +1,87 @@
-import {Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Stack, Link, Href, router } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Stack, router, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/themed-text';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
   
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+
 
 export default function NotificationScreen() {
   const screenBg = useThemeColor({}, 'background');
+  const nav = useRouter();
   return (
-    <SafeAreaView style={styles.container}>
-      <ThemedView >
-        <Stack.Screen
-          options={{
-            title: 'Notifications',
-            headerShown: true,
-            headerRight: () => (
-              <Pressable
-                style={({ pressed }) => [
-                  { padding: 8, marginRight: 20, opacity: pressed ? 0.7 : 1 },
-                ]}> 
-                <Ionicons
-                name={'reorder-three'}
-                size={28}/>
-              </Pressable>
-                          
-            )}}
-        />
+    <View style={[styles.container, { backgroundColor: screenBg }]}>
+      <ThemedView style={[styles.screen, { backgroundColor: screenBg }]}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={[styles.header, { backgroundColor: screenBg }]}>
+          <Pressable
+            onPress={() => nav.back()}
+            style={({ pressed }) => [
+              styles.headerBackButton,
+              { backgroundColor: BACK_BUTTON_BG },
+              pressed && styles.headerBackButtonPressed,
+            ]}
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </Pressable>
+          <ThemedText type="title" style={styles.headerTitle}>
+            Notifications
+          </ThemedText>
+          <Pressable
+            style={({ pressed }) => [
+              styles.headerMenuButton,
+              { backgroundColor: BACK_BUTTON_BG },
+              pressed && styles.headerBackButtonPressed,
+            ]}
+          >
+            <Ionicons name="reorder-three" size={28} color="white" />
+          </Pressable>
+        </View>
         <ScrollView
-          contentContainerStyle={[styles.listContent, { paddingTop: 50 }]}
+          contentContainerStyle={styles.listContent}
           contentInsetAdjustmentBehavior="never"
           style={styles.listcontainer}
           showsVerticalScrollIndicator={false}
         >
           <Pressable
-            onPress={async () => {
+            onPress={() => {
               router.push(`/items/chat`);
             }}
-            style={[styles.card && styles.firstCard]}
+            style={[styles.card, styles.firstCard]}
           >
-            {/* <View style={styles.imageWrapper}>
-              <Image
-                source="https://www.istockphoto.com/photos/placeholder-image"
-                style={styles.imagePlaceholder}
-              />
-            </View> */}
             <View style={styles.infoContainer}>
-              <ThemedText style={[styles.productName]} numberOfLines={1}>
-                You haved matched with user 1. 
-              </ThemedText>
-              <ThemedText style={[styles.price]}>
-                {/* {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(300)} */}
+              <ThemedText style={styles.productName} numberOfLines={1}>
+                You haved matched with user 1.
               </ThemedText>
             </View>
           </Pressable>
         </ScrollView>
       </ThemedView>
-    </SafeAreaView>
-
-    
-
-
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex:1,
-    // borderWidth: 1, 
-    // borderColor: "white",
+    flex: 1,
+  },
+  screen: {
+    flex: 1,
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 100,
   },
   listContent: {
+    paddingTop: 112,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
@@ -84,17 +93,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: 'center',
   },
-  imageWrapper: {
-    position: 'relative',
-    marginRight: 16,
-    borderWidth: 1, 
-    borderColor: "white",
-  },
-  imagePlaceholder: {
-    width: 90,
-    height: 90,
-    borderRadius: 12,
-  },
   infoContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -103,16 +101,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
-    // borderWidth: 1, 
-    // borderColor: "white",
   },
-  price: {
+  listcontainer: { flex: 1 },
+  headerBackButton: {
+    marginLeft: 20,
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    padding: 4,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerBackButtonPressed: {
+    opacity: 0.8,
+  },
+  headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    marginBottom: 4,
   },
-  listcontainer: {
-    // flex: 1,
-    // borderWidth: 1, 
-    // borderColor: "white",
+  headerMenuButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 0,
+    padding: 4,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
