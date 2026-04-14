@@ -110,7 +110,7 @@ export default function TransactionScreen() {
     }
     if (paymentMethod === 'card') {
       markItemPaidSold(id);
-      router.replace('/(tabs)');
+      router.push(`/items/transaction/rate/${id}` as any);
     }
   };
 
