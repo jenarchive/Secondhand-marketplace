@@ -1,44 +1,34 @@
 import { StyleSheet, View } from 'react-native';
-import { ThemedView } from '@/components/themed-view';
-import { ThemedText } from '@/components/themed-text';
-import ToggleSwitch from 'toggle-switch-react-native'
-import { Component } from 'react';
+import { Image } from 'expo-image';
+import ParallaxScrollView from '@/components/parallax-scroll-view';
 
-export default class App extends Component<{}> {
-  state = {
-    isOnBlueToggleSwitch: false
-  };
+export default function LoginScreen() {
+  return (
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerImage={
+        <Image/>
+      }>
 
-  onToggle(isOn: string | boolean) {
-    console.log("Matching mode changed to " + isOn);
-  }
-
-  render() {
-    return (
-      <ThemedView style={styles.container}>
-        <ThemedText style={styles.welcome}>Change to Matching mode</ThemedText>
-        <ToggleSwitch
-          onColor='#687076'
-          isOn={this.state.isOnBlueToggleSwitch}
-          onToggle={isOnBlueToggleSwitch => {
-            this.setState({ isOnBlueToggleSwitch });
-            this.onToggle(isOnBlueToggleSwitch);
-          }}
-        />
-      </ThemedView>
-    );
-  }
+    </ParallaxScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10
-  }
+  stepContainer: {
+    gap: 8,
+    marginBottom: 8,
+  },
+  reactLogo: {
+    height: 178,
+    width: 290,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+  },
 });
