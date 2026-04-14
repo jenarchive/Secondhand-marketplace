@@ -79,7 +79,12 @@ export default function RateAfterPaymentScreen() {
 
         <Pressable
           style={styles.submitButton}
-          onPress={() => router.replace('/(tabs)')}
+          onPress={() =>
+            router.replace({
+              pathname: '/items/transaction/rating-submitted/[id]',
+              params: { id: String(id), rating: String(rating) },
+            } as any)
+          }
         >
           <Text style={styles.submitButtonText}>Submit rating</Text>
         </Pressable>
