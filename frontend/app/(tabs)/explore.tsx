@@ -175,6 +175,11 @@ export default function TabTwoScreen() {
                             ]}
                             onPress={() => setSelectedMatchItemId(myItem.id)}
                           >
+                            <Image
+                              source={{ uri: myItem.image }}
+                              style={styles.matchPickerItemThumb}
+                              contentFit="cover"
+                            />
                             <Text
                               numberOfLines={1}
                               style={[
@@ -422,38 +427,46 @@ const styles = StyleSheet.create({
     maxWidth: 220,
     borderRadius: 14,
     padding: 10,
-    backgroundColor: 'rgba(20,20,20,0.82)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 0,
     gap: 6,
   },
   matchPickerTitle: {
-    color: '#E5E7EB',
+    color: '#1F2937',
     fontSize: 12,
     fontWeight: '600',
   },
   matchPickerEmpty: {
-    color: '#9CA3AF',
+    color: '#6B7280',
     fontSize: 12,
   },
   matchPickerItem: {
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   matchPickerItemSelected: {
-    backgroundColor: 'rgba(10,132,255,0.28)',
+    backgroundColor: '#DBEAFE',
     borderWidth: 1,
-    borderColor: 'rgba(10,132,255,0.7)',
+    borderColor: '#60A5FA',
   },
   matchPickerItemText: {
-    color: '#F9FAFB',
+    color: '#111827',
     fontSize: 12,
     fontWeight: '500',
+    flex: 1,
   },
   matchPickerItemTextSelected: {
-    color: '#D9ECFF',
+    color: '#1D4ED8',
+  },
+  matchPickerItemThumb: {
+    width: 26,
+    height: 26,
+    borderRadius: 6,
   },
   hintsToggleBtn: {
     width: 36,
