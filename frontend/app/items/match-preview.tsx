@@ -40,12 +40,10 @@ export default function MatchPreviewScreen() {
         </Pressable>
         <ThemedText type="title" style={styles.headerTitle}>Trade Match</ThemedText>
       </View>
-      <ThemedText style={styles.subtitle}>Review selected items for 1:1 exchange</ThemedText>
-
       <View style={styles.cardsRow}>
         <View style={styles.itemColumn}>
           <ThemedText style={styles.cardTopLabel}>My Listing</ThemedText>
-          <View style={styles.itemCard}>
+          <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${myItem.id}`)}>
             <Image
               source={{ uri: myItem.image }}
               style={styles.itemImage}
@@ -56,12 +54,12 @@ export default function MatchPreviewScreen() {
             <ThemedText style={styles.itemDescription} numberOfLines={2}>
               {myItem.description}
             </ThemedText>
-          </View>
+          </Pressable>
         </View>
 
         <View style={styles.itemColumn}>
           <ThemedText style={styles.cardTopLabel}>Item to Match</ThemedText>
-          <View style={styles.itemCard}>
+          <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
             <Image
               source={{ uri: targetItem.image }}
               style={styles.itemImage}
@@ -72,7 +70,7 @@ export default function MatchPreviewScreen() {
             <ThemedText style={styles.itemDescription} numberOfLines={2}>
               {targetItem.description}
             </ThemedText>
-          </View>
+          </Pressable>
         </View>
       </View>
     </View>
