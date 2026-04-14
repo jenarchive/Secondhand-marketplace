@@ -1,15 +1,17 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
-import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
 export default function MatchPreviewScreen() {
   const params = useLocalSearchParams<{ myId?: string; targetId?: string }>();
+  const router = useRouter();
   const { getItemById } = useMyListings();
   const backgroundColor = useThemeColor({}, 'background');
   const myId = Number(params.myId);
@@ -27,30 +29,50 @@ export default function MatchPreviewScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor }]}>
-      <ThemedText type="title" style={styles.title}>Trade Match</ThemedText>
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+      />
+      <View style={[styles.header, { backgroundColor }]}>
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </Pressable>
+        <ThemedText type="title" style={styles.headerTitle}>Trade Match</ThemedText>
+      </View>
       <ThemedText style={styles.subtitle}>Review selected items for 1:1 exchange</ThemedText>
 
       <View style={styles.cardsRow}>
-        <View style={styles.itemCard}>
-          <Image
-            source={{ uri: myItem.image }}
-            style={styles.itemImage}
-            placeholder={{ blurhash }}
-            contentFit="cover"
-          />
-          <ThemedText style={styles.itemCaption}>My listing</ThemedText>
-          <ThemedText style={styles.itemTitle} numberOfLines={1}>{myItem.title}</ThemedText>
+        <View style={styles.itemColumn}>
+          <ThemedText style={styles.cardTopLabel}>My Listing</ThemedText>
+          <View style={styles.itemCard}>
+            <Image
+              source={{ uri: myItem.image }}
+              style={styles.itemImage}
+              placeholder={{ blurhash }}
+              contentFit="cover"
+            />
+            <ThemedText style={styles.itemTitle} numberOfLines={1}>{myItem.title}</ThemedText>
+            <ThemedText style={styles.itemDescription} numberOfLines={2}>
+              {myItem.description}
+            </ThemedText>
+          </View>
         </View>
 
-        <View style={styles.itemCard}>
-          <Image
-            source={{ uri: targetItem.image }}
-            style={styles.itemImage}
-            placeholder={{ blurhash }}
-            contentFit="cover"
-          />
-          <ThemedText style={styles.itemCaption}>Explore item</ThemedText>
-          <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
+        <View style={styles.itemColumn}>
+          <ThemedText style={styles.cardTopLabel}>Item to Match</ThemedText>
+          <View style={styles.itemCard}>
+            <Image
+              source={{ uri: targetItem.image }}
+              style={styles.itemImage}
+              placeholder={{ blurhash }}
+              contentFit="cover"
+            />
+            <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
+            <ThemedText style={styles.itemDescription} numberOfLines={2}>
+              {targetItem.description}
+            </ThemedText>
+          </View>
         </View>
       </View>
     </View>
@@ -61,27 +83,49 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 24,
+    paddingTop: 112,
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  headerTitle: {
+    fontSize: 18,
+    marginBottom: 4,
   },
   center: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 8,
-  },
   subtitle: {
     fontSize: 14,
     opacity: 0.8,
+    marginTop: 8,
     marginBottom: 20,
   },
   cardsRow: {
     flexDirection: 'row',
     gap: 12,
   },
-  itemCard: {
+  itemColumn: {
     flex: 1,
+    alignItems: 'center',
+  },
+  cardTopLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 8,
+    color: '#FF9500',
+    textAlign: 'center',
+  },
+  itemCard: {
+    width: '100%',
     borderRadius: 14,
     padding: 10,
     backgroundColor: '#25282B',
@@ -92,13 +136,26 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  itemCaption: {
-    fontSize: 12,
-    opacity: 0.7,
-    marginBottom: 4,
-  },
   itemTitle: {
     fontSize: 15,
     fontWeight: '600',
+    marginBottom: 6,
+  },
+  itemDescription: {
+    fontSize: 12,
+    opacity: 0.8,
+    lineHeight: 17,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 4,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
