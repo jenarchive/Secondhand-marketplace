@@ -83,26 +83,16 @@ export default function HomeScreen() {
   const [matchPickerVisible, setMatchPickerVisible] = useState(false);
   const [selectedMyListingId, setSelectedMyListingId] = useState<number | null>(null);
 
-  const listingStampLabel = isItemSoldOnMarketplace(itemData.id)
-    ? 'SOLD'
-    : isPendingMeetupReservation(itemData.id)
-      ? 'PENDING'
-      : null;
-  const buyNowLocked = listingStampLabel !== null;
-  const buyNowLabel =
-    listingStampLabel === 'SOLD' ? 'Sold' : listingStampLabel === 'PENDING' ? 'Pending' : 'Buy Now';
-  const stampAccentColor =
-    listingStampLabel === 'SOLD'
-      ? LISTING_STAMP_SOLD_COLOR
-      : listingStampLabel === 'PENDING'
-        ? LISTING_STAMP_PENDING_COLOR
-        : LISTING_STAMP_SOLD_COLOR;
-  const stampInset = 4 * detailStampScale;
-  const stampRectStyle = {
-    paddingHorizontal: 5 * detailStampScale,
-    paddingVertical: 3 * detailStampScale,
-    borderRadius: 4 * detailStampScale,
-    borderWidth: Math.min(3, Math.max(1.5, 2 * (detailStampScale / 1.85))),
+  useFocusEffect(
+    useCallback(() => {
+      hasNavigatedToTransaction.current = false;
+      setMatchPickerVisible(false);
+      setSelectedMyListingId(null);
+    }, []),
+  );
+
+  const handleScrollBeginDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollYAtDragStart.current = e.nativeEvent.contentOffset.y;
   };
   const stampTextStyle = {
     fontSize: 9 * detailStampScale,

@@ -6,8 +6,10 @@ import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings, type MyListingItem } from '@/contexts/MyListingsContext';
 
@@ -47,6 +49,13 @@ export default function TabTwoScreen() {
       return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
     });
   }, [exploreItems]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setMatchPickerVisible(false);
+      setSelectedMatchItemId(null);
+    }, []),
+  );
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
