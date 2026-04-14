@@ -81,8 +81,20 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold">{username ? username[0].toUpperCase() : 'U'}</ThemedText>
                 </ThemedView>
                 <ThemedView style={styles.userMeta}>
-                  <ThemedText type="defaultSemiBold">Username</ThemedText>
+                  <ThemedText type="defaultSemiBold" style={styles.userNameText}>Username</ThemedText>
+                  <View style={styles.userRatingRow}>
+                    <View style={styles.userRatingStars}>
+                      <Ionicons name="star" size={12} color="#FACC15" />
+                      <Ionicons name="star" size={12} color="#FACC15" />
+                      <Ionicons name="star" size={12} color="#FACC15" />
+                      <Ionicons name="star" size={12} color="#FACC15" />
+                      <Ionicons name="star" size={12} color="#FACC15" />
+                    </View>
+                  </View>
                 </ThemedView>
+                <View style={styles.userCardArrowWrap}>
+                  <Ionicons name="chevron-forward" size={26} color="#9CA3AF" />
+                </View>
             </ThemedView>
           </Pressable>
         </Link>
@@ -183,7 +195,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userProfileContainer: {
-    width: '92%',
+    width: '88%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -191,8 +203,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
     backgroundColor: colours.container,
     paddingVertical: 35,
-    paddingRight: 30,
-    paddingLeft: 40,
+    paddingLeft: 36,
+    paddingRight: 16,
     borderRadius: 50,
     borderWidth: 1.5,
     borderColor: colours.cardBorder,
@@ -208,10 +220,26 @@ const styles = StyleSheet.create({
   userMeta: {
     backgroundColor: 'transparent',
     alignItems: 'flex-start',
+    justifyContent: 'center',
   },
-  userRating: {
+  userNameText: {
+    lineHeight: 22,
+  },
+  userRatingRow: {
     backgroundColor: 'transparent',
     flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginTop: 8,
+    gap: 6,
+  },
+  userRatingStars: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  userCardArrowWrap: {
+    marginLeft: 'auto',
     justifyContent: 'center',
     alignItems: 'center',
   },
