@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
@@ -78,6 +79,46 @@ export default function ChatScreen() {
 
   const handleCloseMore = () => {
     setShowMoreMenu(false);
+  };
+
+  const pushAttachmentMessage = (prefix: 'photo' | 'video', fileName?: string | null) => {
+    const fallback = prefix === 'photo' ? 'Photo' : 'Video';
+    const label = fileName ? `Sent ${prefix}: ${fileName}` : `Sent ${fallback}`;
+    addMessageForItem(id, label);
+    setMessages((prev) => [...prev, label]);
+  };
+
+  const requestMediaPermission = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permission.granted) return true;
+    Alert.alert('Permission needed', 'Please allow photo library access to send media.');
+    return false;
+  };
+
+  const handleSendPhoto = async () => {
+    const granted = await requestMediaPermission();
+    if (!granted) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: false,
+      quality: 0.9,
+    });
+    if (result.canceled || !result.assets.length) return;
+    pushAttachmentMessage('photo', result.assets[0]?.fileName);
+    handleCloseMore();
+  };
+
+  const handleSendVideo = async () => {
+    const granted = await requestMediaPermission();
+    if (!granted) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['videos'],
+      allowsMultipleSelection: false,
+      quality: 0.9,
+    });
+    if (result.canceled || !result.assets.length) return;
+    pushAttachmentMessage('video', result.assets[0]?.fileName);
+    handleCloseMore();
   };
 
   const handleSend = () => {
@@ -250,7 +291,7 @@ export default function ChatScreen() {
                 <View style={styles.morePanelRow}>
                   <Pressable
                     style={styles.morePanelOption}
-                    onPress={handleCloseMore}
+                    onPress={handleSendPhoto}
                   >
                     <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="image-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
@@ -259,7 +300,7 @@ export default function ChatScreen() {
                   </Pressable>
                   <Pressable
                     style={styles.morePanelOption}
-                    onPress={handleCloseMore}
+                    onPress={handleSendVideo}
                   >
                     <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="videocam-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
