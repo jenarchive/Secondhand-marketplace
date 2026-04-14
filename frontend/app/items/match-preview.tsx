@@ -40,38 +40,46 @@ export default function MatchPreviewScreen() {
         </Pressable>
         <ThemedText type="title" style={styles.headerTitle}>Trade Match</ThemedText>
       </View>
-      <View style={styles.cardsRow}>
-        <View style={styles.itemColumn}>
-          <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMy]}>My Listing</ThemedText>
-          <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${myItem.id}`)}>
-            <Image
-              source={{ uri: myItem.image }}
-              style={styles.itemImage}
-              placeholder={{ blurhash }}
-              contentFit="cover"
-            />
-            <ThemedText style={styles.itemTitle} numberOfLines={1}>{myItem.title}</ThemedText>
-            <ThemedText style={styles.itemDescription} numberOfLines={2}>
-              {myItem.description}
-            </ThemedText>
-          </Pressable>
-        </View>
+      <View style={styles.contentWrap}>
+        <View style={styles.cardsRow}>
+          <View style={styles.itemColumn}>
+            <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMy]}>My Listing</ThemedText>
+            <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${myItem.id}`)}>
+              <Image
+                source={{ uri: myItem.image }}
+                style={styles.itemImage}
+                placeholder={{ blurhash }}
+                contentFit="cover"
+              />
+              <ThemedText style={styles.itemTitle} numberOfLines={1}>{myItem.title}</ThemedText>
+              <ThemedText style={styles.itemDescription} numberOfLines={2}>
+                {myItem.description}
+              </ThemedText>
+            </Pressable>
+          </View>
 
-        <View style={styles.itemColumn}>
-          <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Item to Match</ThemedText>
-          <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
-            <Image
-              source={{ uri: targetItem.image }}
-              style={styles.itemImage}
-              placeholder={{ blurhash }}
-              contentFit="cover"
-            />
-            <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
-            <ThemedText style={styles.itemDescription} numberOfLines={2}>
-              {targetItem.description}
-            </ThemedText>
-          </Pressable>
+          <View style={styles.itemColumn}>
+            <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Item to Match</ThemedText>
+            <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
+              <Image
+                source={{ uri: targetItem.image }}
+                style={styles.itemImage}
+                placeholder={{ blurhash }}
+                contentFit="cover"
+              />
+              <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
+              <ThemedText style={styles.itemDescription} numberOfLines={2}>
+                {targetItem.description}
+              </ThemedText>
+            </Pressable>
+          </View>
+          <View pointerEvents="none" style={styles.tradeIconWrap}>
+            <Ionicons name="swap-horizontal" size={30} color="#FFFFFF" />
+          </View>
         </View>
+        <Pressable style={styles.sendButton} onPress={() => {}}>
+          <ThemedText style={styles.sendButtonText}>Send match offer</ThemedText>
+        </Pressable>
       </View>
     </View>
   );
@@ -81,7 +89,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingTop: 112,
+    paddingTop: 100,
   },
   header: {
     position: 'absolute',
@@ -101,9 +109,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  contentWrap: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingBottom: 0,
+    paddingTop: 10,
+    transform: [{ translateY: -36 }],
+  },
   cardsRow: {
     flexDirection: 'row',
     gap: 12,
+    position: 'relative',
   },
   itemColumn: {
     flex: 1,
@@ -154,5 +170,28 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  sendButton: {
+    marginTop: 24,
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A84FF',
+  },
+  sendButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  tradeIconWrap: {
+    position: 'absolute',
+    left: '50%',
+    top: '46%',
+    marginLeft: -15,
+    marginTop: -15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 20,
   },
 });
