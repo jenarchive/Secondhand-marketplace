@@ -2,7 +2,8 @@ import { Image } from 'expo-image';
 import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
 import { useMemo, useSyncExternalStore } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useRef, useCallback, useMemo, useState } from 'react';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
@@ -27,6 +28,10 @@ export default function HomeScreen() {
   const fromMyListings = params.fromMyListings === 'true';
   const fromChat = params.fromChat === 'true';
   const { items, isMyListing: isItemMine, removeItem } = useMyListings();
+  const myListingItems = useMemo(
+    () => items.filter((item) => isItemMine(item.id)),
+    [items, isItemMine]
+  );
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
   const liked = itemData ? isLiked(itemData.id) : false;
@@ -70,6 +75,13 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
+  const isFocused = useIsFocused();
+  const isFocusedRef = useRef(isFocused);
+  isFocusedRef.current = isFocused;
+  const hasNavigatedToTransaction = useRef(false);
+  const scrollYAtDragStart = useRef(0);
+  const [matchPickerVisible, setMatchPickerVisible] = useState(false);
+  const [selectedMyListingId, setSelectedMyListingId] = useState<number | null>(null);
 
   const listingStampLabel = isItemSoldOnMarketplace(itemData.id)
     ? 'SOLD'
@@ -160,6 +172,81 @@ export default function HomeScreen() {
                   {listingStampLabel}
                 </Text>
               </View>
+            </View>
+          )}
+          {!isItemMine(itemData.id) && (
+            <Pressable
+              style={({ pressed }) => [
+                styles.matchBadge,
+                pressed && styles.matchBadgePressed,
+                matchPickerVisible && styles.matchBadgeActive,
+              ]}
+              onPress={() => {
+                setSelectedMyListingId(null);
+                setMatchPickerVisible((prev) => !prev);
+              }}
+              hitSlop={8}
+            >
+              <Ionicons
+                name="swap-horizontal"
+                size={28}
+                color={matchPickerVisible ? '#0A84FF' : '#FFFFFF'}
+              />
+            </Pressable>
+          )}
+          {!isItemMine(itemData.id) && matchPickerVisible && (
+            <View style={styles.matchPickerPanel}>
+              <ThemedText style={styles.matchPickerTitle}>Match with my listing</ThemedText>
+              {myListingItems.length === 0 ? (
+                <ThemedText style={styles.matchPickerEmpty}>No my listings yet</ThemedText>
+              ) : (
+                myListingItems.map((myItem) => {
+                  const selected = selectedMyListingId === myItem.id;
+                  return (
+                    <Pressable
+                      key={myItem.id}
+                      style={[
+                        styles.matchPickerItem,
+                        selected && styles.matchPickerItemSelected,
+                      ]}
+                      onPress={() => setSelectedMyListingId(myItem.id)}
+                    >
+                      <Image
+                        source={{ uri: myItem.image }}
+                        style={styles.matchPickerItemThumb}
+                        contentFit="cover"
+                      />
+                      <ThemedText
+                        numberOfLines={1}
+                        style={[
+                          styles.matchPickerItemText,
+                          selected && styles.matchPickerItemTextSelected,
+                        ]}
+                      >
+                        {myItem.title}
+                      </ThemedText>
+                      {selected && (
+                        <Pressable
+                          style={styles.matchInlineConfirmButton}
+                          onPress={() =>
+                            router.push({
+                              pathname: '/items/match-preview',
+                              params: {
+                                targetId: String(itemData.id),
+                                myId: String(myItem.id),
+                              },
+                            })
+                          }
+                        >
+                          <ThemedText style={styles.matchInlineConfirmButtonText}>
+                            Confirm
+                          </ThemedText>
+                        </Pressable>
+                      )}
+                    </Pressable>
+                  );
+                })
+              )}
             </View>
           )}
           {!isItemMine(itemData.id) && (
@@ -333,6 +420,86 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  matchBadge: {
+    position: 'absolute',
+    left: 8,
+    top: 8,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 20,
+  },
+  matchBadgePressed: {
+    opacity: 0.75,
+  },
+  matchBadgeActive: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  matchPickerPanel: {
+    position: 'absolute',
+    top: 56,
+    left: 8,
+    zIndex: 30,
+    minWidth: 190,
+    maxWidth: 240,
+    borderRadius: 14,
+    padding: 10,
+    backgroundColor: '#FFFFFF',
+    gap: 6,
+  },
+  matchPickerTitle: {
+    color: '#1F2937',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  matchPickerEmpty: {
+    color: '#6B7280',
+    fontSize: 12,
+  },
+  matchPickerItem: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  matchPickerItemSelected: {
+    backgroundColor: '#DBEAFE',
+    borderWidth: 1,
+    borderColor: '#60A5FA',
+  },
+  matchPickerItemThumb: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+  },
+  matchPickerItemText: {
+    color: '#111827',
+    fontSize: 12,
+    fontWeight: '500',
+    flex: 1,
+  },
+  matchPickerItemTextSelected: {
+    color: '#1D4ED8',
+  },
+  matchInlineConfirmButton: {
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A84FF',
+  },
+  matchInlineConfirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
 
   priceContainer: {
