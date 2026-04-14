@@ -149,22 +149,9 @@ export default function HomeScreen() {
                       contentFit="cover"
                       source={{ uri: item.image }}
                     />
-                    {isItemSoldOnMarketplace(item.id) && (
-                      <View style={styles.pendingStampWrap}>
-                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_SOLD_COLOR }]}>
-                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_SOLD_COLOR }]}>SOLD</Text>
-                        </View>
-                      </View>
-                    )}
-                    {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
-                      <View style={styles.pendingStampWrap}>
-                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
-                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
-                            PENDING
-                          </Text>
-                        </View>
-                      </View>
-                    )}
+                    <View style={styles.matchBadge} pointerEvents="none">
+                      <Ionicons name="swap-horizontal" size={18} color="#5BA3FF" />
+                    </View>
                     <Pressable
                       style={styles.likeButton}
                       onPress={(e) => {
@@ -250,6 +237,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 8,
     bottom: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  matchBadge: {
+    position: 'absolute',
+    left: 8,
+    top: 8,
     width: 32,
     height: 32,
     borderRadius: 16,

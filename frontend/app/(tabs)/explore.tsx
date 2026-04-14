@@ -217,6 +217,9 @@ export default function TabTwoScreen() {
             </ThemedView>
             {index === visibleItems.length - 1 && (
               <>
+                <View style={styles.matchIconBadge} pointerEvents="none">
+                  <Ionicons name="swap-horizontal" size={20} color={ARROW_COLOR} />
+                </View>
                 <Pressable
                   style={({ pressed }) => [styles.hintsToggle, pressed && styles.hintsTogglePressed]}
                   onPress={() => setHintsVisible(v => !v)}
@@ -423,6 +426,18 @@ const styles = StyleSheet.create({
     top: 12,
     right: 12,
     zIndex: 10,
+    alignItems: 'center',
+  },
+  matchIconBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    zIndex: 10,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   hintsToggleBtn: {
