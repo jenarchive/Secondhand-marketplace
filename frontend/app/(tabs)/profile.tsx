@@ -81,8 +81,7 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold">{username ? username[0].toUpperCase() : 'U'}</ThemedText>
                 </ThemedView>
                 <ThemedView style={styles.userMeta}>
-                  <ThemedText type="defaultSemiBold">{username}</ThemedText>
-                  <ThemedText type="defaultSemiBold">{email}</ThemedText>
+                  <ThemedText type="defaultSemiBold">Username</ThemedText>
                 </ThemedView>
             </ThemedView>
           </Pressable>
@@ -157,6 +156,8 @@ const gateStyles = StyleSheet.create({
 
 const colours = {
   container: '#191C1F',
+  cardBorder: '#FFFFFF',
+  avatarBg: '#1E3A8A',
 };
 
 const styles = StyleSheet.create({
@@ -174,42 +175,38 @@ const styles = StyleSheet.create({
   profileFrame: {
     flexDirection: "row",
     alignItems: "center",
-    alignContent: 'center',
-    paddingHorizontal: '5%',
+    justifyContent: 'center',
+    width: '100%',
     height: 200,
   },
   profileLeftHalf: {
     alignItems: 'center',
   },
   userProfileContainer: {
-    flex: 1,
+    width: '92%',
     flexDirection: 'row',
     alignItems: 'center',
-    alignContent: 'center',
-    gap: 40,
+    justifyContent: 'flex-start',
+    gap: 30,
     marginTop: 0,
     backgroundColor: colours.container,
-    padding: 35,
-    paddingLeft: 50,
+    paddingVertical: 35,
+    paddingHorizontal: 30,
     borderRadius: 50,
-    shadowColor: '#e6e6e6',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 8,
+    borderWidth: 1.5,
+    borderColor: colours.cardBorder,
   },
   userProfileImage: {
     width: 80,
     height: 80,
     borderRadius: 25,
-    backgroundColor: '#333333',
+    backgroundColor: colours.avatarBg,
     justifyContent: 'center',
     alignItems: 'center',
   },
   userMeta: {
     backgroundColor: 'transparent',
-    flex: 1,
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   userRating: {
     backgroundColor: 'transparent',
