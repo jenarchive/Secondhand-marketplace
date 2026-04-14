@@ -27,6 +27,10 @@ export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked, likedMap } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
+  const myListingItems = useMemo(
+    () => contextItems.filter((item) => isMyListing(item.id)),
+    [contextItems, isMyListing]
+  );
   const exploreItems = useMemo(
     () => contextItems.filter((item) => !isMyListing(item.id)),
     [contextItems, isMyListing]
@@ -34,25 +38,8 @@ export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
-  const [heartFilledId, setHeartFilledId] = useState<number | null>(null);
-  const [likeButtonHeartFilled, setLikeButtonHeartFilled] = useState(false);
-  const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
-  const fromLikeButtonRef = useRef(false);
-  const visibleItemsRef = useRef<TestItem[]>([]);
-  const prevItemsLengthRef = useRef(0);
-  const alreadyAddedToLikesRef = useRef(false);
-  const fromItemDetailRef = useRef(false);
-  const likedMapRef = useRef(likedMap);
-  useEffect(() => {
-    likedMapRef.current = likedMap;
-  }, [likedMap]);
-
-  useEffect(() => {
-    setVisibleItems((prev) => {
-      if (prev.length === 0) return [...exploreItems];
-      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
-    });
-  }, [exploreItems]);
+  const [matchPickerVisible, setMatchPickerVisible] = useState(false);
+  const [selectedMatchItemId, setSelectedMatchItemId] = useState<number | null>(null);
 
   useEffect(() => {
     setVisibleItems((prev) => {
@@ -79,76 +66,9 @@ export default function TabTwoScreen() {
     setButterflies((prev) => prev.filter((b) => b.id !== id));
   };
 
-  const handleCardDismiss = (direction?: 'left' | 'right', itemIdOverride?: number) => {
-    const item =
-      itemIdOverride != null
-        ? exploreItems.find((i) => i.id === itemIdOverride)
-        : visibleItems[visibleItems.length - 1];
-    if (direction && item) {
-      pendingDismissRef.current = { direction, item };
-    }
-    const nextItems = visibleItems.slice(0, -1);
-    visibleItemsRef.current = nextItems;
-    setVisibleItems(nextItems);
-  };
-
-  useEffect(() => {
-    const prevLen = prevItemsLengthRef.current;
-    prevItemsLengthRef.current = visibleItems.length;
-    if (prevLen > visibleItems.length && pendingDismissRef.current) {
-      const { direction, item } = pendingDismissRef.current;
-      pendingDismissRef.current = null;
-      const fromLikeButton = fromLikeButtonRef.current;
-      fromLikeButtonRef.current = false;
-      const alreadyAdded = alreadyAddedToLikesRef.current;
-      alreadyAddedToLikesRef.current = false;
-      if (direction === 'right') {
-        if (!alreadyAdded) spawnButterflies('right');
-        if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
-        setHeartFilledId(null);
-        setLikeButtonHeartFilled(false);
-      } else {
-        setHeartFilledId(null);
-      }
-    }
-  }, [visibleItems, isLiked, toggleLikeContext]);
-
-  const resetCards = () => {
-    setVisibleItems(exploreItems.filter((item) => !isLiked(item.id)));
-  };
-
-  useEffect(() => {
-    const items = exploreItems.filter((item) => !likedMap[String(item.id)]);
-    visibleItemsRef.current = items;
-  }, [likedMap, exploreItems]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (fromItemDetailRef.current) {
-        fromItemDetailRef.current = false;
-      } else {
-        const latestLikedMap = likedMapRef.current;
-        const newItems = exploreItems.filter((item) => !latestLikedMap[String(item.id)]);
-        visibleItemsRef.current = newItems;
-        setHeartFilledId(null);
-        setLikeButtonHeartFilled(false);
-        setVisibleItems(newItems);
-      }
-    }, [exploreItems])
-  );
-
-  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
-  visibleItemsRef.current = visibleItems;
-
-  const currentItemLiked = currentItem
-    ? isLiked(currentItem.id) || heartFilledId === currentItem.id || likeButtonHeartFilled
-    : false;
-
-  const getTopItemId = () => {
-    const items = visibleItemsRef.current;
-    if (items.length > 0) return items[items.length - 1].id;
-    const unliked = exploreItems.find((i) => !likedMap[String(i.id)]);
-    return unliked?.id ?? null;
+  const handleCardDismiss = (direction?: 'left' | 'right') => {
+    setMatchPickerVisible(false);
+    setVisibleItems(prev => prev.slice(0, -1));
   };
 
   const handleSwipeDirection = (direction: 'left' | 'right') => {
@@ -164,10 +84,17 @@ export default function TabTwoScreen() {
     }
   };
 
-  const handleLikePress = () => {
-    const itemId = getTopItemId();
-    if (itemId == null) return;
-    handleCardDismiss('right', itemId);
+  const resetCards = () => {
+    setMatchPickerVisible(false);
+    setVisibleItems([...exploreItems]);
+  };
+
+  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
+  const currentItemLiked = currentItem ? isLiked(currentItem.id) : false;
+
+  const toggleLike = () => {
+    if (!currentItem) return;
+    toggleLikeContext(currentItem.id);
   };
 
   const handleSwipeUp = () => {
@@ -217,9 +144,52 @@ export default function TabTwoScreen() {
             </ThemedView>
             {index === visibleItems.length - 1 && (
               <>
-                <View style={styles.matchIconBadge} pointerEvents="none">
-                  <Ionicons name="swap-horizontal" size={20} color={ARROW_COLOR} />
-                </View>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.matchIconBadge,
+                    pressed && styles.hintsTogglePressed,
+                    matchPickerVisible && styles.matchIconBadgeActive,
+                  ]}
+                  onPress={() => setMatchPickerVisible((prev) => !prev)}
+                >
+                  <Ionicons
+                    name="swap-horizontal"
+                    size={20}
+                    color={matchPickerVisible ? '#0A84FF' : ARROW_COLOR}
+                  />
+                </Pressable>
+                {matchPickerVisible && (
+                  <View style={styles.matchPickerPanel}>
+                    <Text style={styles.matchPickerTitle}>Match with my listing</Text>
+                    {myListingItems.length === 0 ? (
+                      <Text style={styles.matchPickerEmpty}>No my listings yet</Text>
+                    ) : (
+                      myListingItems.map((myItem) => {
+                        const selected = selectedMatchItemId === myItem.id;
+                        return (
+                          <Pressable
+                            key={myItem.id}
+                            style={[
+                              styles.matchPickerItem,
+                              selected && styles.matchPickerItemSelected,
+                            ]}
+                            onPress={() => setSelectedMatchItemId(myItem.id)}
+                          >
+                            <Text
+                              numberOfLines={1}
+                              style={[
+                                styles.matchPickerItemText,
+                                selected && styles.matchPickerItemTextSelected,
+                              ]}
+                            >
+                              {myItem.title}
+                            </Text>
+                          </Pressable>
+                        );
+                      })
+                    )}
+                  </View>
+                )}
                 <Pressable
                   style={({ pressed }) => [styles.hintsToggle, pressed && styles.hintsTogglePressed]}
                   onPress={() => setHintsVisible(v => !v)}
@@ -439,6 +409,51 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  matchIconBadgeActive: {
+    backgroundColor: 'rgba(255,255,255,0.34)',
+  },
+  matchPickerPanel: {
+    position: 'absolute',
+    top: 56,
+    left: 12,
+    zIndex: 12,
+    minWidth: 180,
+    maxWidth: 220,
+    borderRadius: 14,
+    padding: 10,
+    backgroundColor: 'rgba(20,20,20,0.82)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+    gap: 6,
+  },
+  matchPickerTitle: {
+    color: '#E5E7EB',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  matchPickerEmpty: {
+    color: '#9CA3AF',
+    fontSize: 12,
+  },
+  matchPickerItem: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  matchPickerItemSelected: {
+    backgroundColor: 'rgba(10,132,255,0.28)',
+    borderWidth: 1,
+    borderColor: 'rgba(10,132,255,0.7)',
+  },
+  matchPickerItemText: {
+    color: '#F9FAFB',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  matchPickerItemTextSelected: {
+    color: '#D9ECFF',
   },
   hintsToggleBtn: {
     width: 36,
