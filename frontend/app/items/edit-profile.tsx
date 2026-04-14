@@ -1,34 +1,63 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Stack, useRouter } from 'expo-router';
+import { ThemedText } from '@/components/themed-text';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
-export default function LoginScreen() {
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+
+export default function EditProfileScreen() {
+  const router = useRouter();
+  const screenBg = useThemeColor({}, 'background');
+  const headerTitleColor = useThemeColor({}, 'text');
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image/>
-      }>
-
-    </ParallaxScrollView>
+    <View style={[styles.container, { backgroundColor: screenBg }]}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={[styles.header, { backgroundColor: screenBg }]}>
+        <TouchableOpacity
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
+          onPress={() => router.back()}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <ThemedText type="title" style={[styles.pageTitle, { color: headerTitleColor }]}>
+          Edit Profile
+        </ThemedText>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  header: {
     position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 0,
+    padding: 4,
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+    borderRadius: 20,
+  },
+  pageTitle: {
+    fontSize: 18,
+    marginBottom: 4,
   },
 });
