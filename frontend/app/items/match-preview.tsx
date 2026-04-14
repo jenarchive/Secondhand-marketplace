@@ -42,7 +42,7 @@ export default function MatchPreviewScreen() {
       </View>
       <View style={styles.cardsRow}>
         <View style={styles.itemColumn}>
-          <ThemedText style={styles.cardTopLabel}>My Listing</ThemedText>
+          <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMy]}>My Listing</ThemedText>
           <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${myItem.id}`)}>
             <Image
               source={{ uri: myItem.image }}
@@ -58,7 +58,7 @@ export default function MatchPreviewScreen() {
         </View>
 
         <View style={styles.itemColumn}>
-          <ThemedText style={styles.cardTopLabel}>Item to Match</ThemedText>
+          <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Item to Match</ThemedText>
           <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
             <Image
               source={{ uri: targetItem.image }}
@@ -101,12 +101,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  subtitle: {
-    fontSize: 14,
-    opacity: 0.8,
-    marginTop: 8,
-    marginBottom: 20,
-  },
   cardsRow: {
     flexDirection: 'row',
     gap: 12,
@@ -119,8 +113,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 8,
-    color: '#FF9500',
     textAlign: 'center',
+  },
+  cardTopLabelMy: {
+    color: '#FFFFFF',
+  },
+  cardTopLabelMatch: {
+    color: '#FF9500',
   },
   itemCard: {
     width: '100%',
