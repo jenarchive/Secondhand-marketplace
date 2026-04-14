@@ -164,34 +164,44 @@ export default function TabTwoScreen() {
                     {myListingItems.length === 0 ? (
                       <Text style={styles.matchPickerEmpty}>No my listings yet</Text>
                     ) : (
-                      myListingItems.map((myItem) => {
-                        const selected = selectedMatchItemId === myItem.id;
-                        return (
-                          <Pressable
-                            key={myItem.id}
-                            style={[
-                              styles.matchPickerItem,
-                              selected && styles.matchPickerItemSelected,
-                            ]}
-                            onPress={() => setSelectedMatchItemId(myItem.id)}
-                          >
-                            <Image
-                              source={{ uri: myItem.image }}
-                              style={styles.matchPickerItemThumb}
-                              contentFit="cover"
-                            />
-                            <Text
-                              numberOfLines={1}
+                      <>
+                        {myListingItems.map((myItem) => {
+                          const selected = selectedMatchItemId === myItem.id;
+                          return (
+                            <Pressable
+                              key={myItem.id}
                               style={[
-                                styles.matchPickerItemText,
-                                selected && styles.matchPickerItemTextSelected,
+                                styles.matchPickerItem,
+                                selected && styles.matchPickerItemSelected,
                               ]}
+                              onPress={() => setSelectedMatchItemId(myItem.id)}
                             >
-                              {myItem.title}
-                            </Text>
-                          </Pressable>
-                        );
-                      })
+                              <Image
+                                source={{ uri: myItem.image }}
+                                style={styles.matchPickerItemThumb}
+                                contentFit="cover"
+                              />
+                              <Text
+                                numberOfLines={1}
+                                style={[
+                                  styles.matchPickerItemText,
+                                  selected && styles.matchPickerItemTextSelected,
+                                ]}
+                              >
+                                {myItem.title}
+                              </Text>
+                              {selected && (
+                                <Pressable
+                                  style={styles.matchInlineConfirmButton}
+                                  onPress={() => setMatchPickerVisible(false)}
+                                >
+                                  <Text style={styles.matchInlineConfirmButtonText}>Confirm</Text>
+                                </Pressable>
+                              )}
+                            </Pressable>
+                          );
+                        })}
+                      </>
                     )}
                   </View>
                 )}
@@ -467,6 +477,19 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 6,
+  },
+  matchInlineConfirmButton: {
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A84FF',
+  },
+  matchInlineConfirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
   hintsToggleBtn: {
     width: 36,
