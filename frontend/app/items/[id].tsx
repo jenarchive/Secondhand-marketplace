@@ -103,7 +103,13 @@ export default function HomeScreen() {
       <View style={[styles.customHeader, { backgroundColor }]}>
         <TouchableOpacity
           style={[styles.customHeaderBackButton, { backgroundColor: BACK_BUTTON_BG }]}
-          onPress={() => router.replace('/(tabs)')}
+          onPress={() => {
+            if (fromChat) {
+              router.back();
+              return;
+            }
+            router.replace('/(tabs)');
+          }}
           activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
