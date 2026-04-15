@@ -71,13 +71,10 @@ export default function NotificationScreen() {
                 />
                 <View style={styles.infoContainer}>
                   <ThemedText style={styles.productName}>
-                    You have matched with User {notif.targetId}
+                    {`User ${notif.targetId} × ${getItemById(notif.targetId)?.title || 'Unknown Item'}`}
                   </ThemedText>
-                  <ThemedText style={{ color: 'gray', fontSize: 12 }}>
-                    Item: {getItemById(notif.targetId)?.title || "Unknown Item"}
-                  </ThemedText>
-                  <ThemedText style={{ fontSize: 10, opacity: 0.6 }}>
-                    {notif.timestamp.toLocaleTimeString()}
+                  <ThemedText style={styles.matchTimeText}>
+                    {notif.timestamp.toLocaleDateString()} {notif.timestamp.toLocaleTimeString()}
                   </ThemedText>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="gray" />
@@ -120,7 +117,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   listContent: {
-    paddingTop: 128,
+    paddingTop: 118,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
@@ -133,8 +130,8 @@ const styles = StyleSheet.create({
     paddingBottom: 18,
   },
   matchItemThumb: {
-    width: 48,
-    height: 48,
+    width: 54,
+    height: 54,
     borderRadius: 10,
     marginRight: 12,
     backgroundColor: '#25282B',
@@ -147,6 +144,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
+  },
+  matchTimeText: {
+    fontSize: 11,
+    opacity: 0.62,
   },
   listcontainer: { flex: 1 },
   headerBackButton: {
