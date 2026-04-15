@@ -79,7 +79,7 @@ export default function App() {
   return (
     // Style the main container to fill the screen
     <ThemedView style={styles.mainContiner}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.subContiner}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <View>
           {/* Header Area */}
           <ThemedView style={styles.userInfo}> 
@@ -145,25 +145,13 @@ export default function App() {
 const styles = StyleSheet.create({
   mainContiner: {
     flex: 1, 
-    // borderWidth: 1,
-    // borderColor: 'white',
-  }, 
-  subContiner: {
-    flex: 1, 
-    borderWidth: 1,
-    borderColor: 'white',
   }, 
   userInfo: {
-    borderWidth: 1,
-    borderColor: 'white',
   }, 
   flexbox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 64,
-    borderWidth: 1,
-    borderColor: 'white',
   },  
   contentWrap: {
     flex: 1,
@@ -209,36 +197,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 6,
   },
-  itemDescription: {
-    fontSize: 12,
-    opacity: 0.8,
-    lineHeight: 17,
-  },
-  backButton: {
-    position: 'absolute',
-    left: 20,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    padding: 4,
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendButton: {
-    marginTop: 24,
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#0A84FF',
-  },
-  sendButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
   tradeIconWrap: {
     position: 'absolute',
     left: '50%',
@@ -261,9 +219,5 @@ const styles = StyleSheet.create({
   chatbox: {
     flex: 1,
     paddingBottom: '8%',
-    borderWidth: 1,
-    borderColor: 'white',
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
 });
