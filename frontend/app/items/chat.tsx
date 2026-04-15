@@ -19,7 +19,7 @@ export default function App() {
 
   const params = useLocalSearchParams<{ myId?: string; targetId?: string }>();
   const router = useRouter();
-  const { getItemById } = useMyListings();
+  const { getItemById, removeNotification } = useMyListings();
   const myId = Number(params.myId);
   const targetId = Number(params.targetId);
   const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
@@ -29,7 +29,12 @@ export default function App() {
     Alert.alert('Unmatch', 'This match has been removed.', [
       {
         text: 'OK',
-        onPress: () => router.back(),
+        onPress: () => {
+          if (Number.isFinite(myId) && Number.isFinite(targetId)) {
+            removeNotification(myId, targetId);
+          }
+          router.back();
+        },
       },
     ]);
   };

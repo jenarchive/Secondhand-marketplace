@@ -20,6 +20,7 @@ type MyListingsContextType = {
   recordMatch: (myId: number, targetId: number) => void;
   notifications: Notification[];
   addNotification: (myId: number, targetId: number) => void;
+  removeNotification: (myId: number, targetId: number) => void;
 };
 
 type Match = { // type for storing match
@@ -91,6 +92,15 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   });
   }, []);
 
+  const removeNotification = useCallback((myId: number, targetId: number) => {
+    setNotifications((prev) =>
+      prev.filter((n) => !(n.myId === myId && n.targetId === targetId))
+    );
+    setMatches((prev) =>
+      prev.filter((m) => !(m.myId === myId && m.targetId === targetId))
+    );
+  }, []);
+
   const updateItem = useCallback((id: number, updates: Partial<MyListingItem>) => {
     const next = getItems().map((item) =>
       item.id === id ? { ...item, ...updates } : { ...item }
@@ -117,8 +127,32 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   );
 
   const value = useMemo(
-    () => ({ items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById, notifications, addNotification }),
-    [items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById, , notifications, addNotification]
+    () => ({
+      items,
+      matches,
+      recordMatch,
+      myListings,
+      isMyListing,
+      updateItem,
+      removeItem,
+      getItemById,
+      notifications,
+      addNotification,
+      removeNotification,
+    }),
+    [
+      items,
+      matches,
+      recordMatch,
+      myListings,
+      isMyListing,
+      updateItem,
+      removeItem,
+      getItemById,
+      notifications,
+      addNotification,
+      removeNotification,
+    ]
   );
 
   return (
