@@ -22,11 +22,9 @@ export default function App() {
   const router = useRouter();
   const { getItemById } = useMyListings();
   const { myListings } = useMyListings();
-  // const myId = Number(params.myId);
-  // const targetId = Number(params.targetId);
-  const targetId = 1;
-  const myItem = myListings[0];
-  // const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
+  const myId = Number(params.myId);
+  const targetId = Number(params.targetId);
+  const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
   const targetItem = Number.isFinite(targetId) ? getItemById(targetId) : undefined;
 
   if (!myItem || !targetItem) {
@@ -77,7 +75,6 @@ export default function App() {
   }, []);
 
   return (
-    // Style the main container to fill the screen
     <ThemedView style={styles.mainContiner}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <View>
@@ -127,7 +124,7 @@ export default function App() {
         </View>
       </TouchableWithoutFeedback>
       
-      {/* Chat Area (MUST HAVE FLEX: 1) */}
+      {/* Chat Area */}
       <View style={styles.chatbox}> 
         <GiftedChat
           messages={messages}

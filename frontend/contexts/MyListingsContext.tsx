@@ -62,8 +62,12 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
       targetId,
       timestamp: new Date(),
     };
-
+    
     setMatches((prev) => {
+      const isDuplicate = prev.some(
+        (m) => m.myId === myId && m.targetId === targetId
+      );
+      if (isDuplicate) return prev;
       const exists = prev.find(m => m.myId === myId && m.targetId === targetId);
       return exists ? prev : [...prev, newMatch];
     });
@@ -79,7 +83,12 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
       type: 'MATCH_OFFER',
       timestamp: new Date(),
     };
-    setNotifications(prev => [newNotif, ...prev]);
+    setNotifications((prev) => {
+    const isDuplicate = prev.some((n) => n.targetId === targetId);
+    if (isDuplicate) return prev;
+
+    return [newNotif, ...prev];
+  });
   }, []);
 
   const updateItem = useCallback((id: number, updates: Partial<MyListingItem>) => {

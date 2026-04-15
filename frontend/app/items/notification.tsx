@@ -42,14 +42,17 @@ export default function NotificationScreen() {
         </View>
 
         <ScrollView 
-          contentContainerStyle={styles.listContent}
+          contentContainerStyle={notifications.length === 0 ? { flex: 1 } : styles.listContent}
           style={styles.listcontainer}
         >
-          {notifications.map((notif) => {
-            // Fetch the item details to show a friendly name instead of just ID
-            const targetItem = getItemById(notif.targetId);
-            
-            return (
+          {notifications.length === 0 ? (
+            <View style={styles.centeredEmptyState}>
+              <ThemedText style={styles.emptyText}>
+                No liked items yet
+              </ThemedText>
+            </View>
+          ) : (
+            notifications.map((notif) => (
               <Pressable
                 key={notif.id}
                 onPress={() => {
@@ -65,7 +68,7 @@ export default function NotificationScreen() {
                     You have matched with User {notif.targetId}
                   </ThemedText>
                   <ThemedText style={{ color: 'gray', fontSize: 12 }}>
-                    Item: {targetItem?.title || "Unknown Item"}
+                    Item: {getItemById(notif.targetId)?.title || "Unknown Item"}
                   </ThemedText>
                   <ThemedText style={{ fontSize: 10, opacity: 0.6 }}>
                     {notif.timestamp.toLocaleTimeString()}
@@ -73,13 +76,17 @@ export default function NotificationScreen() {
                 </View>
                 <Ionicons name="chevron-forward" size={20} color="gray" />
               </Pressable>
-            );
-          })}
+            ))
+          )}
 
           {notifications.length === 0 && (
-            <ThemedView style={styles.center}>
-              <ThemedText>No notifications yet.</ThemedText>
-            </ThemedView>
+            <View style={[styles.emptyStateCenter, { backgroundColor: screenBg }]}>
+              <View style={styles.emptyStateAbove}>
+                <ThemedText style={[styles.emptyText]}>
+                  No liked items yet
+                </ThemedText>
+              </View>
+            </View>
           )}
         </ScrollView>
 
@@ -110,9 +117,6 @@ const styles = StyleSheet.create({
     paddingTop: 112,
     paddingHorizontal: 20,
     paddingBottom: 24,
-  },
-  firstCard: {
-    marginTop: 0,
   },
   card: {
     flexDirection: 'row',
@@ -159,11 +163,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notificationCard: {
-    
-  },
-  center: {
+  emptyText: {
+    fontSize: 20,
+    fontWeight: '600',
+    textAlign: 'center',
     justifyContent: 'center',
+  },
+  emptyStateCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  centeredEmptyState: {
+  flex: 1,
+  justifyContent: 'center', 
+  alignItems: 'center',     
+  paddingTop: 100, 
+},
+  emptyStateAbove: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '50%',
+    marginBottom: 52,
     alignItems: 'center',
   },
 });

@@ -31,12 +31,12 @@ export default function MatchPreviewScreen() {
     const mId = Number(myId);
     const tId = Number(targetId);
 
-    // 1. Update the notifications stack globally
+    // Update the notifications stack globally
     addNotification(mId, tId);
 
-    // 2. Direct the user to the chat page with the chosen items
-    router.push({
-      pathname: '/items/chat', // Ensure this matches your chat file path
+    // Direct the user to the chat page with the chosen items
+    router.replace({
+      pathname: '/items/chat', 
       params: { 
         myId: String(mId), 
         targetId: String(tId) 
