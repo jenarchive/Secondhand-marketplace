@@ -12,6 +12,8 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { Ionicons } from '@expo/vector-icons';
 
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+
 export default function App() {
   const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
   const screenBg = useThemeColor({}, 'background');
@@ -76,6 +78,16 @@ export default function App() {
 
   return (
     <ThemedView style={styles.mainContiner}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={styles.header}>
+        <Pressable
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </Pressable>
+        <ThemedText style={styles.headerTitle}>chat</ThemedText>
+      </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <View>
           {/* Header Area */}
@@ -141,8 +153,35 @@ export default function App() {
 
 const styles = StyleSheet.create({
   mainContiner: {
-    flex: 1, 
+    flex: 1,
+    paddingTop: 100,
   }, 
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 0,
+    padding: 4,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
   userInfo: {
   }, 
   flexbox: {
