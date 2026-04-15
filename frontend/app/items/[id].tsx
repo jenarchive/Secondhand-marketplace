@@ -1,9 +1,9 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
-import { useMemo, useSyncExternalStore } from 'react';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native';
+import { useRef, useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useRef, useCallback, useMemo, useState } from 'react';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
@@ -70,6 +70,19 @@ export default function HomeScreen() {
   };
 
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
+  const soldOnMarketplace = isItemSoldOnMarketplace(itemData.id);
+  const pendingMeetup = !soldOnMarketplace && isPendingMeetupReservation(itemData.id);
+  const listingStampLabel = soldOnMarketplace ? 'SOLD' : pendingMeetup ? 'PENDING' : null;
+  const stampAccentColor = soldOnMarketplace ? LISTING_STAMP_SOLD_COLOR : LISTING_STAMP_PENDING_COLOR;
+  const stampInset = 8;
+  const stampRectStyle = {
+    borderWidth: Math.max(2, 2.4 * detailStampScale),
+    borderRadius: 4 * detailStampScale,
+    paddingHorizontal: 5 * detailStampScale,
+    paddingVertical: 3 * detailStampScale,
+  };
+  const buyNowLocked = soldOnMarketplace || pendingMeetup;
+  const buyNowLabel = soldOnMarketplace ? 'Sold' : pendingMeetup ? 'Pending' : 'Buy Now';
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');

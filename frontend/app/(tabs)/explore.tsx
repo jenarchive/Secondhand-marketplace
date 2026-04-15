@@ -6,10 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings, type MyListingItem } from '@/contexts/MyListingsContext';
 
@@ -27,6 +25,7 @@ type TestItem = MyListingItem;
 
 export default function TabTwoScreen() {
   const router = useRouter();
+  const fromItemDetailRef = useRef(false);
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();
   const myItem = myListings[0]; // for now
@@ -306,7 +305,7 @@ export default function TabTwoScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={handleLikePress}
+            onPress={toggleLike}
           >
             <Ionicons
               name={currentItemLiked ? 'heart' : 'heart-outline'}

@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, TextInput, View } from 'react-native';
-import { useState, useMemo, useEffect } from 'react';
+import { Alert, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';

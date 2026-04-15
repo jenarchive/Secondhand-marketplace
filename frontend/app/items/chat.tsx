@@ -17,13 +17,14 @@ export default function App() {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const backgroundColor = useThemeColor({}, 'background');
 
-  const params = useLocalSearchParams<{ myId?: string; targetId?: string }>();
+  const params = useLocalSearchParams<{ myId?: string; targetId?: string; sellerName?: string }>();
   const router = useRouter();
   const { getItemById, removeNotification } = useMyListings();
   const myId = Number(params.myId);
   const targetId = Number(params.targetId);
   const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
   const targetItem = Number.isFinite(targetId) ? getItemById(targetId) : undefined;
+  const headerTitle = params.sellerName ?? (Number.isFinite(targetId) ? `User${targetId}` : 'Chat');
 
   const handleUnmatch = () => {
     Alert.alert('Unmatch', 'This match has been removed.', [
@@ -39,10 +40,10 @@ export default function App() {
     ]);
   };
 
-  if (!myItem || !targetItem) {
+  if (!targetItem) {
       return (
         <View style={[styles.screen, styles.center, { backgroundColor }]}>
-          <ThemedText>Match items not found.</ThemedText>
+          <ThemedText>Item not found.</ThemedText>
         </View>
       );
     }
@@ -96,10 +97,12 @@ export default function App() {
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>
-        <ThemedText style={styles.headerTitle}>Chat</ThemedText>
-        <Pressable style={styles.unmatchButton} onPress={handleUnmatch}>
-          <Ionicons name="close" size={19} color="#FFFFFF" />
-        </Pressable>
+        <ThemedText style={styles.headerTitle}>{headerTitle}</ThemedText>
+        {myItem && (
+          <Pressable style={styles.unmatchButton} onPress={handleUnmatch}>
+            <Ionicons name="close" size={19} color="#FFFFFF" />
+          </Pressable>
+        )}
       </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <View>
@@ -117,22 +120,40 @@ export default function App() {
 
           <ThemedView style={styles.flexbox}> 
             <View style={styles.contentWrap}>
-              <View style={styles.cardsRow}>
-                <View style={styles.itemColumn}>
-                  <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMy]}>My Listing</ThemedText>
-                  <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${myItem.id}`)}>
-                    <Image
-                      source={{ uri: myItem.image }}
-                      style={styles.itemImage}
-                      placeholder={{ blurhash }}
-                      contentFit="cover"
-                    />
-                    <ThemedText style={styles.itemTitle} numberOfLines={1}>{myItem.title}</ThemedText>
-                  </Pressable>
+              {myItem ? (
+                <View style={styles.cardsRow}>
+                  <View style={styles.itemColumn}>
+                    <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMy]}>My Listing</ThemedText>
+                    <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${myItem.id}`)}>
+                      <Image
+                        source={{ uri: myItem.image }}
+                        style={styles.itemImage}
+                        placeholder={{ blurhash }}
+                        contentFit="cover"
+                      />
+                      <ThemedText style={styles.itemTitle} numberOfLines={1}>{myItem.title}</ThemedText>
+                    </Pressable>
+                  </View>
+                  <View style={styles.itemColumn}>
+                    <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Item to Match</ThemedText>
+                    <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
+                      <Image
+                        source={{ uri: targetItem.image }}
+                        style={styles.itemImage}
+                        placeholder={{ blurhash }}
+                        contentFit="cover"
+                      />
+                      <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
+                    </Pressable>
+                  </View>
+                  <View pointerEvents="none" style={styles.tradeIconWrap}>
+                    <Ionicons name="swap-horizontal" size={25} color="#FFFFFF" />
+                  </View>
                 </View>
-                <View style={styles.itemColumn}>
-                  <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Item to Match</ThemedText>
-                  <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
+              ) : (
+                <View style={styles.singleCardWrap}>
+                  <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Ordered Product</ThemedText>
+                  <Pressable style={styles.itemCardSingle} onPress={() => router.push(`/items/${targetItem.id}`)}>
                     <Image
                       source={{ uri: targetItem.image }}
                       style={styles.itemImage}
@@ -142,10 +163,7 @@ export default function App() {
                     <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
                   </Pressable>
                 </View>
-                <View pointerEvents="none" style={styles.tradeIconWrap}>
-                  <Ionicons name="swap-horizontal" size={25} color="#FFFFFF" />
-                </View>
-              </View>
+              )}
             </View>
           </ThemedView>
         </View>

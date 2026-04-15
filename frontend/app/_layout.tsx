@@ -7,6 +7,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { LikedItemsProvider } from '@/contexts/LikedItemsContext';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 
 export const unstable_settings = {
@@ -21,7 +22,6 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <KeyboardProvider>
       <AuthProvider>
       <LikedItemsProvider>
         <MyListingsProvider>
@@ -37,7 +37,6 @@ export default function RootLayout() {
         </MyListingsProvider>
       </LikedItemsProvider>
       </AuthProvider>
-      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }
