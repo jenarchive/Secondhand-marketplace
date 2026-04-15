@@ -28,7 +28,7 @@ export default function NotificationScreen() {
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
           <ThemedText type="title" style={styles.headerTitle}>
-            Notifications
+            My Matches
           </ThemedText>
           <Pressable
             style={({ pressed }) => [
