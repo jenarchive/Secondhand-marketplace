@@ -86,7 +86,7 @@ export default function App() {
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>
-        <ThemedText style={styles.headerTitle}>chat</ThemedText>
+        <ThemedText style={styles.headerTitle}>Chat</ThemedText>
       </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <View>
@@ -189,6 +189,7 @@ const styles = StyleSheet.create({
   userInfo: {
     alignItems: 'center',
     paddingHorizontal: 8,
+    marginTop: 14,
   },
   userCardScaleWrap: {
     width: '94%',
