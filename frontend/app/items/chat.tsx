@@ -46,7 +46,7 @@ export default function App() {
           user: {
             _id: 2,
             name: 'React Native Bot',
-            avatar: 'https://placeimg.com/140/140/any',
+            avatar: 'https://picsum.photos/seed/66/140/140',
           },
         },
       ]);
