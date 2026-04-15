@@ -94,10 +94,10 @@ export default function App() {
           <ThemedView style={styles.userInfo}> 
             <View style={styles.userCardScaleWrap}>
               <UserHeader
-                itemId={1}
-                userLocation={"New York, NY"}
+                itemId={targetItem.id}
+                userLocation={targetItem.location}
                 userRating={4}
-                userId={1}
+                userId={targetItem.id}
                 displayName={undefined}
               />
             </View>
