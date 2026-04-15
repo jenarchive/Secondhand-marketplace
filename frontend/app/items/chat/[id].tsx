@@ -1,13 +1,22 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Pressable, TextInput, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { Image } from 'expo-image';
+import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams, Stack, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { getMessagesForItem, addMessageForItem } from '@/store/chatStore';
+import { setAcceptedOfferItemPrice, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
+
+function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
+  if (!offerPrice || Number.isNaN(Number(offerPrice))) return false;
+  const stored = getAcceptedOfferItemPrice(itemId);
+  return stored !== undefined && stored === Number(offerPrice);
+}
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
@@ -30,6 +39,14 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<string[]>(() => getMessagesForItem(id));
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [offerAccepted, setOfferAccepted] = useState(() => isOfferAcceptedForItem(id, params.offerPrice));
+
+  useFocusEffect(
+    useCallback(() => {
+      setOfferAccepted(isOfferAcceptedForItem(id, params.offerPrice));
+      setMessages(getMessagesForItem(id));
+    }, [id, params.offerPrice])
+  );
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
   const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFF';
@@ -64,8 +81,44 @@ export default function ChatScreen() {
     setShowMoreMenu(false);
   };
 
-  const handleInputFocus = () => {
-    // Panel closes when keyboard actually shows (in listener), so bar position stays fixed
+  const pushAttachmentMessage = (prefix: 'photo' | 'video', fileName?: string | null) => {
+    const fallback = prefix === 'photo' ? 'Photo' : 'Video';
+    const label = fileName ? `Sent ${prefix}: ${fileName}` : `Sent ${fallback}`;
+    addMessageForItem(id, label);
+    setMessages((prev) => [...prev, label]);
+  };
+
+  const requestMediaPermission = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permission.granted) return true;
+    Alert.alert('Permission needed', 'Please allow photo library access to send media.');
+    return false;
+  };
+
+  const handleSendPhoto = async () => {
+    const granted = await requestMediaPermission();
+    if (!granted) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: false,
+      quality: 0.9,
+    });
+    if (result.canceled || !result.assets.length) return;
+    pushAttachmentMessage('photo', result.assets[0]?.fileName);
+    handleCloseMore();
+  };
+
+  const handleSendVideo = async () => {
+    const granted = await requestMediaPermission();
+    if (!granted) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['videos'],
+      allowsMultipleSelection: false,
+      quality: 0.9,
+    });
+    if (result.canceled || !result.assets.length) return;
+    pushAttachmentMessage('video', result.assets[0]?.fileName);
+    handleCloseMore();
   };
 
   const handleSend = () => {
@@ -74,6 +127,19 @@ export default function ChatScreen() {
     addMessageForItem(id, trimmed);
     setMessages((prev) => [...prev, trimmed]);
     setMessage('');
+  };
+
+  const handleAcceptOffer = () => {
+    if (offerAccepted) return;
+    const offerNum = Number(params.offerPrice);
+    if (!Number.isFinite(offerNum) || offerNum <= 0) return;
+    setOfferAccepted(true);
+    setAcceptedOfferItemPrice(id, offerNum);
+    setOfferForItem(id, String(offerNum));
+    router.replace({
+      pathname: '/items/transaction/offer-accepted/[id]',
+      params: { id: String(id) },
+    });
   };
 
   return (
@@ -131,7 +197,12 @@ export default function ChatScreen() {
 
                   <Pressable
                     style={[styles.viewDetailsButton, { backgroundColor: '#2563EB' }]}
-                    onPress={() => router.push({ pathname: `/items/${id}`, params: { fromChat: 'true' } })}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/items/[id]',
+                        params: { id: String(id), fromChat: 'true' },
+                      })
+                    }
                   >
                     <Text style={styles.viewDetailsButtonText}>View details</Text>
                   </Pressable>
@@ -141,17 +212,44 @@ export default function ChatScreen() {
               {(params.offerPrice && !Number.isNaN(Number(params.offerPrice))) || messages.length > 0 ? (
                 <View style={styles.messagesContainer}>
                   {params.offerPrice && !Number.isNaN(Number(params.offerPrice)) && (
-                    <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
-                      <Text style={styles.offerCardTitle}>
-                        (Username) has made an offer.
-                      </Text>
-                      <Text style={styles.offerCardBody}>
-                        {new Intl.NumberFormat('en-GB', {
-                          style: 'currency',
-                          currency: 'GBP',
-                        }).format(Number(params.offerPrice))}
-                      </Text>
-                    </View>
+                    <>
+                      <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
+                        <Text style={styles.offerCardTitle}>
+                          (Username) has made an offer.
+                        </Text>
+                        <Text style={styles.offerCardBody}>
+                          {new Intl.NumberFormat('en-GB', {
+                            style: 'currency',
+                            currency: 'GBP',
+                          }).format(Number(params.offerPrice))}
+                        </Text>
+                        <Pressable
+                          style={[
+                            styles.acceptOfferButton,
+                            offerAccepted && styles.acceptOfferButtonDisabled,
+                          ]}
+                          onPress={handleAcceptOffer}
+                          disabled={offerAccepted}
+                        >
+                          <Text
+                            style={[
+                              styles.acceptOfferButtonText,
+                              offerAccepted && styles.acceptOfferButtonTextDisabled,
+                            ]}
+                          >
+                            {offerAccepted ? 'Accepted' : 'Accept offer'}
+                          </Text>
+                        </Pressable>
+                      </View>
+                      {offerAccepted && (
+                        <View style={[styles.offerAcceptedCard, { backgroundColor: inputBarBg }]}>
+                          <Text style={styles.offerAcceptedCardTitle}>Offer accepted</Text>
+                          <Text style={styles.offerAcceptedCardBody}>
+                            This offer has been accepted. You can continue in your transaction.
+                          </Text>
+                        </View>
+                      )}
+                    </>
                   )}
 
                   {messages.map((m, index) => (
@@ -176,7 +274,6 @@ export default function ChatScreen() {
               placeholderTextColor={placeholderColor}
               value={message}
               onChangeText={setMessage}
-              onFocus={handleInputFocus}
               multiline
               maxLength={500}
             />
@@ -189,12 +286,12 @@ export default function ChatScreen() {
           </View>
 
           {showMoreMenu && (
-            <View style={[styles.morePanelWrap, { height: panelHeight, backgroundColor: menuPanelBg }]}>
+            <View style={{ height: panelHeight, backgroundColor: menuPanelBg }}>
               <View style={styles.morePanelInner}>
                 <View style={styles.morePanelRow}>
                   <Pressable
                     style={styles.morePanelOption}
-                    onPress={handleCloseMore}
+                    onPress={handleSendPhoto}
                   >
                     <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="image-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
@@ -203,7 +300,7 @@ export default function ChatScreen() {
                   </Pressable>
                   <Pressable
                     style={styles.morePanelOption}
-                    onPress={handleCloseMore}
+                    onPress={handleSendVideo}
                   >
                     <View style={[styles.morePanelIconCircle, { backgroundColor: BACK_BUTTON_BG }]}>
                       <Ionicons name="videocam-outline" size={36} color={colorScheme === 'dark' ? '#fff' : '#000'} />
@@ -345,7 +442,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.35)',
     zIndex: 200,
   },
-  morePanelWrap: {},
   morePanelInner: {
     paddingTop: 24,
     paddingHorizontal: 24,
@@ -379,24 +475,64 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   offerCard: {
-    width: 140,
-    height: 140,
-    borderRadius: 20,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignSelf: 'flex-end',
+    width: 156,
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
     marginBottom: 2,
+    gap: 10,
   },
   offerCardTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#FACC15',
-    marginBottom: 4,
+    lineHeight: 18,
   },
   offerCardBody: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  acceptOfferButton: {
+    alignSelf: 'stretch',
+    backgroundColor: '#C44536',
+    paddingVertical: 11,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  acceptOfferButtonDisabled: {
+    backgroundColor: '#000000',
+  },
+  acceptOfferButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  acceptOfferButtonTextDisabled: {
+    color: '#888888',
+  },
+  offerAcceptedCard: {
+    alignSelf: 'flex-end',
+    maxWidth: '92%',
+    borderRadius: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    marginBottom: 2,
+    gap: 6,
+  },
+  offerAcceptedCardTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FACC15',
+    lineHeight: 18,
+  },
+  offerAcceptedCardBody: {
+    fontSize: 13,
+    fontWeight: '500',
+    lineHeight: 18,
     color: '#FFFFFF',
   },
   messageBubbleMe: {

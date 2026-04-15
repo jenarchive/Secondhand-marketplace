@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Pressable, TextInput, ScrollView, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
-import { getOfferForItem, setOfferForItem } from '@/store/transactionStore';
+import { getOfferForItem, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
+import { markItemPaidSold, markPendingMeetupReservation } from '@/store/pendingMeetupStore';
 
 type TransactionMethod = 'Delivery' | 'Collection';
 type PaymentMethod = 'card' | 'inPerson';
@@ -30,10 +32,25 @@ export default function TransactionScreen() {
 
   const [method, setMethod] = useState<TransactionMethod>('Delivery');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
+
+  useEffect(() => {
+    if (method === 'Delivery') {
+      setPaymentMethod('card');
+    } else {
+      setPaymentMethod('inPerson');
+    }
+  }, [method]);
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [collectionLocation, setCollectionLocation] = useState('');
   const [offerPrice, setOfferPrice] = useState(() => getOfferForItem(id));
+  const [acceptedItemPrice, setAcceptedItemPrice] = useState<number | undefined>(() => getAcceptedOfferItemPrice(id));
   const insets = useSafeAreaInsets();
+
+  useFocusEffect(
+    useCallback(() => {
+      setAcceptedItemPrice(getAcceptedOfferItemPrice(id));
+    }, [id])
+  );
   const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
@@ -75,10 +92,30 @@ export default function TransactionScreen() {
         id: String(id),
         sellerName: `User${id}`,
         transactionMethod: method,
-        offerPrice: hasValidOffer ? String(num) : undefined,
+        offerPrice:
+          acceptedItemPrice !== undefined
+            ? String(acceptedItemPrice)
+            : hasValidOffer
+              ? String(num)
+              : undefined,
       },
     });
   };
+
+  const handlePayOrReserve = () => {
+    if (method === 'Collection' && paymentMethod === 'inPerson') {
+      markPendingMeetupReservation(id);
+      router.replace('/(tabs)');
+      return;
+    }
+    if (paymentMethod === 'card') {
+      markItemPaidSold(id);
+      router.push(`/items/transaction/rate/${id}` as any);
+    }
+  };
+
+  const paymentItemPrice = itemData && (acceptedItemPrice ?? itemData.price);
+  const isOfferAccepted = acceptedItemPrice !== undefined;
 
   return (
     <>
@@ -218,20 +255,31 @@ export default function TransactionScreen() {
                       keyboardType="decimal-pad"
                     />
                   </View>
-                  <Pressable
-                    style={[styles.offerButton, { backgroundColor: borderColor }]}
-                    onPress={handleSendOffer}
-                  >
-                    <Text style={styles.offerButtonText}>Send offer</Text>
-                  </Pressable>
+                  {!isOfferAccepted && (
+                    <Pressable
+                      style={[styles.offerButton, { backgroundColor: borderColor }]}
+                      onPress={handleSendOffer}
+                    >
+                      <Text style={styles.offerButtonText}>Send offer</Text>
+                    </Pressable>
+                  )}
                 </View>
               </View>
 
               <Pressable
-                style={[styles.chatButton, { backgroundColor: cardBg, borderColor: borderColor }]}
+                style={[
+                  styles.chatButton,
+                  isOfferAccepted
+                    ? { backgroundColor: borderColor, borderWidth: 0 }
+                    : { backgroundColor: cardBg, borderWidth: 1, borderColor },
+                ]}
                 onPress={handleChatWithSeller}
               >
-                <Ionicons name="chatbubble-outline" size={22} color={borderColor} />
+                <Ionicons
+                  name="chatbubble-outline"
+                  size={22}
+                  color={isOfferAccepted ? '#FFFFFF' : borderColor}
+                />
                 <Text style={[styles.chatButtonText, { color: '#FFFFFF' }]}>Chat with seller</Text>
               </Pressable>
 
@@ -239,36 +287,78 @@ export default function TransactionScreen() {
                 <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment method</Text>
                 <View style={styles.methodRow}>
                   <Pressable
+                    disabled={method === 'Collection'}
                     style={[
                       styles.methodCard,
                       { backgroundColor: cardBg },
                       paymentMethod === 'card' && { borderWidth: 2, borderColor },
+                      method === 'Collection' && styles.paymentMethodDisabled,
                     ]}
                     onPress={() => setPaymentMethod('card')}
                   >
                     <Ionicons
                       name="card-outline"
                       size={24}
-                      color={paymentMethod === 'card' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+                      color={
+                        method === 'Collection'
+                          ? (colorScheme === 'dark' ? '#666' : '#999')
+                          : paymentMethod === 'card'
+                            ? borderColor
+                            : (colorScheme === 'dark' ? '#999' : '#666')
+                      }
                     />
-                    <Text style={[styles.methodLabel, { color: paymentMethod === 'card' ? borderColor : unselectedTextColor }, paymentMethod === 'card' && { fontWeight: '600' }]}>
+                    <Text
+                      style={[
+                        styles.methodLabel,
+                        {
+                          color:
+                            method === 'Collection'
+                              ? (colorScheme === 'dark' ? '#666' : '#999')
+                              : paymentMethod === 'card'
+                                ? borderColor
+                                : unselectedTextColor,
+                        },
+                        paymentMethod === 'card' && method !== 'Collection' && { fontWeight: '600' },
+                      ]}
+                    >
                       Card
                     </Text>
                   </Pressable>
                   <Pressable
+                    disabled={method === 'Delivery'}
                     style={[
                       styles.methodCard,
                       { backgroundColor: cardBg },
                       paymentMethod === 'inPerson' && { borderWidth: 2, borderColor },
+                      method === 'Delivery' && styles.paymentMethodDisabled,
                     ]}
                     onPress={() => setPaymentMethod('inPerson')}
                   >
                     <Ionicons
                       name="wallet-outline"
                       size={24}
-                      color={paymentMethod === 'inPerson' ? borderColor : (colorScheme === 'dark' ? '#999' : '#666')}
+                      color={
+                        method === 'Delivery'
+                          ? (colorScheme === 'dark' ? '#666' : '#999')
+                          : paymentMethod === 'inPerson'
+                            ? borderColor
+                            : (colorScheme === 'dark' ? '#999' : '#666')
+                      }
                     />
-                    <Text style={[styles.methodLabel, { color: paymentMethod === 'inPerson' ? borderColor : unselectedTextColor }, paymentMethod === 'inPerson' && { fontWeight: '600' }]}>
+                    <Text
+                      style={[
+                        styles.methodLabel,
+                        {
+                          color:
+                            method === 'Delivery'
+                              ? (colorScheme === 'dark' ? '#666' : '#999')
+                              : paymentMethod === 'inPerson'
+                                ? borderColor
+                                : unselectedTextColor,
+                        },
+                        paymentMethod === 'inPerson' && method !== 'Delivery' && { fontWeight: '600' },
+                      ]}
+                    >
                       Pay in-person
                     </Text>
                   </Pressable>
@@ -284,7 +374,7 @@ export default function TransactionScreen() {
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
                     <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Item price</Text>
                     <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>
-                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
+                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(paymentItemPrice ?? itemData.price)}
                     </Text>
                   </View>
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
@@ -302,7 +392,11 @@ export default function TransactionScreen() {
                   <View style={styles.totalCardRowLast}>
                     <Text style={[styles.totalCardTotalLabel, { color: '#FFFFFF' }]}>Total payment</Text>
                     <Text style={[styles.totalCardTotalAmount, { color: '#FFFFFF' }]}>
-                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(method === 'Delivery' ? itemData.price + DELIVERY_POSTAGE : itemData.price)}
+                      {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(
+                        method === 'Delivery'
+                          ? (paymentItemPrice ?? itemData.price) + DELIVERY_POSTAGE
+                          : (paymentItemPrice ?? itemData.price)
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -310,7 +404,7 @@ export default function TransactionScreen() {
 
               <Pressable
                 style={[styles.payButton, { backgroundColor: borderColor }]}
-                onPress={() => {}}
+                onPress={handlePayOrReserve}
               >
                 <Text style={styles.payButtonText}>
                   {paymentMethod === 'inPerson' ? 'Reserve item' : 'Pay now'}
@@ -443,6 +537,9 @@ const styles = StyleSheet.create({
   paymentMethodSection: {
     marginTop: 24,
   },
+  paymentMethodDisabled: {
+    opacity: 0.45,
+  },
   totalSection: {
     marginTop: 24,
   },
@@ -539,7 +636,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: 12,
     marginTop: 16,
-    borderWidth: 1,
   },
   chatButtonText: {
     fontSize: 15,

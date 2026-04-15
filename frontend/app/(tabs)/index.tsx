@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { useState, useMemo, useEffect } from 'react';
+import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -8,14 +8,19 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { CATEGORIES } from '@/constants/categories';
+import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
+import {
+  subscribePendingMeetup,
+  getPendingMeetupVersion,
+  isPendingMeetupReservation,
+  isItemSoldOnMarketplace,
+} from '@/store/pendingMeetupStore';
 
 export default function HomeScreen() {
-  const colourScheme = useColorScheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -24,6 +29,8 @@ export default function HomeScreen() {
   const { toggleLike, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+
+  useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
 
   useEffect(() => {
     setDisplayItems([...contextItems]);
@@ -59,7 +66,6 @@ export default function HomeScreen() {
       headerImage={<Image />}>
       
       <ThemedView>
-        {/* Search bar: category (left), input, search icon (right) */}
         <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
           <View style={styles.searchInner}>
             <Pressable
@@ -149,6 +155,22 @@ export default function HomeScreen() {
                       contentFit="cover"
                       source={{ uri: item.image }}
                     />
+                    {isItemSoldOnMarketplace(item.id) && (
+                      <View style={styles.pendingStampWrap}>
+                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_SOLD_COLOR }]}>
+                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_SOLD_COLOR }]}>SOLD</Text>
+                        </View>
+                      </View>
+                    )}
+                    {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
+                      <View style={styles.pendingStampWrap}>
+                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
+                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
+                            PENDING
+                          </Text>
+                        </View>
+                      </View>
+                    )}
                     <Pressable
                       style={styles.likeButton}
                       onPress={(e) => {
@@ -203,6 +225,30 @@ const styles = StyleSheet.create({
   imageWrapper: {
     position: 'relative',
     marginBottom: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  pendingStampWrap: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    zIndex: 2,
+    maxWidth: '55%',
+  },
+  pendingStampRect: {
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 4,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+  },
+  pendingStampText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.45,
   },
   likeButton: {
     position: 'absolute',

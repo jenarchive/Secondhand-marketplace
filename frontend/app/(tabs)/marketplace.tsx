@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity } from 'react-native';
-import { useState, useMemo, useEffect } from 'react';
+import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -12,6 +12,13 @@ import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { CATEGORIES } from '@/constants/categories';
+import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
+import {
+  subscribePendingMeetup,
+  getPendingMeetupVersion,
+  isPendingMeetupReservation,
+  isItemSoldOnMarketplace,
+} from '@/store/pendingMeetupStore';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -22,6 +29,8 @@ export default function HomeScreen() {
   const { toggleLike, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+
+  useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
 
   useEffect(() => {
     setDisplayItems([...contextItems]);
@@ -56,7 +65,6 @@ export default function HomeScreen() {
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#191C1F' }}
       headerImage={<Image />}>
       <ThemedView>
-        {/* Search bar: category (left), input, search icon (right) */}
         <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
           <View style={styles.searchInner}>
             <Pressable
@@ -124,12 +132,10 @@ export default function HomeScreen() {
                 key={`${item.id}-${item.title}`}
                 style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
                 onPress={async () => {
-                  // light selection haptic and navigate
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                   router.push(`/items/${item.id}`);
                 }}
                 onLongPress={async () => {
-                  // stronger feedback on long press
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                   router.push(`/items/${item.id}`);
                 }}
@@ -143,6 +149,22 @@ export default function HomeScreen() {
                       contentFit="cover"
                       source={{ uri: item.image }}
                     />
+                    {isItemSoldOnMarketplace(item.id) && (
+                      <View style={styles.pendingStampWrap}>
+                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_SOLD_COLOR }]}>
+                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_SOLD_COLOR }]}>SOLD</Text>
+                        </View>
+                      </View>
+                    )}
+                    {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
+                      <View style={styles.pendingStampWrap}>
+                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
+                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
+                            PENDING
+                          </Text>
+                        </View>
+                      </View>
+                    )}
                     <Pressable
                       style={styles.likeButton}
                       onPress={(e) => {
@@ -182,7 +204,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#25282B",
   },
 
-  //each item is 48% width 2 items per row
   listingLink: {
     flexBasis: '48%',
     maxWidth: '48%',
@@ -200,8 +221,31 @@ const styles = StyleSheet.create({
   imageWrapper: {
     position: 'relative',
     marginBottom: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
-
+  pendingStampWrap: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    zIndex: 2,
+    maxWidth: '55%',
+  },
+  pendingStampRect: {
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 4,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+  },
+  pendingStampText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.45,
+  },
   likeButton: {
     position: 'absolute',
     right: 8,
@@ -214,7 +258,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  //wraps children into two columns
   flexbox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -240,7 +283,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderWidth: 6,
     borderColor: DarkTheme.colors.border,
-    //iOS-like shadow
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
       android: { elevation: 2 }

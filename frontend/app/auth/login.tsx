@@ -1,15 +1,21 @@
 import { useState } from 'react';
-import { StyleSheet, Pressable, View, TextInput, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { StyleSheet, Pressable, View, TextInput, ActivityIndicator, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { useAuth } from '@/contexts/AuthContext';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function LoginScreen() {
   const router = useRouter();
   const { login } = useAuth();
+  const backgroundColor = useThemeColor({}, 'background');
+  const { height: windowHeight } = useWindowDimensions();
+  const formLift = Math.round(Math.min(200, windowHeight * 0.14));
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -43,47 +49,93 @@ export default function LoginScreen() {
   }
 
   return (
-    <ThemedView style={styles.screen}>
-      <View style={styles.form}>
-        <ThemedText type="title" style={styles.title}>Log In</ThemedText>
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <View style={[styles.root, { backgroundColor }]}>
+        <View style={[styles.header, { backgroundColor }]}>
+          <TouchableOpacity
+            style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
+            onPress={() => router.back()}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+        <ThemedView style={[styles.screen, { backgroundColor }]}>
+          <View style={[styles.formCenter, { paddingBottom: formLift }]}>
+            <View style={styles.form}>
+              <ThemedText type="title" style={styles.title}>Log In</ThemedText>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#888"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#888"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
+              />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#888"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+              />
 
-        {error ? <ThemedText style={styles.error}>{error}</ThemedText> : null}
+              {error ? <ThemedText style={styles.error}>{error}</ThemedText> : null}
 
-        <Pressable style={styles.button} onPress={handleLogin} disabled={loading}>
-          {loading
-            ? <ActivityIndicator color="#fff" />
-            : <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>Log In</ThemedText>
-          }
-        </Pressable>
+              <Pressable style={styles.button} onPress={handleLogin} disabled={loading}>
+                {loading
+                  ? <ActivityIndicator color="#fff" />
+                  : <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>Log In</ThemedText>
+                }
+              </Pressable>
+            </View>
+          </View>
+        </ThemedView>
       </View>
-    </ThemedView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    zIndex: 100,
+    paddingHorizontal: 20,
+  },
+  backButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 0,
+    padding: 4,
+    height: 40,
+    width: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginTop: 8,
+  },
   screen: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: '25%',
+    paddingTop: 100,
+  },
+  formCenter: {
+    flex: 1,
+    justifyContent: 'center',
   },
   form: {
     gap: 16,

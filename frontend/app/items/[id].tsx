@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
+import { useMemo, useSyncExternalStore } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
@@ -10,6 +11,13 @@ import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import {
+  subscribePendingMeetup,
+  getPendingMeetupVersion,
+  isPendingMeetupReservation,
+  isItemSoldOnMarketplace,
+} from '@/store/pendingMeetupStore';
+import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -22,6 +30,16 @@ export default function HomeScreen() {
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
   const liked = itemData ? isLiked(itemData.id) : false;
+
+  useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
+
+  const { width: windowWidth } = useWindowDimensions();
+  const detailStampScale = useMemo(() => {
+    const detailImageWidth = Math.max(1, windowWidth - 48);
+    const cardImageApproxWidth = Math.max(1, windowWidth * 0.44);
+    const r = detailImageWidth / cardImageApproxWidth;
+    return Math.min(2.5, Math.max(1.2, r));
+  }, [windowWidth]);
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -53,13 +71,45 @@ export default function HomeScreen() {
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
 
+  const listingStampLabel = isItemSoldOnMarketplace(itemData.id)
+    ? 'SOLD'
+    : isPendingMeetupReservation(itemData.id)
+      ? 'PENDING'
+      : null;
+  const buyNowLocked = listingStampLabel !== null;
+  const buyNowLabel =
+    listingStampLabel === 'SOLD' ? 'Sold' : listingStampLabel === 'PENDING' ? 'Pending' : 'Buy Now';
+  const stampAccentColor =
+    listingStampLabel === 'SOLD'
+      ? LISTING_STAMP_SOLD_COLOR
+      : listingStampLabel === 'PENDING'
+        ? LISTING_STAMP_PENDING_COLOR
+        : LISTING_STAMP_SOLD_COLOR;
+  const stampInset = 4 * detailStampScale;
+  const stampRectStyle = {
+    paddingHorizontal: 5 * detailStampScale,
+    paddingVertical: 3 * detailStampScale,
+    borderRadius: 4 * detailStampScale,
+    borderWidth: Math.min(3, Math.max(1.5, 2 * (detailStampScale / 1.85))),
+  };
+  const stampTextStyle = {
+    fontSize: 9 * detailStampScale,
+    letterSpacing: 0.45 * detailStampScale,
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.customHeader, { backgroundColor }]}>
         <TouchableOpacity
           style={[styles.customHeaderBackButton, { backgroundColor: BACK_BUTTON_BG }]}
-          onPress={() => router.replace('/(tabs)')}
+          onPress={() => {
+            if (fromChat) {
+              router.back();
+              return;
+            }
+            router.replace('/(tabs)');
+          }}
           activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -97,6 +147,21 @@ export default function HomeScreen() {
             contentFit="cover"
             source={{ uri: MyData.image }}
           />
+          {listingStampLabel && (
+            <View style={[styles.pendingStampWrap, { top: stampInset, left: stampInset }]}>
+              <View
+                style={[
+                  styles.pendingStampRect,
+                  stampRectStyle,
+                  { borderColor: stampAccentColor },
+                ]}
+              >
+                <Text style={[styles.pendingStampText, stampTextStyle, { color: stampAccentColor }]}>
+                  {listingStampLabel}
+                </Text>
+              </View>
+            </View>
+          )}
           {!isItemMine(itemData.id) && (
           <Pressable
             style={styles.likeButton}
@@ -160,14 +225,15 @@ export default function HomeScreen() {
         ) : !fromChat ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
-            style={styles.buyNowButton}
+            style={[styles.buyNowButton, buyNowLocked && styles.buyNowButtonStatusLocked]}
             onPress={async () => {
+              if (buyNowLocked) return;
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               router.push(`/items/transaction/${id}`);
             }}
-            accessibilityLabel="Buy Now"
+            accessibilityLabel={buyNowLabel}
           >
-            <ThemedText type="defaultSemiBold" style={styles.buyNowButtonText}>Buy Now</ThemedText>
+            <ThemedText type="defaultSemiBold" style={styles.buyNowButtonText}>{buyNowLabel}</ThemedText>
           </Pressable>
         </View>
         ) : null}
@@ -232,12 +298,29 @@ const styles = StyleSheet.create({
 
   imageWrapper: {
     position: 'relative',
+    borderRadius: 16,
+    overflow: 'hidden',
   },
 
   image: {
     width: '100%',
     borderRadius: 16,
     aspectRatio: 1,
+  },
+
+  pendingStampWrap: {
+    position: 'absolute',
+    zIndex: 2,
+    maxWidth: '55%',
+  },
+  pendingStampRect: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+  },
+  pendingStampText: {
+    fontWeight: '800',
   },
 
   likeButton: {
@@ -305,6 +388,9 @@ const styles = StyleSheet.create({
     minWidth: 160,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buyNowButtonStatusLocked: {
+    backgroundColor: '#C44536',
   },
   buyNowButtonText: {
     color: '#FFFFFF',
