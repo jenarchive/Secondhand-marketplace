@@ -31,15 +31,6 @@ export default function NotificationScreen() {
           <ThemedText type="title" style={styles.headerTitle}>
             My Matches
           </ThemedText>
-          <Pressable
-            style={({ pressed }) => [
-              styles.headerMenuButton,
-              { backgroundColor: BACK_BUTTON_BG },
-              pressed && styles.headerBackButtonPressed,
-            ]}
-          >
-            <Ionicons name="reorder-three" size={28} color="white" />
-          </Pressable>
         </View>
 
         <ScrollView 
@@ -165,17 +156,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     marginBottom: 4,
-  },
-  headerMenuButton: {
-    position: 'absolute',
-    right: 20,
-    bottom: 0,
-    padding: 4,
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   emptyText: {
     fontSize: 20,
