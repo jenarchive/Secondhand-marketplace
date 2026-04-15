@@ -1,4 +1,4 @@
-import { Keyboard, TouchableWithoutFeedback, View, StyleSheet, Pressable } from 'react-native';
+import { Alert, Keyboard, TouchableWithoutFeedback, View, StyleSheet, Pressable } from 'react-native';
 import { ThemedView } from "@/components/themed-view";
 import UserHeader from "@/components/user-header";
 import React, { useCallback, useState, useEffect } from "react";
@@ -24,6 +24,15 @@ export default function App() {
   const targetId = Number(params.targetId);
   const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
   const targetItem = Number.isFinite(targetId) ? getItemById(targetId) : undefined;
+
+  const handleUnmatch = () => {
+    Alert.alert('Unmatch', 'This match has been removed.', [
+      {
+        text: 'OK',
+        onPress: () => router.back(),
+      },
+    ]);
+  };
 
   if (!myItem || !targetItem) {
       return (
@@ -83,6 +92,9 @@ export default function App() {
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Chat</ThemedText>
+        <Pressable style={styles.unmatchButton} onPress={handleUnmatch}>
+          <Ionicons name="close" size={19} color="#FFFFFF" />
+        </Pressable>
       </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <View>
@@ -177,6 +189,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 8,
+  },
+  unmatchButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 1,
+    height: 36,
+    width: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FF3B30',
   },
   userInfo: {
     alignItems: 'center',
