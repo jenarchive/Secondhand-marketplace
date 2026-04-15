@@ -85,6 +85,7 @@ export default function LikedItemsScreen() {
           headerShown: likedItems.length > 0,
           headerTitleStyle: { fontWeight: '700' },
           headerStyle: { backgroundColor: screenBg },
+          headerShadowVisible: false,
           headerTintColor: textColor,
           headerLeft: isEditMode
             ? () => (
@@ -168,7 +169,7 @@ export default function LikedItemsScreen() {
             setOrderedItems(data);
             setLikedOrder(data.map((i) => i.id));
           }}
-          contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+          contentContainerStyle={[styles.listContent, { paddingTop: 18 }]}
           style={{ backgroundColor: screenBg }}
           renderItem={({ item, drag, isActive, getIndex }) => (
             <ScaleDecorator>
@@ -231,7 +232,7 @@ export default function LikedItemsScreen() {
         />
       ) : (
       <ScrollView
-        contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: 18 }]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
@@ -327,6 +328,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 24,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.14)',
+    paddingBottom: 16,
   },
   cardContent: {
     flex: 1,
