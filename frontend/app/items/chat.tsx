@@ -92,11 +92,15 @@ export default function App() {
         <View>
           {/* Header Area */}
           <ThemedView style={styles.userInfo}> 
-            <UserHeader itemId={1}
-              userLocation={"New York, NY"}
-              userRating={4}
-              userId={1}
-              displayName={undefined} />
+            <View style={styles.userCardScaleWrap}>
+              <UserHeader
+                itemId={1}
+                userLocation={"New York, NY"}
+                userRating={4}
+                userId={1}
+                displayName={undefined}
+              />
+            </View>
           </ThemedView>
 
           {/* Product Info */}
@@ -183,6 +187,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   userInfo: {
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+  userCardScaleWrap: {
+    width: '94%',
+    transform: [{ scale: 0.96 }],
   }, 
   flexbox: {
     flexDirection: 'row',
