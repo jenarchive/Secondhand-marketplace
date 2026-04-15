@@ -71,7 +71,7 @@ export default function NotificationScreen() {
                 />
                 <View style={styles.infoContainer}>
                   <ThemedText style={styles.productName}>
-                    {`User ${notif.targetId} × ${getItemById(notif.targetId)?.title || 'Unknown Item'}`}
+                    {`${getItemById(notif.targetId)?.title || 'Unknown Item'} with User ${notif.targetId}`}
                   </ThemedText>
                   <ThemedText style={styles.matchTimeText}>
                     {notif.timestamp.toLocaleDateString()} {notif.timestamp.toLocaleTimeString()}
