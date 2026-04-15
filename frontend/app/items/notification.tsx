@@ -5,6 +5,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/themed-text';
 import { Ionicons } from '@expo/vector-icons';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import { Image } from 'expo-image';
   
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -63,6 +64,11 @@ export default function NotificationScreen() {
                 }}
                 style={styles.card}
               >
+                <Image
+                  source={{ uri: getItemById(notif.targetId)?.image }}
+                  style={styles.matchItemThumb}
+                  contentFit="cover"
+                />
                 <View style={styles.infoContainer}>
                   <ThemedText style={styles.productName}>
                     You have matched with User {notif.targetId}
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   listContent: {
-    paddingTop: 112,
+    paddingTop: 128,
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
@@ -122,6 +128,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 24,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.16)',
+    paddingBottom: 18,
+  },
+  matchItemThumb: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    marginRight: 12,
+    backgroundColor: '#25282B',
   },
   infoContainer: {
     flex: 1,
