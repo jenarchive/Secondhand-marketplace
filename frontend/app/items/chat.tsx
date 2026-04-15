@@ -6,8 +6,6 @@ import { GiftedChat,IMessage } from "react-native-gifted-chat";
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Image } from 'expo-image';
 import { ThemedText } from "@/components/themed-text";
-import { router } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,14 +14,12 @@ const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function App() {
   const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
-  const screenBg = useThemeColor({}, 'background');
   const [messages, setMessages] = useState<IMessage[]>([]);
   const backgroundColor = useThemeColor({}, 'background');
 
   const params = useLocalSearchParams<{ myId?: string; targetId?: string }>();
   const router = useRouter();
   const { getItemById } = useMyListings();
-  const { myListings } = useMyListings();
   const myId = Number(params.myId);
   const targetId = Number(params.targetId);
   const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
@@ -61,7 +57,7 @@ export default function App() {
 
     setTimeout(() => {
           const reply: IMessage = {
-            _id: Math.random(), // Note: In production, use a more robust ID generator
+            _id: Math.random(),
             text: "I received your message!",
             createdAt: new Date(),
             user: {
@@ -90,7 +86,6 @@ export default function App() {
       </View>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
         <View>
-          {/* Header Area */}
           <ThemedView style={styles.userInfo}> 
             <View style={styles.userCardScaleWrap}>
               <UserHeader
@@ -103,7 +98,6 @@ export default function App() {
             </View>
           </ThemedView>
 
-          {/* Product Info */}
           <ThemedView style={styles.flexbox}> 
             <View style={styles.contentWrap}>
               <View style={styles.cardsRow}>
@@ -139,8 +133,6 @@ export default function App() {
           </ThemedView>
         </View>
       </TouchableWithoutFeedback>
-      
-      {/* Chat Area */}
       <View style={styles.chatbox}> 
         <GiftedChat
           messages={messages}

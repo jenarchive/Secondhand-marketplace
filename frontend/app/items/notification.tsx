@@ -81,16 +81,6 @@ export default function NotificationScreen() {
               </Pressable>
             ))
           )}
-
-          {notifications.length === 0 && (
-            <View style={[styles.emptyStateCenter, { backgroundColor: screenBg }]}>
-              <View style={styles.emptyStateAbove}>
-                <ThemedText style={[styles.emptyText]}>
-                  No liked items yet
-                </ThemedText>
-              </View>
-            </View>
-          )}
         </ScrollView>
 
 
