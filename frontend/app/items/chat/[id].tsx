@@ -550,3 +550,33 @@
 //     lineHeight: 18,
 //   },
 // });
+
+
+
+
+            {/* <Pressable 
+              style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
+              key={`${1}-${"Used Bicycle"}`}
+              onPress={() => {
+                router.push(`/items/${1}`);
+              }}
+              onLongPress={() => {
+                router.push(`/items/${1}`);
+              }}
+            >
+              <ThemedView style={styles.imageWrapper}>
+                <Image
+                  style={styles.image}
+                  contentFit="cover"
+                  placeholder={{ blurhash }}
+                  source="https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=400&h=600&fit=crop"
+                />
+              </ThemedView>
+              <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{"Used Bicycle"}</ThemedText>
+              <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(150)}</ThemedText>
+              <FontAwesome
+                name={"exchange"} 
+                size={20}
+                color={'#FFFFFF'}
+              />
+            </Pressable> */}
