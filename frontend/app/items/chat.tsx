@@ -108,18 +108,6 @@ export default function App() {
             <View style={styles.contentWrap}>
               <View style={styles.cardsRow}>
                 <View style={styles.itemColumn}>
-                  <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Item to Match</ThemedText>
-                  <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
-                    <Image
-                      source={{ uri: targetItem.image }}
-                      style={styles.itemImage}
-                      placeholder={{ blurhash }}
-                      contentFit="cover"
-                    />
-                    <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
-                  </Pressable>
-                </View>
-                <View style={styles.itemColumn}>
                   <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMy]}>My Listing</ThemedText>
                   <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${myItem.id}`)}>
                     <Image
@@ -129,6 +117,18 @@ export default function App() {
                       contentFit="cover"
                     />
                     <ThemedText style={styles.itemTitle} numberOfLines={1}>{myItem.title}</ThemedText>
+                  </Pressable>
+                </View>
+                <View style={styles.itemColumn}>
+                  <ThemedText style={[styles.cardTopLabel, styles.cardTopLabelMatch]}>Item to Match</ThemedText>
+                  <Pressable style={styles.itemCard} onPress={() => router.push(`/items/${targetItem.id}`)}>
+                    <Image
+                      source={{ uri: targetItem.image }}
+                      style={styles.itemImage}
+                      placeholder={{ blurhash }}
+                      contentFit="cover"
+                    />
+                    <ThemedText style={styles.itemTitle} numberOfLines={1}>{targetItem.title}</ThemedText>
                   </Pressable>
                 </View>
                 <View pointerEvents="none" style={styles.tradeIconWrap}>
@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     marginTop: 14,
+    marginBottom: 10,
   },
   userCardScaleWrap: {
     width: '94%',
@@ -204,12 +205,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingBottom: 0,
-    paddingTop: 10,
+    paddingTop: 18,
   },
   cardsRow: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 2,
     position: 'relative',
+    width: '94%',
+    alignSelf: 'center',
   },
   itemColumn: {
     flex: 1,
@@ -218,7 +221,7 @@ const styles = StyleSheet.create({
   cardTopLabel: {
     fontSize: 14,
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 4,
     textAlign: 'center',
   },
   cardTopLabelMy: {
@@ -228,7 +231,7 @@ const styles = StyleSheet.create({
     color: '#FF9500',
   },
   itemCard: {
-    width: '80%',
+    width: '86%',
     borderRadius: 14,
     padding: 10,
     backgroundColor: '#25282B',
@@ -247,9 +250,9 @@ const styles = StyleSheet.create({
   tradeIconWrap: {
     position: 'absolute',
     left: '50%',
-    top: '46%',
-    marginLeft: -10,
-    marginTop: -1,
+    top: '50%',
+    marginLeft: -12,
+    marginTop: -12,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 20,
