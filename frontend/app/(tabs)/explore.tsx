@@ -27,8 +27,9 @@ type TestItem = MyListingItem;
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const { toggleLike: toggleLikeContext, isLiked, likedMap } = useLikedItems();
-  const { items: contextItems, isMyListing } = useMyListings();
+  const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
+  const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();
+  const myItem = myListings[0]; // for now
   const myListingItems = useMemo(
     () => contextItems.filter((item) => isMyListing(item.id)),
     [contextItems, isMyListing]
@@ -81,15 +82,19 @@ export default function TabTwoScreen() {
   };
 
   const handleSwipeDirection = (direction: 'left' | 'right') => {
-    const itemId = getTopItemId();
-    if (direction === 'right' && itemId != null) {
-      setHeartFilledId(itemId);
-      setLikeButtonHeartFilled(true);
-      if (!isLiked(itemId)) {
-        alreadyAddedToLikesRef.current = true;
-        toggleLikeContext(itemId);
+    spawnButterflies(direction);
+    if (direction === 'right' && currentItem) {
+      toggleLikeContext(currentItem.id);
+      if (currentItem == visibleItems[0]){ // for matching for now
+        recordMatch(myItem.id, currentItem.id);
+        router.push({
+          pathname: '/items/match-preview',
+          params: {
+            targetId: String(currentItem.id),
+            myId: String(myItem.id),
+          },
+        })
       }
-      spawnButterflies('right');
     }
   };
 
@@ -104,6 +109,16 @@ export default function TabTwoScreen() {
   const toggleLike = () => {
     if (!currentItem) return;
     toggleLikeContext(currentItem.id);
+    if (currentItem == visibleItems[0]){ // for matching for now
+      recordMatch(myItem.id, currentItem.id);
+      router.push({
+        pathname: '/items/match-preview',
+        params: {
+          targetId: String(currentItem.id),
+          myId: String(myItem.id),
+        },
+      })
+    }
   };
 
   const handleSwipeUp = () => {

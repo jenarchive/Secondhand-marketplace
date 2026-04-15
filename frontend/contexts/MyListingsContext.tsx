@@ -16,6 +16,15 @@ type MyListingsContextType = {
   updateItem: (id: number, updates: Partial<MyListingItem>) => void;
   removeItem: (id: number) => void;
   getItemById: (id: number) => MyListingItem | undefined;
+  matches: Match[]; 
+  recordMatch: (myId: number, targetId: number) => void;
+};
+
+type Match = { // type for storing match
+  id: string; 
+  myId: number;
+  targetId: number;
+  timestamp: Date;
 };
 
 const MyListingsContext = createContext<MyListingsContextType | null>(null);
@@ -27,11 +36,29 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   const [myListingIds, setMyListingIds] = useState<number[]>(() =>
     pickRandomItems(getItems(), 2).map((i) => i.id)
   );
+  const [matches, setMatches] = useState<Match[]>([]);
 
   const myListings = useMemo(
     () => items.filter((item) => myListingIds.includes(item.id)),
     [items, myListingIds]
   );
+
+  // func to record matches
+  const recordMatch = useCallback((myId: number, targetId: number) => {
+    const newMatch: Match = {
+      id: `${myId}-${targetId}-${Date.now()}`, 
+      myId,
+      targetId,
+      timestamp: new Date(),
+    };
+
+    setMatches((prev) => {
+      const exists = prev.find(m => m.myId === myId && m.targetId === targetId);
+      return exists ? prev : [...prev, newMatch];
+    });
+
+    console.log("Match Recorded Globally:", newMatch);
+  }, []);
 
   const updateItem = useCallback((id: number, updates: Partial<MyListingItem>) => {
     const next = getItems().map((item) =>
@@ -59,8 +86,8 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   );
 
   const value = useMemo(
-    () => ({ items, myListings, isMyListing, updateItem, removeItem, getItemById }),
-    [items, myListings, isMyListing, updateItem, removeItem, getItemById]
+    () => ({ items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById }),
+    [items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById]
   );
 
   return (
