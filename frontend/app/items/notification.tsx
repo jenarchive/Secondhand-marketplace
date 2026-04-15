@@ -71,7 +71,10 @@ export default function NotificationScreen() {
                 />
                 <View style={styles.infoContainer}>
                   <ThemedText style={styles.productName}>
-                    {`${getItemById(notif.targetId)?.title || 'Unknown Item'} with User ${notif.targetId}`}
+                    {`${getItemById(notif.targetId)?.title || 'Unknown Item'} `}
+                    <ThemedText style={styles.withUserText}>
+                      {`with User ${notif.targetId}`}
+                    </ThemedText>
                   </ThemedText>
                   <ThemedText style={styles.matchTimeText}>
                     {notif.timestamp.toLocaleDateString()} {notif.timestamp.toLocaleTimeString()}
@@ -134,6 +137,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 4,
+  },
+  withUserText: {
+    fontSize: 14,
+    fontWeight: '400',
   },
   matchTimeText: {
     fontSize: 11,
