@@ -18,12 +18,22 @@ type MyListingsContextType = {
   getItemById: (id: number) => MyListingItem | undefined;
   matches: Match[]; 
   recordMatch: (myId: number, targetId: number) => void;
+  notifications: Notification[];
+  addNotification: (myId: number, targetId: number) => void;
 };
 
 type Match = { // type for storing match
   id: string; 
   myId: number;
   targetId: number;
+  timestamp: Date;
+};
+
+type Notification = { // for showing in notification page
+  id: string;
+  myId: number;
+  targetId: number;
+  type: 'MATCH_OFFER';
   timestamp: Date;
 };
 
@@ -37,6 +47,7 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
     pickRandomItems(getItems(), 2).map((i) => i.id)
   );
   const [matches, setMatches] = useState<Match[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const myListings = useMemo(
     () => items.filter((item) => myListingIds.includes(item.id)),
@@ -58,6 +69,17 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
     });
 
     console.log("Match Recorded Globally:", newMatch);
+  }, []);
+
+  const addNotification = useCallback((myId: number, targetId: number) => {
+    const newNotif: Notification = {
+      id: Math.random().toString(),
+      myId,
+      targetId,
+      type: 'MATCH_OFFER',
+      timestamp: new Date(),
+    };
+    setNotifications(prev => [newNotif, ...prev]);
   }, []);
 
   const updateItem = useCallback((id: number, updates: Partial<MyListingItem>) => {
@@ -86,8 +108,8 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   );
 
   const value = useMemo(
-    () => ({ items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById }),
-    [items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById]
+    () => ({ items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById, notifications, addNotification }),
+    [items, matches, recordMatch, myListings, isMyListing, updateItem, removeItem, getItemById, , notifications, addNotification]
   );
 
   return (

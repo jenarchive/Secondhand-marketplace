@@ -12,7 +12,7 @@ const blurhash =
 export default function MatchPreviewScreen() {
   const params = useLocalSearchParams<{ myId?: string; targetId?: string }>();
   const router = useRouter();
-  const { getItemById } = useMyListings();
+  const { getItemById, addNotification } = useMyListings();
   const backgroundColor = useThemeColor({}, 'background');
   const myId = Number(params.myId);
   const targetId = Number(params.targetId);
@@ -26,6 +26,23 @@ export default function MatchPreviewScreen() {
       </View>
     );
   }
+
+  const handleSendOffer = () => {
+    const mId = Number(myId);
+    const tId = Number(targetId);
+
+    // 1. Update the notifications stack globally
+    addNotification(mId, tId);
+
+    // 2. Direct the user to the chat page with the chosen items
+    router.push({
+      pathname: '/items/chat', // Ensure this matches your chat file path
+      params: { 
+        myId: String(mId), 
+        targetId: String(tId) 
+      },
+    });
+  };
 
   return (
     <View style={[styles.screen, { backgroundColor }]}>
@@ -77,7 +94,7 @@ export default function MatchPreviewScreen() {
             <Ionicons name="swap-horizontal" size={30} color="#FFFFFF" />
           </View>
         </View>
-        <Pressable style={styles.sendButton} onPress={() => {}}>
+        <Pressable style={styles.sendButton} onPress={handleSendOffer}>
           <ThemedText style={styles.sendButtonText}>Send match offer</ThemedText>
         </Pressable>
       </View>

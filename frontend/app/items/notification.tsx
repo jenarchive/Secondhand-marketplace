@@ -4,13 +4,14 @@ import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/themed-text';
 import { Ionicons } from '@expo/vector-icons';
+import { useMyListings } from '@/contexts/MyListingsContext';
   
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
-
 
 export default function NotificationScreen() {
   const screenBg = useThemeColor({}, 'background');
   const nav = useRouter();
+  const { notifications, getItemById } = useMyListings();
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <ThemedView style={[styles.screen, { backgroundColor: screenBg }]}>
@@ -39,25 +40,50 @@ export default function NotificationScreen() {
             <Ionicons name="reorder-three" size={28} color="white" />
           </Pressable>
         </View>
-        <ScrollView
+
+        <ScrollView 
           contentContainerStyle={styles.listContent}
-          contentInsetAdjustmentBehavior="never"
           style={styles.listcontainer}
-          showsVerticalScrollIndicator={false}
         >
-          <Pressable
-            onPress={() => {
-              router.push(`/items/chat`);
-            }}
-            style={[styles.card, styles.firstCard]}
-          >
-            <View style={styles.infoContainer}>
-              <ThemedText style={styles.productName} numberOfLines={1}>
-                You haved matched with user 1.
-              </ThemedText>
-            </View>
-          </Pressable>
+          {notifications.map((notif) => {
+            // Fetch the item details to show a friendly name instead of just ID
+            const targetItem = getItemById(notif.targetId);
+            
+            return (
+              <Pressable
+                key={notif.id}
+                onPress={() => {
+                  router.push({
+                    pathname: '/items/chat',
+                    params: { myId: notif.myId, targetId: notif.targetId }
+                  });
+                }}
+                style={styles.card}
+              >
+                <View style={styles.infoContainer}>
+                  <ThemedText style={styles.productName}>
+                    You have matched with User {notif.targetId}
+                  </ThemedText>
+                  <ThemedText style={{ color: 'gray', fontSize: 12 }}>
+                    Item: {targetItem?.title || "Unknown Item"}
+                  </ThemedText>
+                  <ThemedText style={{ fontSize: 10, opacity: 0.6 }}>
+                    {notif.timestamp.toLocaleTimeString()}
+                  </ThemedText>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color="gray" />
+              </Pressable>
+            );
+          })}
+
+          {notifications.length === 0 && (
+            <ThemedView style={styles.center}>
+              <ThemedText>No notifications yet.</ThemedText>
+            </ThemedView>
+          )}
         </ScrollView>
+
+
       </ThemedView>
     </View>
   );
@@ -130,6 +156,13 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationCard: {
+    
+  },
+  center: {
     justifyContent: 'center',
     alignItems: 'center',
   },
