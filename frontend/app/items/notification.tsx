@@ -114,10 +114,10 @@ const styles = StyleSheet.create({
     paddingBottom: 18,
   },
   matchItemThumb: {
-    width: 54,
-    height: 54,
-    borderRadius: 10,
-    marginRight: 12,
+    width: 90,
+    height: 90,
+    borderRadius: 12,
+    marginRight: 16,
     backgroundColor: '#25282B',
   },
   infoContainer: {
@@ -125,16 +125,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   productName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
     marginBottom: 4,
   },
   withUserText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '400',
   },
   matchTimeText: {
-    fontSize: 11,
+    fontSize: 12,
     opacity: 0.62,
   },
   listcontainer: { flex: 1 },

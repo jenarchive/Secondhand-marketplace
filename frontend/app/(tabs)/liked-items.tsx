@@ -263,6 +263,7 @@ export default function LikedItemsScreen() {
                   {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
                 </ThemedText>
               </View>
+              <Ionicons name="chevron-forward" size={20} color="gray" />
             </Pressable>
           ))}
       </ScrollView>
