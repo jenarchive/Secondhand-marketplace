@@ -25,16 +25,27 @@ const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 const DELIVERY_POSTAGE = 2.5;
 
 export default function TransactionScreen() {
-  const params = useLocalSearchParams<{ id: string; source?: string; fromMarketplace?: string; fromExplore?: string; fromLikedItems?: string }>();
+  const params = useLocalSearchParams<{
+    id: string;
+    source?: string;
+    fromMarketplace?: string;
+    fromExplore?: string;
+    fromLikedItems?: string;
+    /** My Chats → 채팅 → 결제까지 온 경우 결제 종료 후 My Chats로 복귀 */
+    fromMyChatsList?: string;
+  }>();
   const id = Number(params.id);
   const sourceParam = params.source;
   const source = Array.isArray(sourceParam) ? sourceParam[0] : sourceParam;
   const fromMarketplaceParam = params.fromMarketplace;
   const fromExploreParam = params.fromExplore;
   const fromLikedItemsParam = params.fromLikedItems;
+  const fromMyChatsListParam = params.fromMyChatsList;
   const fromMarketplace = (Array.isArray(fromMarketplaceParam) ? fromMarketplaceParam[0] : fromMarketplaceParam) === 'true';
   const fromExplore = (Array.isArray(fromExploreParam) ? fromExploreParam[0] : fromExploreParam) === 'true';
   const fromLikedItems = (Array.isArray(fromLikedItemsParam) ? fromLikedItemsParam[0] : fromLikedItemsParam) === 'true';
+  const returnToMyChatsAfterPayment =
+    (Array.isArray(fromMyChatsListParam) ? fromMyChatsListParam[0] : fromMyChatsListParam) === 'true';
   const router = useRouter();
   const { items, addPurchaseChatEntry } = useMyListings();
   const itemData = items.find((item) => item.id === id);
@@ -110,6 +121,7 @@ export default function TransactionScreen() {
         fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
         fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
         fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
+        ...(returnToMyChatsAfterPayment ? { fromMyChatsList: 'true' } : {}),
       },
     });
   };
@@ -129,6 +141,7 @@ export default function TransactionScreen() {
         fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
         fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
         fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
+        ...(returnToMyChatsAfterPayment ? { fromMyChatsList: 'true' } : {}),
         offerPrice:
           acceptedItemPrice !== undefined
             ? String(acceptedItemPrice)
@@ -143,13 +156,23 @@ export default function TransactionScreen() {
     if (method === 'Collection' && paymentMethod === 'inPerson') {
       markPendingMeetupReservation(id);
       addPurchaseChatEntry(id);
-      router.replace('/(tabs)');
+      if (returnToMyChatsAfterPayment) {
+        router.replace('/items/your-chats');
+      } else {
+        router.replace('/(tabs)');
+      }
       return;
     }
     if (paymentMethod === 'card') {
       markItemPaidSold(id);
       addPurchaseChatEntry(id);
-      router.push(`/items/transaction/rate/${id}` as any);
+      router.push({
+        pathname: '/items/transaction/rate/[id]',
+        params: {
+          id: String(id),
+          fromMyChatsList: returnToMyChatsAfterPayment ? 'true' : 'false',
+        },
+      } as any);
     }
   };
 

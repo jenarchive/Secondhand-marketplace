@@ -62,7 +62,7 @@ export default function YourChatsScreen() {
 
   const sortedNotifications = useMemo(
     () =>
-      [...notifications].sort((a, b) => notificationCreatedAt(a) - notificationCreatedAt(b)),
+      [...notifications].sort((a, b) => notificationCreatedAt(b) - notificationCreatedAt(a)),
     [notifications]
   );
 
@@ -118,6 +118,7 @@ export default function YourChatsScreen() {
                         id: String(itemId),
                         sellerName: `User${itemId}`,
                         fromTransaction: 'true',
+                        fromMyChatsList: 'true',
                       },
                     });
                   }}

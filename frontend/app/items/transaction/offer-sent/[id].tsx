@@ -20,6 +20,7 @@ export default function OfferSentScreen() {
     fromMarketplace?: string | string[];
     fromExplore?: string | string[];
     fromLikedItems?: string | string[];
+    fromMyChatsList?: string | string[];
   }>();
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
@@ -73,6 +74,7 @@ export default function OfferSentScreen() {
     const fromMarketplace = firstParam(params.fromMarketplace) ?? 'false';
     const fromExplore = firstParam(params.fromExplore) ?? 'false';
     const fromLikedItems = firstParam(params.fromLikedItems) ?? 'false';
+    const fromMyChatsList = firstParam(params.fromMyChatsList) === 'true';
 
     const t = setTimeout(() => {
       router.replace({
@@ -87,6 +89,7 @@ export default function OfferSentScreen() {
           fromMarketplace,
           fromExplore,
           fromLikedItems,
+          ...(fromMyChatsList ? { fromMyChatsList: 'true' } : {}),
         },
       });
     }, OFFER_SENT_DURATION_MS);
@@ -100,6 +103,7 @@ export default function OfferSentScreen() {
     params.fromMarketplace,
     params.fromExplore,
     params.fromLikedItems,
+    params.fromMyChatsList,
     router,
   ]);
 

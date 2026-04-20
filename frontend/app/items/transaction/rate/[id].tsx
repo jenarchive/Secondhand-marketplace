@@ -10,7 +10,7 @@ import { useMyListings } from '@/contexts/MyListingsContext';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function RateAfterPaymentScreen() {
-  const params = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string; fromMyChatsList?: string }>();
   const id = Number(params.id);
   const router = useRouter();
   const { items } = useMyListings();
@@ -82,7 +82,11 @@ export default function RateAfterPaymentScreen() {
           onPress={() =>
             router.replace({
               pathname: '/items/transaction/rating-submitted/[id]',
-              params: { id: String(id), rating: String(rating) },
+              params: {
+                id: String(id),
+                rating: String(rating),
+                fromMyChatsList: params.fromMyChatsList ?? 'false',
+              },
             } as any)
           }
         >

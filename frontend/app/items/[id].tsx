@@ -19,10 +19,13 @@ import {
   isPendingMeetupReservation,
   isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
-import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
+import {
+  LISTING_STAMP_IN_PROGRESS_COLOR,
+  LISTING_STAMP_PENDING_COLOR,
+  LISTING_STAMP_SOLD_COLOR,
+} from '@/constants/listing-stamp';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
-const IN_PROGRESS_COLOR = '#16A34A';
 
 export default function HomeScreen() {
   const params = useLocalSearchParams<{
@@ -34,11 +37,13 @@ export default function HomeScreen() {
     fromMarketplace?: string;
     fromLikedItems?: string;
     source?: string;
+    showBuyNowFromPurchaseChat?: string;
   }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
   const fromChat = params.fromChat === 'true';
   const fromTransaction = params.fromTransaction === 'true';
+  const showBuyNowFromPurchaseChat = params.showBuyNowFromPurchaseChat === 'true';
   const fromExplore = params.fromExplore === 'true';
   const fromMarketplace = params.fromMarketplace === 'true';
   const fromLikedItems = params.fromLikedItems === 'true';
@@ -108,7 +113,7 @@ export default function HomeScreen() {
   const stampAccentColor = soldOnMarketplace
     ? LISTING_STAMP_SOLD_COLOR
     : inProgressStatus
-      ? IN_PROGRESS_COLOR
+      ? LISTING_STAMP_IN_PROGRESS_COLOR
       : LISTING_STAMP_PENDING_COLOR;
   const stampInset = 8;
   const stampRectStyle = {
@@ -190,7 +195,14 @@ export default function HomeScreen() {
             styles.scrollContentWrap,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) && !fromChat && !fromTransaction ? 72 : 0),
+              paddingBottom:
+                24 +
+                Math.max(insets.bottom, 12) +
+                (!isItemMine(itemData.id) &&
+                !fromTransaction &&
+                (!fromChat || showBuyNowFromPurchaseChat)
+                  ? 72
+                  : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -388,7 +400,7 @@ export default function HomeScreen() {
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
           </Pressable>
         </View>
-        ) : !fromChat && !fromTransaction ? (
+        ) : !fromTransaction && (!fromChat || showBuyNowFromPurchaseChat) ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
             style={[
@@ -420,6 +432,7 @@ export default function HomeScreen() {
                   fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
                   fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
                   fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
+                  ...(showBuyNowFromPurchaseChat ? { fromMyChatsList: 'true' } : {}),
                 },
               });
             }}
@@ -667,7 +680,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#C44536',
   },
   buyNowButtonInProgress: {
-    backgroundColor: IN_PROGRESS_COLOR,
+    backgroundColor: LISTING_STAMP_IN_PROGRESS_COLOR,
   },
   buyNowButtonText: {
     color: '#FFFFFF',

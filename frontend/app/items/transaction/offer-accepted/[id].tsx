@@ -22,6 +22,7 @@ export default function OfferAcceptedScreen() {
     fromMarketplace?: string | string[];
     fromExplore?: string | string[];
     fromLikedItems?: string | string[];
+    fromMyChatsList?: string | string[];
   }>();
   const router = useRouter();
   const id = firstParam(params.id);
@@ -40,24 +41,36 @@ export default function OfferAcceptedScreen() {
   useEffect(() => {
     if (!id) return;
     const t = setTimeout(() => {
+      const source = firstParam(params.source);
+      const fromMyChats = firstParam(params.fromMyChatsList) === 'true';
+      const txParams = {
+        id: String(id),
+        ...(source ? { source } : {}),
+        fromMarketplace: firstParam(params.fromMarketplace) ?? 'false',
+        fromExplore: firstParam(params.fromExplore) ?? 'false',
+        fromLikedItems: firstParam(params.fromLikedItems) ?? 'false',
+        ...(fromMyChats ? { fromMyChatsList: 'true' as const } : {}),
+      };
+
+      if (fromMyChats) {
+        router.replace({
+          pathname: '/items/transaction/[id]',
+          params: txParams,
+        });
+        return;
+      }
+
       if (router.canGoBack()) {
         router.back();
         return;
       }
-      const source = firstParam(params.source);
       router.replace({
         pathname: '/items/transaction/[id]',
-        params: {
-          id: String(id),
-          ...(source ? { source } : {}),
-          fromMarketplace: firstParam(params.fromMarketplace) ?? 'false',
-          fromExplore: firstParam(params.fromExplore) ?? 'false',
-          fromLikedItems: firstParam(params.fromLikedItems) ?? 'false',
-        },
+        params: txParams,
       });
     }, AUTO_NAV_MS);
     return () => clearTimeout(t);
-  }, [id, router, params.source, params.fromMarketplace, params.fromExplore, params.fromLikedItems]);
+  }, [id, router, params.source, params.fromMarketplace, params.fromExplore, params.fromLikedItems, params.fromMyChatsList]);
 
   return (
     <>

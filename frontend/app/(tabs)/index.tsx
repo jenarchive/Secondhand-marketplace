@@ -12,15 +12,17 @@ import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { CATEGORIES } from '@/constants/categories';
-import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
+import {
+  LISTING_STAMP_IN_PROGRESS_COLOR,
+  LISTING_STAMP_PENDING_COLOR,
+  LISTING_STAMP_SOLD_COLOR,
+} from '@/constants/listing-stamp';
 import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
   isPendingMeetupReservation,
   isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
-
-const IN_PROGRESS_COLOR = '#16A34A';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -191,13 +193,21 @@ export default function HomeScreen() {
                         <View
                           style={[
                             styles.pendingStampRect,
-                            { borderColor: hasPendingMatchOffer ? IN_PROGRESS_COLOR : LISTING_STAMP_PENDING_COLOR },
+                            {
+                              borderColor: hasPendingMatchOffer
+                                ? LISTING_STAMP_IN_PROGRESS_COLOR
+                                : LISTING_STAMP_PENDING_COLOR,
+                            },
                           ]}
                         >
                           <Text
                             style={[
                               styles.pendingStampText,
-                              { color: hasPendingMatchOffer ? IN_PROGRESS_COLOR : LISTING_STAMP_PENDING_COLOR },
+                              {
+                                color: hasPendingMatchOffer
+                                  ? LISTING_STAMP_IN_PROGRESS_COLOR
+                                  : LISTING_STAMP_PENDING_COLOR,
+                              },
                             ]}
                           >
                             {hasPendingMatchOffer ? 'IN PROGRESS' : 'RESERVED'}

@@ -67,6 +67,8 @@ export default function ChatScreen() {
     fromExplore?: string;
     fromLikedItems?: string;
     fromTransaction?: string;
+    /** My Chats에서 연 경우: 오퍼 수락 후 결제 페이지로 replace (back 시 목록으로만 가지 않게) */
+    fromMyChatsList?: string;
   }>();
   const router = useRouter();
   const { isLoggedIn, token } = useAuth();
@@ -219,6 +221,7 @@ export default function ChatScreen() {
         fromMarketplace: params.fromMarketplace ?? 'false',
         fromExplore: params.fromExplore ?? 'false',
         fromLikedItems: params.fromLikedItems ?? 'false',
+        fromMyChatsList: params.fromMyChatsList ?? 'false',
       },
     });
   };
@@ -243,6 +246,7 @@ export default function ChatScreen() {
                   fromMarketplace: params.fromMarketplace ?? 'false',
                   fromExplore: params.fromExplore ?? 'false',
                   fromLikedItems: params.fromLikedItems ?? 'false',
+                  ...(params.fromMyChatsList === 'true' ? { fromMyChatsList: 'true' } : {}),
                 },
               });
             }}
@@ -290,7 +294,11 @@ export default function ChatScreen() {
                     onPress={() =>
                       router.push({
                         pathname: '/items/[id]',
-                        params: { id: String(id), fromChat: 'true' },
+                        params: {
+                          id: String(id),
+                          fromChat: 'true',
+                          showBuyNowFromPurchaseChat: 'true',
+                        },
                       })
                     }
                   >
