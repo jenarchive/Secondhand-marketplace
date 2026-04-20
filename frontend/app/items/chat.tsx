@@ -1,7 +1,7 @@
 import { Alert, Keyboard, TouchableWithoutFeedback, View, StyleSheet, Pressable, Text, TextInput, Platform } from 'react-native';
 import { ThemedView } from "@/components/themed-view";
 import UserHeader from "@/components/user-header";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Image } from 'expo-image';
 import { ThemedText } from "@/components/themed-text";
@@ -45,6 +45,7 @@ export default function App() {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const inputRef = useRef<TextInput | null>(null);
   const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
   const targetItem = Number.isFinite(targetId) ? getItemById(targetId) : undefined;
   const headerTitle = params.sellerName ?? (Number.isFinite(targetId) ? `User${targetId}` : 'Chat');
@@ -109,11 +110,20 @@ export default function App() {
   }, [chatKey, message]);
 
   const handleMorePress = () => {
+    inputRef.current?.blur();
     Keyboard.dismiss();
     setShowMoreMenu(true);
   };
 
   const handleCloseMore = () => {
+    inputRef.current?.blur();
+    Keyboard.dismiss();
+    setShowMoreMenu(false);
+  };
+
+  const handleMainPress = () => {
+    inputRef.current?.blur();
+    Keyboard.dismiss();
     setShowMoreMenu(false);
   };
 
@@ -175,7 +185,7 @@ export default function App() {
           </Pressable>
         )}
       </View>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
+      <TouchableWithoutFeedback onPress={handleMainPress}>
         <View style={styles.contentWrap}>
           {showMoreMenu && (
             <Pressable style={styles.moreOverlay} onPress={handleCloseMore} />
@@ -240,24 +250,25 @@ export default function App() {
               )}
             </View>
           </ThemedView>
+          <View style={styles.chatbox}>
+            <View style={styles.messagesContainer}>
+              {messages.map((m, index) => (
+                <View key={`${m.sentAt}-${index}-${m.text}`} style={styles.messageBubbleMe}>
+                  <Text style={styles.messageText}>{m.text}</Text>
+                  <Text style={styles.messageMeta}>{formatMessageTime(m.sentAt)}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
         </View>
       </TouchableWithoutFeedback>
-      <View style={styles.chatbox}> 
-        <View style={styles.messagesContainer}>
-          {messages.map((m, index) => (
-            <View key={`${m.sentAt}-${index}-${m.text}`} style={styles.messageBubbleMe}>
-              <Text style={styles.messageText}>{m.text}</Text>
-              <Text style={styles.messageMeta}>{formatMessageTime(m.sentAt)}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
       <View style={styles.bottomWrap}>
         <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: inputBarPadding, paddingTop: 12 }]}>
           <Pressable style={[styles.moreButton, { backgroundColor: BACK_BUTTON_BG }]} onPress={handleMorePress}>
             <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
           </Pressable>
           <TextInput
+            ref={inputRef}
             style={[styles.messageInput, { color: '#FFFFFF' }]}
             placeholder="Enter your message."
             placeholderTextColor={placeholderColor}
@@ -433,7 +444,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   contentWrap: {
-    flex: 0,
+    flex: 1,
   },
   messagesContainer: {
     flexGrow: 1,
