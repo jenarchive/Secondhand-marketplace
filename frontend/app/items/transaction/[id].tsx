@@ -123,6 +123,7 @@ export default function TransactionScreen() {
         id: String(id),
         sellerName: `User${id}`,
         transactionMethod: method,
+        fromTransaction: 'true',
         ...(source ? { source } : {}),
         fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
         fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',

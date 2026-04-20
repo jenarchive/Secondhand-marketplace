@@ -80,6 +80,7 @@ export default function OfferSentScreen() {
         params: {
           id: idStr,
           sellerName: `User${idStr}`,
+          fromTransaction: 'true',
           ...(transactionMethod ? { transactionMethod } : {}),
           ...(offerPrice ? { offerPrice } : {}),
           ...(source ? { source } : {}),

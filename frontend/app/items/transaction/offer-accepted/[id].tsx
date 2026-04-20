@@ -10,10 +10,21 @@ const AUTO_NAV_MS = 5000;
 const BUTTERFLY_DURATION = 4200;
 const TITLE_ORANGE = '#FF9500';
 
+function firstParam(v: string | string[] | undefined): string | undefined {
+  if (v === undefined) return undefined;
+  return Array.isArray(v) ? v[0] : v;
+}
+
 export default function OfferAcceptedScreen() {
-  const params = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{
+    id: string | string[];
+    source?: string | string[];
+    fromMarketplace?: string | string[];
+    fromExplore?: string | string[];
+    fromLikedItems?: string | string[];
+  }>();
   const router = useRouter();
-  const id = params.id;
+  const id = firstParam(params.id);
   const backgroundColor = useThemeColor({}, 'background');
   const subtextColor = useThemeColor({}, 'tabIconDefault');
 
@@ -29,10 +40,24 @@ export default function OfferAcceptedScreen() {
   useEffect(() => {
     if (!id) return;
     const t = setTimeout(() => {
-      router.replace({ pathname: '/items/transaction/[id]', params: { id: String(id) } });
+      if (router.canGoBack()) {
+        router.back();
+        return;
+      }
+      const source = firstParam(params.source);
+      router.replace({
+        pathname: '/items/transaction/[id]',
+        params: {
+          id: String(id),
+          ...(source ? { source } : {}),
+          fromMarketplace: firstParam(params.fromMarketplace) ?? 'false',
+          fromExplore: firstParam(params.fromExplore) ?? 'false',
+          fromLikedItems: firstParam(params.fromLikedItems) ?? 'false',
+        },
+      });
     }, AUTO_NAV_MS);
     return () => clearTimeout(t);
-  }, [id, router]);
+  }, [id, router, params.source, params.fromMarketplace, params.fromExplore, params.fromLikedItems]);
 
   return (
     <>

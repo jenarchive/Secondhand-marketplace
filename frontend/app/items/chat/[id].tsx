@@ -41,10 +41,12 @@ export default function ChatScreen() {
     fromMarketplace?: string;
     fromExplore?: string;
     fromLikedItems?: string;
+    fromTransaction?: string;
   }>();
   const router = useRouter();
   const { isLoggedIn, token } = useAuth();
   const id = Number(params.id);
+  const returnToTransactionFlow = params.fromTransaction === 'true';
   const { items } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
@@ -177,7 +179,13 @@ export default function ChatScreen() {
     setOfferForItem(id, String(offerNum));
     router.replace({
       pathname: '/items/transaction/offer-accepted/[id]',
-      params: { id: String(id) },
+      params: {
+        id: String(id),
+        ...(params.source ? { source: params.source } : {}),
+        fromMarketplace: params.fromMarketplace ?? 'false',
+        fromExplore: params.fromExplore ?? 'false',
+        fromLikedItems: params.fromLikedItems ?? 'false',
+      },
     });
   };
 
@@ -188,7 +196,11 @@ export default function ChatScreen() {
         <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-            onPress={() =>
+            onPress={() => {
+              if (returnToTransactionFlow && router.canGoBack()) {
+                router.back();
+                return;
+              }
               router.replace({
                 pathname: '/items/transaction/[id]',
                 params: {
@@ -198,8 +210,8 @@ export default function ChatScreen() {
                   fromExplore: params.fromExplore ?? 'false',
                   fromLikedItems: params.fromLikedItems ?? 'false',
                 },
-              })
-            }
+              });
+            }}
             activeOpacity={0.8}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
