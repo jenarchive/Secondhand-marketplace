@@ -78,32 +78,27 @@ export default function HomeScreen() {
     <ThemedView style={styles.screen}>
       <View style={styles.mainContainer}>
 
-        <Link href="../items/edit-profile" asChild>
-          <Pressable style={styles.profileFrame}>
-            <ThemedView style={styles.userProfileContainer}>
-                <ThemedView style={styles.userProfileImage}>
-                  <ThemedText type="defaultSemiBold">{username ? username[0].toUpperCase() : 'U'}</ThemedText>
-                </ThemedView>
-                <ThemedView style={styles.userMeta}>
-                  <ThemedText type="defaultSemiBold" style={styles.userNameText}>
-                    {username || 'Username'}
-                  </ThemedText>
-                  <View style={styles.userRatingRow}>
-                    <View style={styles.userRatingStars}>
-                      <Ionicons name="star" size={14} color="#FACC15" />
-                      <Ionicons name="star" size={14} color="#FACC15" />
-                      <Ionicons name="star" size={14} color="#FACC15" />
-                      <Ionicons name="star" size={14} color="#FACC15" />
-                      <Ionicons name="star" size={14} color="#FACC15" />
-                    </View>
-                  </View>
-                </ThemedView>
-                <View style={styles.userCardArrowWrap}>
-                  <Ionicons name="chevron-forward" size={26} color="#9CA3AF" />
-                </View>
+        <View style={styles.profileFrame}>
+          <ThemedView style={styles.userProfileContainer}>
+            <ThemedView style={styles.userProfileImage}>
+              <ThemedText type="defaultSemiBold">{username ? username[0].toUpperCase() : 'U'}</ThemedText>
             </ThemedView>
-          </Pressable>
-        </Link>
+            <ThemedView style={styles.userMeta}>
+              <ThemedText type="defaultSemiBold" style={styles.userNameText}>
+                {username || 'Username'}
+              </ThemedText>
+              <View style={styles.userRatingRow}>
+                <View style={styles.userRatingStars}>
+                  <Ionicons name="star" size={14} color="#FACC15" />
+                  <Ionicons name="star" size={14} color="#FACC15" />
+                  <Ionicons name="star" size={14} color="#FACC15" />
+                  <Ionicons name="star" size={14} color="#FACC15" />
+                  <Ionicons name="star" size={14} color="#FACC15" />
+                </View>
+              </View>
+            </ThemedView>
+          </ThemedView>
+        </View>
 
         <FlatList
           data={Data}
@@ -240,11 +235,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
-  },
-  userCardArrowWrap: {
-    marginLeft: 'auto',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   listContainer: {
     paddingTop: 32,
