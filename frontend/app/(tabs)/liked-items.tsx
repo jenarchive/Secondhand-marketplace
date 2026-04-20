@@ -243,7 +243,14 @@ export default function LikedItemsScreen() {
               style={[styles.card, index === 0 && styles.firstCard]}
               onPress={async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                router.push(`/items/${item.id}`);
+                router.push({
+                  pathname: '/items/[id]',
+                  params: {
+                    id: String(item.id),
+                    source: 'liked-items',
+                    fromLikedItems: 'true',
+                  },
+                });
               }}
             >
               <View style={styles.imageWrapper}>

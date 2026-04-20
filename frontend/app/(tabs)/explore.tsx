@@ -127,6 +127,7 @@ export default function TabTwoScreen() {
         params: {
           id: String(currentItem.id),
           source: 'explore',
+          fromExplore: 'true',
         },
       });
     }

@@ -25,8 +25,16 @@ const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 const DELIVERY_POSTAGE = 2.5;
 
 export default function TransactionScreen() {
-  const params = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string; source?: string; fromMarketplace?: string; fromExplore?: string; fromLikedItems?: string }>();
   const id = Number(params.id);
+  const sourceParam = params.source;
+  const source = Array.isArray(sourceParam) ? sourceParam[0] : sourceParam;
+  const fromMarketplaceParam = params.fromMarketplace;
+  const fromExploreParam = params.fromExplore;
+  const fromLikedItemsParam = params.fromLikedItems;
+  const fromMarketplace = (Array.isArray(fromMarketplaceParam) ? fromMarketplaceParam[0] : fromMarketplaceParam) === 'true';
+  const fromExplore = (Array.isArray(fromExploreParam) ? fromExploreParam[0] : fromExploreParam) === 'true';
+  const fromLikedItems = (Array.isArray(fromLikedItemsParam) ? fromLikedItemsParam[0] : fromLikedItemsParam) === 'true';
   const router = useRouter();
   const { items } = useMyListings();
   const itemData = items.find((item) => item.id === id);
@@ -147,7 +155,21 @@ export default function TransactionScreen() {
         <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-            onPress={() => router.replace(`/items/${id}`)}
+            onPress={() => {
+              if (source === 'marketplace' || fromMarketplace) {
+                router.replace('/(tabs)');
+                return;
+              }
+              if (source === 'explore' || fromExplore) {
+                router.replace('/(tabs)/explore');
+                return;
+              }
+              if (source === 'liked-items' || fromLikedItems) {
+                router.replace('/(tabs)/liked-items');
+                return;
+              }
+              router.replace(`/items/${id}`);
+            }}
             activeOpacity={0.8}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
@@ -239,7 +261,15 @@ export default function TransactionScreen() {
               <Text style={[styles.sectionLabel, styles.orderSectionLabel, { color: primaryTextColor }]}>Ordered product</Text>
               <Pressable
                 style={[styles.orderCard, { backgroundColor: cardBg }]}
-                onPress={() => router.push(`/items/${id}`)}
+                onPress={() =>
+                  router.push({
+                    pathname: '/items/[id]',
+                    params: {
+                      id: String(id),
+                      ...(source ? { source } : {}),
+                    },
+                  })
+                }
               >
                 <Image
                   source={{ uri: itemData.image }}

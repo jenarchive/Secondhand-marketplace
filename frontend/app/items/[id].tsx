@@ -24,13 +24,15 @@ import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constan
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
-  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string; fromExplore?: string; fromMarketplace?: string; source?: string }>();
+  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string; fromExplore?: string; fromMarketplace?: string; fromLikedItems?: string; source?: string }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
   const fromChat = params.fromChat === 'true';
   const fromExplore = params.fromExplore === 'true';
   const fromMarketplace = params.fromMarketplace === 'true';
-  const source = params.source;
+  const fromLikedItems = params.fromLikedItems === 'true';
+  const sourceParam = params.source;
+  const source = Array.isArray(sourceParam) ? sourceParam[0] : sourceParam;
   const { items, isMyListing: isItemMine, removeItem } = useMyListings();
   const myListingItems = useMemo(
     () => items.filter((item) => isItemMine(item.id)),
@@ -126,7 +128,7 @@ export default function HomeScreen() {
               return;
             }
             if (source === 'marketplace') {
-              router.replace('/(tabs)/marketplace');
+              router.replace('/(tabs)');
               return;
             }
             if (source === 'explore') {
@@ -134,7 +136,7 @@ export default function HomeScreen() {
               return;
             }
             if (fromMarketplace) {
-              router.replace('/(tabs)/marketplace');
+              router.replace('/(tabs)');
               return;
             }
             if (fromExplore) {
@@ -337,7 +339,18 @@ export default function HomeScreen() {
             onPress={async () => {
               if (buyNowLocked) return;
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              router.push(`/items/transaction/${id}`);
+              router.push({
+                pathname: '/items/transaction/[id]',
+                params: {
+                  id: String(id),
+                  source:
+                    source ??
+                    (fromMarketplace ? 'marketplace' : fromExplore ? 'explore' : undefined),
+                  fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
+                  fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
+                  fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
+                },
+              });
             }}
             accessibilityLabel={buyNowLabel}
           >

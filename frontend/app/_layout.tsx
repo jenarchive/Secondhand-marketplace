@@ -23,10 +23,10 @@ export default function RootLayout() {
         <MyListingsProvider>
         <ThemeProvider value={theme}>
           <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="items" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-            <Stack.Screen name="auth/signup" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="items" options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="auth/login" options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="auth/signup" options={{ headerShown: false, animation: 'none' }} />
           </Stack>
           <StatusBar style="light" />
         </ThemeProvider>
