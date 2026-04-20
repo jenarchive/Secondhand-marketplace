@@ -84,11 +84,11 @@ export default function HomeScreen() {
                   </ThemedText>
                   <View style={styles.userRatingRow}>
                     <View style={styles.userRatingStars}>
-                      <Ionicons name="star" size={12} color="#FACC15" />
-                      <Ionicons name="star" size={12} color="#FACC15" />
-                      <Ionicons name="star" size={12} color="#FACC15" />
-                      <Ionicons name="star" size={12} color="#FACC15" />
-                      <Ionicons name="star" size={12} color="#FACC15" />
+                      <Ionicons name="star" size={14} color="#FACC15" />
+                      <Ionicons name="star" size={14} color="#FACC15" />
+                      <Ionicons name="star" size={14} color="#FACC15" />
+                      <Ionicons name="star" size={14} color="#FACC15" />
+                      <Ionicons name="star" size={14} color="#FACC15" />
                     </View>
                   </View>
                 </ThemedView>
@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: 'center',
+    marginTop: 90,
     rowGap: '2%',
   },
   profileFrame: {
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContainer: {
-    paddingTop: 16,
+    paddingTop: 32,
     paddingBottom: 24,
     width: 300,
     alignContent: 'center',
