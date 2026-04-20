@@ -105,6 +105,10 @@ export default function TransactionScreen() {
         id: String(id),
         offerPrice: String(num),
         transactionMethod: method,
+        ...(source ? { source } : {}),
+        fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
+        fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
+        fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
       },
     });
   };
