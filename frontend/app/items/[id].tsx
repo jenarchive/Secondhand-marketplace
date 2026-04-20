@@ -23,10 +23,11 @@ import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constan
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
-  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string }>();
+  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string; fromExplore?: string }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
   const fromChat = params.fromChat === 'true';
+  const fromExplore = params.fromExplore === 'true';
   const { items, isMyListing: isItemMine, removeItem } = useMyListings();
   const myListingItems = useMemo(
     () => items.filter((item) => isItemMine(item.id)),
@@ -123,7 +124,11 @@ export default function HomeScreen() {
               router.back();
               return;
             }
-            router.replace('/(tabs)');
+            if (fromExplore && router.canGoBack()) {
+              router.back();
+              return;
+            }
+            router.replace('/(tabs)/explore');
           }}
           activeOpacity={0.8}
         >

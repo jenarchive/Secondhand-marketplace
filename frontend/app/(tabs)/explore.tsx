@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState, useMemo } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
@@ -25,7 +25,6 @@ type TestItem = MyListingItem;
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const fromItemDetailRef = useRef(false);
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();
   const myItem = myListings[0]; // for now
@@ -123,8 +122,13 @@ export default function TabTwoScreen() {
   const handleSwipeUp = () => {
     const currentItem = visibleItems[visibleItems.length - 1];
     if (currentItem) {
-      fromItemDetailRef.current = true;
-      router.push(`/items/${currentItem.id}`);
+      router.push({
+        pathname: '/items/[id]',
+        params: {
+          id: String(currentItem.id),
+          fromExplore: 'true',
+        },
+      });
     }
   };
 
@@ -452,12 +456,12 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.55)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   matchIconBadgeActive: {
-    backgroundColor: 'rgba(255,255,255,0.34)',
+    backgroundColor: 'rgba(255,255,255,0.55)',
   },
   matchPickerPanel: {
     position: 'absolute',
