@@ -19,7 +19,14 @@ export default function RatingSubmittedScreen() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace(returnToMyChats ? '/items/your-chats' : '/(tabs)');
+      if (returnToMyChats) {
+        router.replace({
+          pathname: '/items/your-chats',
+          params: { backToProfile: 'true' },
+        } as any);
+      } else {
+        router.replace('/(tabs)');
+      }
     }, 3000);
 
     return () => clearTimeout(timer);

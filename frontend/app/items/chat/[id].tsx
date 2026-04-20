@@ -27,7 +27,6 @@ function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
   return stored !== undefined && stored === Number(offerPrice);
 }
 
-/** URL params → 저장된 오퍼/수락가 순으로 복원 (My Chats 등 재진입 시에도 오퍼 카드 유지) */
 function getEffectiveOfferPrice(
   itemId: number,
   offerPriceParam?: string | string[]
@@ -67,7 +66,6 @@ export default function ChatScreen() {
     fromExplore?: string;
     fromLikedItems?: string;
     fromTransaction?: string;
-    /** My Chats에서 연 경우: 오퍼 수락 후 결제 페이지로 replace (back 시 목록으로만 가지 않게) */
     fromMyChatsList?: string;
   }>();
   const router = useRouter();

@@ -18,7 +18,7 @@ type MyListingsContextType = {
   updateItem: (id: number, updates: Partial<MyListingItem>) => void;
   removeItem: (id: number) => void;
   getItemById: (id: number) => MyListingItem | undefined;
-  matches: Match[]; 
+  matches: Match[];
   recordMatch: (myId: number, targetId: number) => void;
   notifications: Notification[];
   addNotification: (myId: number, targetId: number) => void;
@@ -26,8 +26,8 @@ type MyListingsContextType = {
   removeNotification: (myId: number, targetId: number) => void;
 };
 
-type Match = { // type for storing match
-  id: string; 
+type Match = {
+  id: string;
   myId: number;
   targetId: number;
   timestamp: Date;
@@ -38,9 +38,7 @@ type Notification = {
   myId: number;
   targetId: number;
   type: ChatListNotificationType;
-  /** 표시용 시간 (레거시, 마이그레이션용) */
   timestamp: Date;
-  /** 목록 정렬·고정용: 최초 생성 시각만 사용 (재방문 시 변경하지 않음) */
   createdAt?: Date;
 };
 
@@ -61,25 +59,18 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
     [items, myListingIds]
   );
 
-  // func to record matches
   const recordMatch = useCallback((myId: number, targetId: number) => {
     const newMatch: Match = {
-      id: `${myId}-${targetId}-${Date.now()}`, 
+      id: `${myId}-${targetId}-${Date.now()}`,
       myId,
       targetId,
       timestamp: new Date(),
     };
-    
-    setMatches((prev) => {
-      const isDuplicate = prev.some(
-        (m) => m.myId === myId && m.targetId === targetId
-      );
-      if (isDuplicate) return prev;
-      const exists = prev.find(m => m.myId === myId && m.targetId === targetId);
-      return exists ? prev : [...prev, newMatch];
-    });
 
-    console.log("Match Recorded Globally:", newMatch);
+    setMatches((prev) => {
+      if (prev.some((m) => m.myId === myId && m.targetId === targetId)) return prev;
+      return [...prev, newMatch];
+    });
   }, []);
 
   const addNotification = useCallback((myId: number, targetId: number) => {

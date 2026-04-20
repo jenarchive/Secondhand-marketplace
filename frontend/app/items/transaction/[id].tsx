@@ -31,7 +31,6 @@ export default function TransactionScreen() {
     fromMarketplace?: string;
     fromExplore?: string;
     fromLikedItems?: string;
-    /** My Chats → 채팅 → 결제까지 온 경우 결제 종료 후 My Chats로 복귀 */
     fromMyChatsList?: string;
   }>();
   const id = Number(params.id);
@@ -157,7 +156,10 @@ export default function TransactionScreen() {
       markPendingMeetupReservation(id);
       addPurchaseChatEntry(id);
       if (returnToMyChatsAfterPayment) {
-        router.replace('/items/your-chats');
+        router.replace({
+          pathname: '/items/your-chats',
+          params: { backToProfile: 'true' },
+        } as any);
       } else {
         router.replace('/(tabs)');
       }

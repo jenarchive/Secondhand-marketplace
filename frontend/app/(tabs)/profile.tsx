@@ -35,13 +35,11 @@ function AuthGate() {
 }
 
 export default function HomeScreen() {
-  const { isLoggedIn, token } = useAuth();
+  const { isLoggedIn, token, logout } = useAuth();
   const colorScheme = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
   const [username, setUsername] = useState(cachedUsername);
   const [email, setEmail] = useState(cachedEmail);
-
-  const { logout } = useAuth();
 
   useEffect(() => {
     if (!isLoggedIn || !token) return;

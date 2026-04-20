@@ -79,6 +79,7 @@ export default function ItemsLayout() {
         options={{
           headerShown: false,
           animation: "slide_from_right",
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen

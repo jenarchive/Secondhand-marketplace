@@ -27,8 +27,9 @@ export default function UserHeader({
   const starOutlineColor = colorScheme === 'dark' ? 'rgba(0,0,0,0.75)' : 'rgba(55,65,81,0.6)';
 
   const handleUserPress = async () => {
-    try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
-    console.log('User profile pressed', itemId);
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } catch {}
   };
 
   const name = displayName ?? `User${userId}`;

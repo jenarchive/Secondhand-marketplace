@@ -1,6 +1,6 @@
 import { useMemo, useSyncExternalStore } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/themed-text';
@@ -25,19 +25,13 @@ const LABEL_RESERVED = 'Reserved';
 const COLOR_MATCH = '#3B82F6';
 const COLOR_PURCHASE = '#16A34A';
 const COLOR_BOUGHT = '#EF4444';
-/** 마켓플레이스·상세 RESERVED 스탬프와 동일 계열 주황 */
 const COLOR_RESERVED = '#EA580C';
 
 function notificationCreatedAt(n: { createdAt?: Date; timestamp: Date }): number {
   return (n.createdAt ?? n.timestamp).getTime();
 }
 
-function statusLabelAndColor(
-  kind: ChatListNotificationType,
-  itemId: number,
-  pendingSnapshot: number
-): { label: string; color: string } {
-  void pendingSnapshot;
+function statusLabelAndColor(kind: ChatListNotificationType, itemId: number): { label: string; color: string } {
   if (kind === 'MATCH_OFFER') {
     return { label: LABEL_MATCH, color: COLOR_MATCH };
   }
@@ -53,6 +47,8 @@ function statusLabelAndColor(
 export default function YourChatsScreen() {
   const screenBg = useThemeColor({}, 'background');
   const nav = useRouter();
+  const params = useLocalSearchParams<{ backToProfile?: string }>();
+  const backToProfile = params.backToProfile === 'true';
   const { notifications, getItemById } = useMyListings();
   const pendingVersion = useSyncExternalStore(
     subscribePendingMeetup,
@@ -63,7 +59,7 @@ export default function YourChatsScreen() {
   const sortedNotifications = useMemo(
     () =>
       [...notifications].sort((a, b) => notificationCreatedAt(b) - notificationCreatedAt(a)),
-    [notifications]
+    [notifications, pendingVersion]
   );
 
   return (
@@ -72,7 +68,13 @@ export default function YourChatsScreen() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={[styles.header, { backgroundColor: screenBg }]}>
           <Pressable
-            onPress={() => nav.back()}
+            onPress={() => {
+              if (backToProfile) {
+                nav.replace('/(tabs)/profile');
+                return;
+              }
+              nav.back();
+            }}
             style={({ pressed }) => [
               styles.headerBackButton,
               { backgroundColor: BACK_BUTTON_BG },
@@ -100,7 +102,7 @@ export default function YourChatsScreen() {
             sortedNotifications.map((notif) => {
               const kind: ChatListNotificationType = notif.type ?? 'MATCH_OFFER';
               const itemId = notif.targetId;
-              const { label, color } = statusLabelAndColor(kind, itemId, pendingVersion);
+              const { label, color } = statusLabelAndColor(kind, itemId);
               return (
                 <Pressable
                   key={notif.id}
