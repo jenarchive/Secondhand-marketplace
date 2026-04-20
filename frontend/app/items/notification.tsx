@@ -6,6 +6,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Ionicons } from '@expo/vector-icons';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { Image } from 'expo-image';
+import * as Haptics from 'expo-haptics';
   
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
@@ -38,10 +39,25 @@ export default function NotificationScreen() {
           style={styles.listcontainer}
         >
           {notifications.length === 0 ? (
-            <View style={styles.centeredEmptyState}>
-              <ThemedText style={styles.emptyText}>
-                No liked items yet
-              </ThemedText>
+            <View style={styles.emptyStateCenter}>
+              <View style={styles.emptyStateAbove}>
+                <ThemedText style={styles.emptyText}>
+                  No match offers yet
+                </ThemedText>
+              </View>
+              <View style={styles.emptyStateButtonAtCenter}>
+                <Pressable
+                  style={({ pressed }) => [pressed && { opacity: 0.85 }]}
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    router.replace('/(tabs)');
+                  }}
+                >
+                  <ThemedView style={styles.marketplaceButton}>
+                    <ThemedText style={styles.marketplaceButtonText}>Go to Marketplace</ThemedText>
+                  </ThemedView>
+                </Pressable>
+              </View>
             </View>
           ) : (
             notifications.map((notif) => (
@@ -161,7 +177,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
-    justifyContent: 'center',
   },
   emptyStateCenter: {
     position: 'absolute',
@@ -172,12 +187,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
   },
-  centeredEmptyState: {
-  flex: 1,
-  justifyContent: 'center', 
-  alignItems: 'center',     
-  paddingTop: 100, 
-},
+  emptyStateButtonAtCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '50%',
+    alignItems: 'center',
+    transform: [{ translateY: -30 }],
+  },
   emptyStateAbove: {
     position: 'absolute',
     left: 0,
@@ -185,5 +202,17 @@ const styles = StyleSheet.create({
     bottom: '50%',
     marginBottom: 52,
     alignItems: 'center',
+  },
+  marketplaceButton: {
+    width: 300,
+    height: 60,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#28289D',
+  },
+  marketplaceButtonText: {
+    fontSize: 18,
+    color: '#fff',
   },
 });
