@@ -10,7 +10,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { getMessagesForItem, addMessageForItem } from '@/store/chatStore';
+import { getMessagesForItem, addMessageForItem, type ChatMessage } from '@/store/chatStore';
 import { setAcceptedOfferItemPrice, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
 
 const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
@@ -23,6 +23,13 @@ function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+
+function formatMessageTime(sentAt: number): string {
+  return new Date(sentAt).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 export default function ChatScreen() {
   const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string; fromOfferSent?: string }>();
@@ -40,7 +47,7 @@ export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [messages, setMessages] = useState<string[]>(() => getMessagesForItem(id));
+  const [messages, setMessages] = useState<ChatMessage[]>(() => getMessagesForItem(id));
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [offerAccepted, setOfferAccepted] = useState(() => isOfferAcceptedForItem(id, params.offerPrice));
@@ -107,8 +114,8 @@ export default function ChatScreen() {
   const pushAttachmentMessage = (prefix: 'photo' | 'video', fileName?: string | null) => {
     const fallback = prefix === 'photo' ? 'Photo' : 'Video';
     const label = fileName ? `Sent ${prefix}: ${fileName}` : `Sent ${fallback}`;
-    addMessageForItem(id, label);
-    setMessages((prev) => [...prev, label]);
+    const newMessage = addMessageForItem(id, label);
+    setMessages((prev) => [...prev, newMessage]);
   };
 
   const requestMediaPermission = async () => {
@@ -147,8 +154,8 @@ export default function ChatScreen() {
   const handleSend = () => {
     const trimmed = message.trim();
     if (!trimmed) return;
-    addMessageForItem(id, trimmed);
-    setMessages((prev) => [...prev, trimmed]);
+    const newMessage = addMessageForItem(id, trimmed);
+    setMessages((prev) => [...prev, newMessage]);
     setMessage('');
   };
 
@@ -270,8 +277,9 @@ export default function ChatScreen() {
                   )}
 
                   {messages.map((m, index) => (
-                    <View key={`${index}-${m}`} style={styles.messageBubbleMe}>
-                      <Text style={styles.messageText}>{m}</Text>
+                    <View key={`${m.sentAt}-${index}-${m.text}`} style={styles.messageBubbleMe}>
+                      <Text style={styles.messageText}>{m.text}</Text>
+                      <Text style={styles.messageMeta}>{formatMessageTime(m.sentAt)}</Text>
                     </View>
                   ))}
                 </View>
@@ -565,5 +573,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     lineHeight: 18,
+  },
+  messageMeta: {
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: 11,
+    lineHeight: 14,
+    marginTop: 4,
+    alignSelf: 'flex-end',
   },
 });

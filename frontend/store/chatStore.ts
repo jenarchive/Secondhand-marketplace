@@ -1,16 +1,36 @@
-type ChatStore = Record<number, string[]>;
+export type ChatMessage = {
+  text: string;
+  sentAt: number;
+};
 
-let messagesByItem: ChatStore = {};
+type LegacyChatStore = Record<number, string[]>;
+type ChatStore = Record<number, ChatMessage[]>;
 
-export function getMessagesForItem(itemId: number): string[] {
-  return messagesByItem[itemId] ?? [];
+let messagesByItem: ChatStore | LegacyChatStore = {};
+
+export function getMessagesForItem(itemId: number): ChatMessage[] {
+  const raw = messagesByItem[itemId] ?? [];
+  return raw.map((entry) => {
+    if (typeof entry === 'string') {
+      return {
+        text: entry,
+        sentAt: Date.now(),
+      };
+    }
+    return entry;
+  });
 }
 
-export function addMessageForItem(itemId: number, text: string): void {
-  const existing = messagesByItem[itemId] ?? [];
+export function addMessageForItem(itemId: number, text: string): ChatMessage {
+  const existing = getMessagesForItem(itemId);
+  const newMessage: ChatMessage = {
+    text,
+    sentAt: Date.now(),
+  };
   messagesByItem = {
     ...messagesByItem,
-    [itemId]: [...existing, text],
+    [itemId]: [...existing, newMessage],
   };
+  return newMessage;
 }
 
