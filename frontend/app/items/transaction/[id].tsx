@@ -32,9 +32,10 @@ export default function TransactionScreen() {
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
-  const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)';
+  const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
   const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
+  const primaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
 
   const [method, setMethod] = useState<TransactionMethod>('Delivery');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
@@ -59,7 +60,7 @@ export default function TransactionScreen() {
       setHasMadeOffer(hasSentOfferForItem(id));
     }, [id])
   );
-  const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
+  const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.10)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
   const handleOfferPriceChange = (value: string) => {
@@ -151,7 +152,7 @@ export default function TransactionScreen() {
           >
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: '#FFFFFF' }]} numberOfLines={1}>
+          <Text style={[styles.headerTitle, { color: primaryTextColor }]} numberOfLines={1}>
             Transaction
           </Text>
         </View>
@@ -163,7 +164,7 @@ export default function TransactionScreen() {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-          <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Transaction method</Text>
+          <Text style={[styles.sectionLabel, { color: primaryTextColor }]}>Transaction method</Text>
           <View style={styles.methodRow}>
             <Pressable
               style={[
@@ -203,10 +204,10 @@ export default function TransactionScreen() {
 
           {method === 'Delivery' && (
             <View style={styles.addressSection}>
-              <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Delivery address</Text>
+              <Text style={[styles.sectionLabel, { color: primaryTextColor }]}>Delivery address</Text>
               <View style={[styles.addressInputWrap, { backgroundColor: inputBg }]}>
                 <TextInput
-                  style={[styles.addressInput, { color: '#FFFFFF' }]}
+                  style={[styles.addressInput, { color: primaryTextColor }]}
                   placeholder="Enter postcode"
                   placeholderTextColor={inputPlaceholderColor}
                   value={deliveryAddress}
@@ -219,10 +220,10 @@ export default function TransactionScreen() {
 
           {method === 'Collection' && (
             <View style={styles.addressSection}>
-              <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Meet-up location</Text>
+              <Text style={[styles.sectionLabel, { color: primaryTextColor }]}>Meet-up location</Text>
               <View style={[styles.addressInputWrap, { backgroundColor: inputBg }]}>
                 <TextInput
-                  style={[styles.addressInput, { color: '#FFFFFF' }]}
+                  style={[styles.addressInput, { color: primaryTextColor }]}
                   placeholder="e.g. Station, cafe name"
                   placeholderTextColor={inputPlaceholderColor}
                   value={collectionLocation}
@@ -235,7 +236,7 @@ export default function TransactionScreen() {
 
           {itemData && (
             <View style={styles.orderSection}>
-              <Text style={[styles.sectionLabel, styles.orderSectionLabel, { color: '#FFFFFF' }]}>Ordered product</Text>
+              <Text style={[styles.sectionLabel, styles.orderSectionLabel, { color: primaryTextColor }]}>Ordered product</Text>
               <Pressable
                 style={[styles.orderCard, { backgroundColor: cardBg }]}
                 onPress={() => router.push(`/items/${id}`)}
@@ -247,7 +248,7 @@ export default function TransactionScreen() {
                   contentFit="cover"
                 />
                 <View style={styles.orderCardBody}>
-                  <Text style={[styles.orderPrice, { color: '#FFFFFF' }]} numberOfLines={1}>
+                  <Text style={[styles.orderPrice, { color: primaryTextColor }]} numberOfLines={1}>
                     {itemData.title}
                   </Text>
                   <Text style={[styles.orderDescription, { color: unselectedTextColor }]} numberOfLines={2}>
@@ -257,7 +258,7 @@ export default function TransactionScreen() {
               </Pressable>
 
               <View style={styles.actionSection}>
-                <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Adjust price</Text>
+                <Text style={[styles.sectionLabel, { color: primaryTextColor }]}>Adjust price</Text>
                 <View style={styles.offerRow}>
                   <Text style={[styles.listPriceLabel, { color: unselectedTextColor }]}>
                     List price: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(itemData.price)}
@@ -265,7 +266,7 @@ export default function TransactionScreen() {
                   <View style={[styles.offerInputWrap, { backgroundColor: inputBg }]}>
                     <Text style={[styles.currencyPrefix, { color: unselectedTextColor }]}>£</Text>
                     <TextInput
-                      style={[styles.offerInput, { color: '#FFFFFF' }]}
+                      style={[styles.offerInput, { color: primaryTextColor }]}
                       placeholder="Your offer"
                       placeholderTextColor={inputPlaceholderColor}
                       value={offerPrice}
@@ -304,11 +305,18 @@ export default function TransactionScreen() {
                   size={22}
                   color={(isOfferAccepted || hasMadeOffer) ? '#FFFFFF' : borderColor}
                 />
-                <Text style={[styles.chatButtonText, { color: '#FFFFFF' }]}>Chat with seller</Text>
+                <Text
+                  style={[
+                    styles.chatButtonText,
+                    { color: (isOfferAccepted || hasMadeOffer) ? '#FFFFFF' : borderColor },
+                  ]}
+                >
+                  Chat with seller
+                </Text>
               </Pressable>
 
               <View style={styles.paymentMethodSection}>
-                <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment method</Text>
+                <Text style={[styles.sectionLabel, { color: primaryTextColor }]}>Payment method</Text>
                 <View style={styles.methodRow}>
                   <Pressable
                     disabled={method === 'Collection'}
@@ -390,20 +398,20 @@ export default function TransactionScreen() {
               </View>
 
               <View style={styles.totalSection}>
-                <Text style={[styles.sectionLabel, { color: '#FFFFFF' }]}>Payment amount</Text>
+                <Text style={[styles.sectionLabel, { color: primaryTextColor }]}>Payment amount</Text>
                 <Text style={[styles.totalHelperText, { color: unselectedTextColor }]}>
                   The price will update once the seller agrees
                 </Text>
                 <View style={[styles.totalCard, { backgroundColor: cardBg }]}>
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
                     <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Item price</Text>
-                    <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>
+                    <Text style={[styles.totalCardAmount, { color: primaryTextColor }]}>
                       {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(paymentItemPrice ?? itemData.price)}
                     </Text>
                   </View>
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
                     <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Delivery fee</Text>
-                    <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>
+                    <Text style={[styles.totalCardAmount, { color: primaryTextColor }]}>
                       {method === 'Delivery'
                         ? new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(DELIVERY_POSTAGE)
                         : 'Free'}
@@ -411,11 +419,11 @@ export default function TransactionScreen() {
                   </View>
                   <View style={[styles.totalCardRow, { borderBottomColor: colorScheme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' }]}>
                     <Text style={[styles.totalCardLabel, { color: unselectedTextColor }]}>Service fee</Text>
-                    <Text style={[styles.totalCardAmount, { color: '#FFFFFF' }]}>Free</Text>
+                    <Text style={[styles.totalCardAmount, { color: primaryTextColor }]}>Free</Text>
                   </View>
                   <View style={styles.totalCardRowLast}>
-                    <Text style={[styles.totalCardTotalLabel, { color: '#FFFFFF' }]}>Total payment</Text>
-                    <Text style={[styles.totalCardTotalAmount, { color: '#FFFFFF' }]}>
+                    <Text style={[styles.totalCardTotalLabel, { color: primaryTextColor }]}>Total payment</Text>
+                    <Text style={[styles.totalCardTotalAmount, { color: primaryTextColor }]}>
                       {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(
                         method === 'Delivery'
                           ? (paymentItemPrice ?? itemData.price) + DELIVERY_POSTAGE
