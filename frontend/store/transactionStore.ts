@@ -1,6 +1,7 @@
 type TransactionOfferStore = Record<number, string>;
 
 let offersByItem: TransactionOfferStore = {};
+let offerSentByItem: Record<number, boolean> = {};
 
 let acceptedItemPriceById: Record<number, number> = {};
 
@@ -13,6 +14,17 @@ export function setOfferForItem(itemId: number, price: string): void {
     ...offersByItem,
     [itemId]: price,
   };
+}
+
+export function markOfferSentForItem(itemId: number): void {
+  offerSentByItem = {
+    ...offerSentByItem,
+    [itemId]: true,
+  };
+}
+
+export function hasSentOfferForItem(itemId: number): boolean {
+  return offerSentByItem[itemId] === true;
 }
 
 export function setAcceptedOfferItemPrice(itemId: number, price: number): void {

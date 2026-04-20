@@ -8,7 +8,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useMyListings } from '@/contexts/MyListingsContext';
-import { getOfferForItem, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
+import {
+  getOfferForItem,
+  setOfferForItem,
+  getAcceptedOfferItemPrice,
+  hasSentOfferForItem,
+  markOfferSentForItem,
+} from '@/store/transactionStore';
 import { markItemPaidSold, markPendingMeetupReservation } from '@/store/pendingMeetupStore';
 
 type TransactionMethod = 'Delivery' | 'Collection';
@@ -44,17 +50,23 @@ export default function TransactionScreen() {
   const [collectionLocation, setCollectionLocation] = useState('');
   const [offerPrice, setOfferPrice] = useState(() => getOfferForItem(id));
   const [acceptedItemPrice, setAcceptedItemPrice] = useState<number | undefined>(() => getAcceptedOfferItemPrice(id));
+  const [hasMadeOffer, setHasMadeOffer] = useState(() => hasSentOfferForItem(id));
   const insets = useSafeAreaInsets();
 
   useFocusEffect(
     useCallback(() => {
       setAcceptedItemPrice(getAcceptedOfferItemPrice(id));
+      setHasMadeOffer(hasSentOfferForItem(id));
     }, [id])
   );
   const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
   const handleOfferPriceChange = (value: string) => {
+    if (hasMadeOffer) {
+      Alert.alert('Offer already sent', 'You already made an offer. You cannot change the adjusted price now.');
+      return;
+    }
     setOfferPrice(value);
     if (itemData) {
       setOfferForItem(id, value);
@@ -64,6 +76,10 @@ export default function TransactionScreen() {
   const handleSendOffer = () => {
     const num = parseFloat(offerPrice.replace(/[^0-9.]/g, ''));
     if (!itemData) return;
+    if (hasMadeOffer) {
+      Alert.alert('Offer already sent', 'You already made an offer for this item.');
+      return;
+    }
     if (!offerPrice.trim() || isNaN(num) || num <= 0) {
       Alert.alert('Enter your offer', 'Please enter a price for your offer.');
       return;
@@ -72,6 +88,8 @@ export default function TransactionScreen() {
       Alert.alert('Same as list price', 'Your offer is the same as the list price. Please enter a different amount.');
       return;
     }
+    markOfferSentForItem(id);
+    setHasMadeOffer(true);
     router.push({
       pathname: '/items/transaction/offer-sent/[id]',
       params: {
@@ -252,10 +270,16 @@ export default function TransactionScreen() {
                       placeholderTextColor={inputPlaceholderColor}
                       value={offerPrice}
                       onChangeText={handleOfferPriceChange}
+                      editable={!hasMadeOffer}
+                      onPressIn={() => {
+                        if (hasMadeOffer) {
+                          Alert.alert('Offer already sent', 'You already made an offer. You cannot change the adjusted price now.');
+                        }
+                      }}
                       keyboardType="decimal-pad"
                     />
                   </View>
-                  {!isOfferAccepted && (
+                  {!isOfferAccepted && !hasMadeOffer && (
                     <Pressable
                       style={[styles.offerButton, { backgroundColor: borderColor }]}
                       onPress={handleSendOffer}
@@ -269,7 +293,7 @@ export default function TransactionScreen() {
               <Pressable
                 style={[
                   styles.chatButton,
-                  isOfferAccepted
+                  (isOfferAccepted || hasMadeOffer)
                     ? { backgroundColor: borderColor, borderWidth: 0 }
                     : { backgroundColor: cardBg, borderWidth: 1, borderColor },
                 ]}
@@ -278,7 +302,7 @@ export default function TransactionScreen() {
                 <Ionicons
                   name="chatbubble-outline"
                   size={22}
-                  color={isOfferAccepted ? '#FFFFFF' : borderColor}
+                  color={(isOfferAccepted || hasMadeOffer) ? '#FFFFFF' : borderColor}
                 />
                 <Text style={[styles.chatButtonText, { color: '#FFFFFF' }]}>Chat with seller</Text>
               </Pressable>
