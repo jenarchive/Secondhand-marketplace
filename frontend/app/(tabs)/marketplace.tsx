@@ -133,11 +133,23 @@ export default function HomeScreen() {
                 style={({ pressed }) => [styles.listingLink, pressed && styles.pressed]}
                 onPress={async () => {
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                  router.push(`/items/${item.id}`);
+                  router.push({
+                    pathname: '/items/[id]',
+                    params: {
+                      id: String(item.id),
+                      source: 'marketplace',
+                    },
+                  });
                 }}
                 onLongPress={async () => {
                   await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                  router.push(`/items/${item.id}`);
+                  router.push({
+                    pathname: '/items/[id]',
+                    params: {
+                      id: String(item.id),
+                      source: 'marketplace',
+                    },
+                  });
                 }}
               >
                 <ThemedView style={styles.listingContainer}>

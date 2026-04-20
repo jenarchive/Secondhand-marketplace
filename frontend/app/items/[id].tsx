@@ -23,11 +23,13 @@ import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constan
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
-  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string; fromExplore?: string }>();
+  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string; fromExplore?: string; fromMarketplace?: string; source?: string }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
   const fromChat = params.fromChat === 'true';
   const fromExplore = params.fromExplore === 'true';
+  const fromMarketplace = params.fromMarketplace === 'true';
+  const source = params.source;
   const { items, isMyListing: isItemMine, removeItem } = useMyListings();
   const myListingItems = useMemo(
     () => items.filter((item) => isItemMine(item.id)),
@@ -114,8 +116,24 @@ export default function HomeScreen() {
               router.back();
               return;
             }
-            if (fromExplore && router.canGoBack()) {
+            if (router.canGoBack()) {
               router.back();
+              return;
+            }
+            if (source === 'marketplace') {
+              router.replace('/(tabs)/marketplace');
+              return;
+            }
+            if (source === 'explore') {
+              router.replace('/(tabs)/explore');
+              return;
+            }
+            if (fromMarketplace) {
+              router.replace('/(tabs)/marketplace');
+              return;
+            }
+            if (fromExplore) {
+              router.replace('/(tabs)/explore');
               return;
             }
             router.replace('/(tabs)/explore');

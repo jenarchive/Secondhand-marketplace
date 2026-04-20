@@ -126,7 +126,7 @@ export default function TabTwoScreen() {
         pathname: '/items/[id]',
         params: {
           id: String(currentItem.id),
-          fromExplore: 'true',
+          source: 'explore',
         },
       });
     }
