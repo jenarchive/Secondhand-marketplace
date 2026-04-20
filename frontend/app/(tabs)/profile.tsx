@@ -4,13 +4,11 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link, Href } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 
 const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 let cachedUsername = '';
-let cachedEmail = '';
 
 function AuthGate() {
   return (
@@ -36,10 +34,8 @@ function AuthGate() {
 
 export default function HomeScreen() {
   const { isLoggedIn, token, logout } = useAuth();
-  const colorScheme = useColorScheme();
-  const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
+  const iconColor = '#fff';
   const [username, setUsername] = useState(cachedUsername);
-  const [email, setEmail] = useState(cachedEmail);
 
   useEffect(() => {
     if (!isLoggedIn || !token) return;
@@ -47,19 +43,16 @@ export default function HomeScreen() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (res.status === 401) { logout(); return null; }
+        if (res.status === 401) {
+          logout();
+          return null;
+        }
         return res.json();
       })
       .then((data) => {
-        if (!data) return;
-        if (data.username) {
-          setUsername(data.username);
-          cachedUsername = data.username;
-        }
-        if (data.email) {
-          setEmail(data.email);
-          cachedEmail = data.email;
-        }
+        if (!data?.username) return;
+        setUsername(data.username);
+        cachedUsername = data.username;
       })
       .catch(() => {});
   }, [isLoggedIn, token, logout]);
@@ -69,15 +62,14 @@ export default function HomeScreen() {
   }
 
   const Data = [
-    { id: 0, iconName: 'chatbubble-ellipses-outline' as const, label: "My Chats", next: require('../../assets/images/next.png'), link: "/items/your-chats" },
-    { id: 1, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
-    { id: 2, iconName: 'log-out-outline' as const, label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
+    { id: 0, iconName: 'chatbubble-ellipses-outline' as const, label: 'My Chats', next: require('../../assets/images/next.png'), link: '/items/your-chats' },
+    { id: 1, iconName: 'pricetag-outline' as const, label: 'My Listings', next: require('../../assets/images/next.png'), link: '/items/current-listing' },
+    { id: 2, iconName: 'log-out-outline' as const, label: 'Log Out', next: require('../../assets/images/next.png'), link: '/items/logout' },
   ];
 
   return (
     <ThemedView style={styles.screen}>
       <View style={styles.mainContainer}>
-
         <View style={styles.profileFrame}>
           <ThemedView style={styles.userProfileContainer}>
             <ThemedView style={styles.userProfileImage}>
@@ -106,7 +98,7 @@ export default function HomeScreen() {
           contentContainerStyle={styles.listContainer}
           ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
           keyExtractor={(item) => item.id.toString()}
-           renderItem={({ item }) => (
+          renderItem={({ item }) => (
             <Link href={item.link as Href} asChild>
               <Pressable>
                 <ThemedView style={styles.listRow}>
@@ -128,7 +120,6 @@ export default function HomeScreen() {
         />
       </View>
     </ThemedView>
-
   );
 }
 
@@ -185,8 +176,8 @@ const styles = StyleSheet.create({
     marginTop: 90,
   },
   profileFrame: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
     height: 200,

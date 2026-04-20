@@ -99,12 +99,6 @@ export default function ItemsLayout() {
         }}
       />
       <Stack.Screen name="edit" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="setting"
-        options={{
-          headerShown: false,
-        }}
-      />
       <Stack.Screen name="logout" />
       <Stack.Screen name="your-chats" />
       <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
