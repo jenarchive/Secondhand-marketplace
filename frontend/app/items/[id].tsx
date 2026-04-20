@@ -1,8 +1,8 @@
 import { Image } from 'expo-image';
-import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions, type NativeSyntheticEvent, type NativeScrollEvent } from 'react-native';
-import { useRef, useCallback, useMemo, useState, useSyncExternalStore } from 'react';
+import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
@@ -89,25 +89,15 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
   const router = useRouter();
-  const isFocused = useIsFocused();
-  const isFocusedRef = useRef(isFocused);
-  isFocusedRef.current = isFocused;
-  const hasNavigatedToTransaction = useRef(false);
-  const scrollYAtDragStart = useRef(0);
   const [matchPickerVisible, setMatchPickerVisible] = useState(false);
   const [selectedMyListingId, setSelectedMyListingId] = useState<number | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      hasNavigatedToTransaction.current = false;
       setMatchPickerVisible(false);
       setSelectedMyListingId(null);
     }, []),
   );
-
-  const handleScrollBeginDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollYAtDragStart.current = e.nativeEvent.contentOffset.y;
-  };
   const stampTextStyle = {
     fontSize: 9 * detailStampScale,
     letterSpacing: 0.45 * detailStampScale,

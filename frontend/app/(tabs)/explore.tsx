@@ -27,7 +27,7 @@ export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();
-  const myItem = myListings[0]; // for now
+  const myItem = myListings[0];
   const myListingItems = useMemo(
     () => contextItems.filter((item) => isMyListing(item.id)),
     [contextItems, isMyListing]
@@ -83,7 +83,7 @@ export default function TabTwoScreen() {
     spawnButterflies(direction);
     if (direction === 'right' && currentItem) {
       toggleLikeContext(currentItem.id);
-      if (currentItem == visibleItems[0]){ // for matching for now
+      if (currentItem === visibleItems[0]) {
         recordMatch(myItem.id, currentItem.id);
         router.push({
           pathname: '/items/match-preview',
@@ -107,7 +107,7 @@ export default function TabTwoScreen() {
   const toggleLike = () => {
     if (!currentItem) return;
     toggleLikeContext(currentItem.id);
-    if (currentItem == visibleItems[0]){ // for matching for now
+    if (currentItem === visibleItems[0]) {
       recordMatch(myItem.id, currentItem.id);
       router.push({
         pathname: '/items/match-preview',

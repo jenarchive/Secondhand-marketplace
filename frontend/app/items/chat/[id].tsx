@@ -32,7 +32,7 @@ function formatMessageTime(sentAt: number): string {
 }
 
 export default function ChatScreen() {
-  const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string; fromOfferSent?: string }>();
+  const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string }>();
   const router = useRouter();
   const { isLoggedIn, token } = useAuth();
   const id = Number(params.id);
