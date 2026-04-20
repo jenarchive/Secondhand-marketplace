@@ -197,7 +197,7 @@ export default function HomeScreen() {
               </View>
             </View>
           )}
-          {!isItemMine(itemData.id) && (
+          {!isItemMine(itemData.id) && !soldOnMarketplace && (
             <Pressable
               style={({ pressed }) => [
                 styles.matchBadge,
@@ -217,7 +217,7 @@ export default function HomeScreen() {
               />
             </Pressable>
           )}
-          {!isItemMine(itemData.id) && matchPickerVisible && (
+          {!isItemMine(itemData.id) && !soldOnMarketplace && matchPickerVisible && (
             <View style={styles.matchPickerPanel}>
               <ThemedText style={styles.matchPickerTitle}>Match with my listing</ThemedText>
               {myListingItems.length === 0 ? (
@@ -337,7 +337,11 @@ export default function HomeScreen() {
           <Pressable
             style={[styles.buyNowButton, buyNowLocked && styles.buyNowButtonStatusLocked]}
             onPress={async () => {
-              if (buyNowLocked) return;
+              if (soldOnMarketplace) {
+                Alert.alert('Unavailable', 'Sorry, this item is no longer available');
+                return;
+              }
+              if (pendingMeetup) return;
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               router.push({
                 pathname: '/items/transaction/[id]',
