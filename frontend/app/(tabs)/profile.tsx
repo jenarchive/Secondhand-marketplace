@@ -63,8 +63,8 @@ export default function HomeScreen() {
   }
 
   const Data = [
-    { id: 0, iconName: 'git-compare-outline' as const, label: "My Matches", next: require('../../assets/images/next.png'), link: "/items/notification" },
-    { id: 1, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
+    { id: 0, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
+    { id: 1, iconName: 'chatbubble-ellipses-outline' as const, label: "My Chats", next: require('../../assets/images/next.png'), link: "/items/your-chats" },
     { id: 2, iconName: 'log-out-outline' as const, label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 

@@ -1,19 +1,19 @@
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { Stack, router, useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/themed-text';
 import { Ionicons } from '@expo/vector-icons';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { Image } from 'expo-image';
-import * as Haptics from 'expo-haptics';
-  
+
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
-export default function NotificationScreen() {
+export default function YourChatsScreen() {
   const screenBg = useThemeColor({}, 'background');
   const nav = useRouter();
   const { notifications, getItemById } = useMyListings();
+
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <ThemedView style={[styles.screen, { backgroundColor: screenBg }]}>
@@ -30,50 +30,35 @@ export default function NotificationScreen() {
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
           <ThemedText type="title" style={styles.headerTitle}>
-            My Matches
+            My Chats
           </ThemedText>
         </View>
 
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={notifications.length === 0 ? { flex: 1 } : styles.listContent}
           style={styles.listcontainer}
         >
           {notifications.length === 0 ? (
             <View style={styles.emptyStateCenter}>
-              <View style={styles.emptyStateAbove}>
-                <ThemedText style={styles.emptyText}>
-                  No match offers yet
-                </ThemedText>
-              </View>
-              <View style={styles.emptyStateButtonAtCenter}>
-                <Pressable
-                  style={({ pressed }) => [pressed && { opacity: 0.85 }]}
-                  onPress={async () => {
-                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.replace('/(tabs)');
-                  }}
-                >
-                  <ThemedView style={styles.marketplaceButton}>
-                    <ThemedText style={styles.marketplaceButtonText}>Go to Marketplace</ThemedText>
-                  </ThemedView>
-                </Pressable>
-              </View>
+              <ThemedText style={styles.emptyText}>
+                No chats yet
+              </ThemedText>
             </View>
           ) : (
             notifications.map((notif) => (
               <Pressable
                 key={notif.id}
                 onPress={() => {
-                  router.push({
+                  nav.push({
                     pathname: '/items/chat',
-                    params: { myId: notif.myId, targetId: notif.targetId }
+                    params: { myId: notif.myId, targetId: notif.targetId },
                   });
                 }}
                 style={styles.card}
               >
                 <Image
                   source={{ uri: getItemById(notif.targetId)?.image }}
-                  style={styles.matchItemThumb}
+                  style={styles.chatItemThumb}
                   contentFit="cover"
                 />
                 <View style={styles.infoContainer}>
@@ -92,8 +77,6 @@ export default function NotificationScreen() {
             ))
           )}
         </ScrollView>
-
-
       </ThemedView>
     </View>
   );
@@ -129,7 +112,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(255,255,255,0.16)',
     paddingBottom: 18,
   },
-  matchItemThumb: {
+  chatItemThumb: {
     width: 90,
     height: 90,
     borderRadius: 12,
@@ -185,34 +168,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     alignItems: 'center',
-    zIndex: 10,
-  },
-  emptyStateButtonAtCenter: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: '50%',
-    alignItems: 'center',
-    transform: [{ translateY: -30 }],
-  },
-  emptyStateAbove: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: '50%',
-    marginBottom: 52,
-    alignItems: 'center',
-  },
-  marketplaceButton: {
-    width: 300,
-    height: 60,
-    borderRadius: 25,
-    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#28289D',
-  },
-  marketplaceButtonText: {
-    fontSize: 18,
-    color: '#fff',
+    zIndex: 10,
   },
 });

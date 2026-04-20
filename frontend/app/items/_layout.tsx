@@ -16,11 +16,9 @@ export default function ItemsLayout() {
         headerShown: true,
         headerStyle: { backgroundColor: headerBg },
         headerTintColor: headerTint,
-        headerBackTitleVisible: false,
         headerBackTitle: "",
         headerShadowVisible: false,
         headerBackVisible: false,
-        headerLeftContainerStyle: { borderWidth: 0, backgroundColor: "transparent" },
         headerLeft: () => (
           <View style={{ marginLeft: Platform.OS === "ios" ? 0 : 4, marginTop: 8 }}>
             <TouchableOpacity
@@ -108,7 +106,7 @@ export default function ItemsLayout() {
       />
       <Stack.Screen name="edit-profile" />
       <Stack.Screen name="logout" />
-      <Stack.Screen name="notification" />
+      <Stack.Screen name="My-chats" />
       <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
     </Stack>
   );
