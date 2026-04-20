@@ -6,6 +6,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import { ThemedText } from './themed-text';
 import * as Haptics from 'expo-haptics';
 import TestData from '@/test-data.json'
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function UserHeader({
   userId,
@@ -20,6 +21,13 @@ export default function UserHeader({
   itemId: number;
   displayName?: string;
 }) {
+  const colorScheme = useColorScheme() ?? 'light';
+  const cardBg = colorScheme === 'dark' ? colours.container : 'rgba(0,0,0,0.12)';
+  const avatarBg = colorScheme === 'dark' ? '#333333' : 'rgba(0,0,0,0.14)';
+  const primaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
+  const secondaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#374151';
+  const emptyStarColor = colorScheme === 'dark' ? '#666' : '#9CA3AF';
+
   const handleUserPress = async () => {
     try { await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
     console.log('User profile pressed', itemId);
@@ -30,13 +38,13 @@ export default function UserHeader({
   return (
     <ThemedView>
     <Pressable onPress={handleUserPress}>
-    <ThemedView style={styles.userProfileContainer}>
-      <ThemedView style={styles.userProfileImage}>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{name.charAt(0).toUpperCase()}</ThemedText>
+    <ThemedView style={[styles.userProfileContainer, { backgroundColor: cardBg }]}>
+      <ThemedView style={[styles.userProfileImage, { backgroundColor: avatarBg }]}>
+        <ThemedText type="defaultSemiBold" style={{ color: primaryTextColor }}>{name.charAt(0).toUpperCase()}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.userMeta}>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{name}</ThemedText>
-        <ThemedText type="defaultSemiBold" style={{color: '#fff'}}>{userLocation}</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{ color: primaryTextColor }}>{name}</ThemedText>
+        <ThemedText type="defaultSemiBold" style={{ color: secondaryTextColor }}>{userLocation}</ThemedText>
       </ThemedView>
       <ThemedView style={styles.userRating} accessibilityLabel={`Rating ${userRating} out of 5`}>
         {Array.from({ length: 5 }).map((_, i) => {
@@ -46,7 +54,7 @@ export default function UserHeader({
             <ThemedText
               key={starIndex}
               type="defaultSemiBold"
-              style={{ color: filled ? '#FFD700' : '#666', marginHorizontal: 2 }}
+              style={{ color: filled ? '#FFD700' : emptyStarColor, marginHorizontal: 2 }}
             >
               {filled ? '★' : '☆'}
             </ThemedText>

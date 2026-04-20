@@ -32,7 +32,7 @@ export default function TransactionScreen() {
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
-  const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+  const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.12)';
   const borderColor = colorScheme === 'dark' ? '#5BA3FF' : '#0047AB';
   const unselectedTextColor = colorScheme === 'dark' ? '#999' : '#666';
   const primaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
@@ -60,7 +60,7 @@ export default function TransactionScreen() {
       setHasMadeOffer(hasSentOfferForItem(id));
     }, [id])
   );
-  const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.10)';
+  const inputBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)';
   const inputPlaceholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
   const handleOfferPriceChange = (value: string) => {

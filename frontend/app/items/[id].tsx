@@ -12,6 +12,7 @@ import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
@@ -90,6 +91,10 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
+  const colorScheme = useColorScheme() ?? 'light';
+  const detailCardBg = colorScheme === 'dark' ? colours.container : 'rgba(0,0,0,0.12)';
+  const detailPrimaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
+  const detailSecondaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#374151';
   const router = useRouter();
   const [matchPickerVisible, setMatchPickerVisible] = useState(false);
   const [selectedMyListingId, setSelectedMyListingId] = useState<number | null>(null);
@@ -275,22 +280,22 @@ export default function HomeScreen() {
           </Pressable>
           )}
         </View>
-        <ThemedView style={styles.listingTitle}>
-          <ThemedText type="defaultSemiBold" style={styles.cardText}>{MyData.title}</ThemedText>
-          <ThemedText type="default" style={styles.cardText}>Category: {MyData.category}</ThemedText>
+        <ThemedView style={[styles.listingTitle, { backgroundColor: detailCardBg }]}>
+          <ThemedText type="defaultSemiBold" style={[styles.cardText, { color: detailPrimaryTextColor }]}>{MyData.title}</ThemedText>
+          <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>Category: {MyData.category}</ThemedText>
           <ThemedView style={styles.priceContainer}>
-            <ThemedText type="default" style={styles.cardText}>
+            <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>
               {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price)}
             </ThemedText>
-            <ThemedText type="default" style={styles.cardText}>
+            <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>
               Price Incl Postage: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price + 5)}
             </ThemedText>
           </ThemedView>
         </ThemedView>
-        <ThemedView style={styles.listingDescription}>
+        <ThemedView style={[styles.listingDescription, { backgroundColor: detailCardBg }]}>
           <ThemedView style={styles.descriptionInner}>
-            <ThemedText type="defaultSemiBold" style={styles.cardText}>Description</ThemedText>
-            <ThemedText type="default" style={styles.cardText}>{MyData.description}</ThemedText>
+            <ThemedText type="defaultSemiBold" style={[styles.cardText, { color: detailPrimaryTextColor }]}>Description</ThemedText>
+            <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>{MyData.description}</ThemedText>
           </ThemedView>
         </ThemedView>
       </ThemedView>
@@ -522,7 +527,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 8,
-    backgroundColor: colours.container,
+    backgroundColor: 'transparent',
   },
 
   listingDescription: {
