@@ -91,7 +91,8 @@ export default function HomeScreen() {
     location: itemData.location
   };
 
-  const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
+  const userRatingValue: number =
+    typeof itemData.rating === 'number' ? itemData.rating : 4;
   const soldOnMarketplace = isItemSoldOnMarketplace(itemData.id);
   const hasPendingMatchOffer =
     !soldOnMarketplace &&

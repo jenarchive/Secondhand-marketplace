@@ -11,7 +11,7 @@ export default function RateAfterPaymentScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyChatsList?: string }>();
   const id = Number(params.id);
   const router = useRouter();
-  const { items } = useMyListings();
+  const { items, updateItem } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
@@ -70,7 +70,10 @@ export default function RateAfterPaymentScreen() {
 
         <Pressable
           style={styles.submitButton}
-          onPress={() =>
+          onPress={() => {
+            if (Number.isFinite(id) && id > 0) {
+              updateItem(id, { rating });
+            }
             router.replace({
               pathname: '/items/transaction/rating-submitted/[id]',
               params: {
@@ -78,8 +81,8 @@ export default function RateAfterPaymentScreen() {
                 rating: String(rating),
                 fromMyChatsList: params.fromMyChatsList ?? 'false',
               },
-            } as any)
-          }
+            } as any);
+          }}
         >
           <Text style={styles.submitButtonText}>Submit rating</Text>
         </Pressable>

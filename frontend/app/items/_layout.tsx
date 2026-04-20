@@ -107,7 +107,7 @@ export default function ItemsLayout() {
       />
       <Stack.Screen name="edit-profile" />
       <Stack.Screen name="logout" />
-      <Stack.Screen name="My-chats" />
+      <Stack.Screen name="your-chats" />
       <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
     </Stack>
   );
