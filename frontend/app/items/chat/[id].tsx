@@ -9,8 +9,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { getMessagesForItem, addMessageForItem } from '@/store/chatStore';
 import { setAcceptedOfferItemPrice, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
+
+const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 
 function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
   if (!offerPrice || Number.isNaN(Number(offerPrice))) return false;
@@ -24,6 +27,7 @@ const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 export default function ChatScreen() {
   const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string; fromOfferSent?: string }>();
   const router = useRouter();
+  const { isLoggedIn, token } = useAuth();
   const id = Number(params.id);
   const { items } = useMyListings();
   const itemData = items.find((item) => item.id === id);
@@ -40,6 +44,7 @@ export default function ChatScreen() {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [offerAccepted, setOfferAccepted] = useState(() => isOfferAcceptedForItem(id, params.offerPrice));
+  const [myUsername, setMyUsername] = useState('');
 
   useFocusEffect(
     useCallback(() => {
@@ -68,6 +73,24 @@ export default function ChatScreen() {
       hide.remove();
     };
   }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn || !token) {
+      setMyUsername('');
+      return;
+    }
+
+    fetch(`${FLASK_SERVER_ADDRESS}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.username) {
+          setMyUsername(data.username);
+        }
+      })
+      .catch(() => {});
+  }, [isLoggedIn, token]);
 
   const inputBarPadding = (keyboardVisible || showMoreMenu) ? 8 : fullPadding;
   const bottomPadding = keyboardVisible && !showMoreMenu ? keyboardHeight : 0;
@@ -209,7 +232,7 @@ export default function ChatScreen() {
                     <>
                       <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
                         <Text style={styles.offerCardTitle}>
-                          (Username) has made an offer.
+                          {`${myUsername || 'User'} has made an offer.`}
                         </Text>
                         <Text style={styles.offerCardBody}>
                           {new Intl.NumberFormat('en-GB', {
