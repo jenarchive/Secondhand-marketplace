@@ -78,7 +78,7 @@ export default function HomeScreen() {
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
   const soldOnMarketplace = isItemSoldOnMarketplace(itemData.id);
   const pendingMeetup = !soldOnMarketplace && isPendingMeetupReservation(itemData.id);
-  const listingStampLabel = soldOnMarketplace ? 'SOLD' : pendingMeetup ? 'PENDING' : null;
+  const listingStampLabel = soldOnMarketplace ? 'SOLD' : pendingMeetup ? 'RESERVED' : null;
   const stampAccentColor = soldOnMarketplace ? LISTING_STAMP_SOLD_COLOR : LISTING_STAMP_PENDING_COLOR;
   const stampInset = 8;
   const stampRectStyle = {
@@ -88,7 +88,7 @@ export default function HomeScreen() {
     paddingVertical: 3 * detailStampScale,
   };
   const buyNowLocked = soldOnMarketplace || pendingMeetup;
-  const buyNowLabel = soldOnMarketplace ? 'Sold' : pendingMeetup ? 'Pending' : 'Buy Now';
+  const buyNowLabel = soldOnMarketplace ? 'Sold' : pendingMeetup ? 'Reserved' : 'Buy Now';
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
@@ -201,6 +201,7 @@ export default function HomeScreen() {
             <Pressable
               style={({ pressed }) => [
                 styles.matchBadge,
+                listingStampLabel === 'RESERVED' && styles.matchBadgeBelowStamp,
                 pressed && styles.matchBadgePressed,
                 matchPickerVisible && styles.matchBadgeActive,
               ]}
@@ -469,6 +470,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 20,
+  },
+  matchBadgeBelowStamp: {
+    top: 54,
   },
   matchBadgePressed: {
     opacity: 0.75,

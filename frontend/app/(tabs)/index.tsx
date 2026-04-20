@@ -183,7 +183,7 @@ export default function HomeScreen() {
                       <View style={styles.pendingStampWrap}>
                         <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
                           <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
-                            PENDING
+                            RESERVED
                           </Text>
                         </View>
                       </View>
