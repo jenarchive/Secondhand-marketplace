@@ -103,18 +103,18 @@ export default function HomeScreen() {
           data={Data}
           scrollEnabled={false}
           contentContainerStyle={styles.listContainer}
-          ItemSeparatorComponent={() => <View style={{ height: 60 }} />}
+          ItemSeparatorComponent={() => <View style={{ height: 25 }} />}
           keyExtractor={(item) => item.id.toString()}
            renderItem={({ item }) => (
             <Link href={item.link as Href} asChild>
               <Pressable>
                 <ThemedView style={styles.listRow}>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <View style={styles.listSide}>
+                  <View style={styles.listRowContent}>
+                    <View style={[styles.listSide, styles.leadingIconSide]}>
                       <Ionicons name={item.iconName} size={30} color={iconColor} />
                     </View>
                     <View style={styles.listText}>
-                      <ThemedText>{item.label}</ThemedText>
+                      <ThemedText style={styles.listLabelText}>{item.label}</ThemedText>
                     </View>
                     <View style={styles.listSide}>
                       <Image style={styles.listArrow} source={item.next} />
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   userNameText: {
+    fontSize: 20,
     lineHeight: 22,
   },
   userRatingRow: {
@@ -240,31 +241,46 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   listContainer: {
-    paddingBottom: 60,
-    flex: 1,
+    paddingTop: 16,
+    paddingBottom: 24,
     width: 300,
     alignContent: 'center',
     alignItems: 'center',
-    justifyContent: 'flex-end',
     borderRadius: 50,
   },
   listRow: {
     width: 300,
     borderRadius: 25,
+    paddingHorizontal: 0,
+  },
+  listRowContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 56,
   },
   listSide: {
-    height: 30,
-    flex: 1,
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  leadingIconSide: {
+    paddingLeft: 10,
+  },
   listText: {
-    flex: 4,
-    marginHorizontal: 25,
-    alignContent: 'center',
+    flex: 1,
+    marginHorizontal: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listLabelText: {
+    fontSize: 17,
+    lineHeight: 22,
+    textAlign: 'center',
   },
   listArrow: {
-    height: 15,
-    width: 15,
+    height: 18,
+    width: 18,
   },
 });
