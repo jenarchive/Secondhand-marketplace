@@ -20,13 +20,16 @@ const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 const LABEL_MATCH = 'Match in progress';
 const LABEL_PURCHASE = 'Purchase in progress';
 const LABEL_BOUGHT = 'Bought';
+const LABEL_RESERVED = 'Reserved';
 
 const COLOR_MATCH = '#3B82F6';
 const COLOR_PURCHASE = '#16A34A';
 const COLOR_BOUGHT = '#EF4444';
+/** 마켓플레이스·상세 RESERVED 스탬프와 동일 계열 주황 */
+const COLOR_RESERVED = '#EA580C';
 
-function isBoughtOrReservedItem(itemId: number): boolean {
-  return isItemSoldOnMarketplace(itemId) || isPendingMeetupReservation(itemId);
+function notificationCreatedAt(n: { createdAt?: Date; timestamp: Date }): number {
+  return (n.createdAt ?? n.timestamp).getTime();
 }
 
 function statusLabelAndColor(
@@ -38,8 +41,11 @@ function statusLabelAndColor(
   if (kind === 'MATCH_OFFER') {
     return { label: LABEL_MATCH, color: COLOR_MATCH };
   }
-  if (isBoughtOrReservedItem(itemId)) {
+  if (isItemSoldOnMarketplace(itemId)) {
     return { label: LABEL_BOUGHT, color: COLOR_BOUGHT };
+  }
+  if (isPendingMeetupReservation(itemId)) {
+    return { label: LABEL_RESERVED, color: COLOR_RESERVED };
   }
   return { label: LABEL_PURCHASE, color: COLOR_PURCHASE };
 }
@@ -56,7 +62,7 @@ export default function YourChatsScreen() {
 
   const sortedNotifications = useMemo(
     () =>
-      [...notifications].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
+      [...notifications].sort((a, b) => notificationCreatedAt(a) - notificationCreatedAt(b)),
     [notifications]
   );
 
@@ -133,7 +139,10 @@ export default function YourChatsScreen() {
                       </ThemedText>
                     </ThemedText>
                     <ThemedText style={styles.matchTimeText}>
-                      {notif.timestamp.toLocaleDateString()} {notif.timestamp.toLocaleTimeString()}
+                      {(() => {
+                        const d = notif.createdAt ?? notif.timestamp;
+                        return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+                      })()}
                     </ThemedText>
                   </View>
                   <Ionicons name="chevron-forward" size={20} color="gray" />

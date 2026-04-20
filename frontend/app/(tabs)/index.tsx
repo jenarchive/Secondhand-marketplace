@@ -138,7 +138,11 @@ export default function HomeScreen() {
                 <ThemedText style={styles.emptySubtitle}>There are no items to show right now.</ThemedText>
               </View>
             ) : filtered.map((item) => {
-              const hasPendingMatchOffer = notifications.some((n) => n.targetId === item.id);
+              const hasPendingMatchOffer = notifications.some(
+                (n) =>
+                  (n.type ?? 'MATCH_OFFER') === 'MATCH_OFFER' &&
+                  (n.myId === item.id || n.targetId === item.id)
+              );
               const hasReservedMeetup = isPendingMeetupReservation(item.id) && !hasPendingMatchOffer;
               return (
               <View key={item.id} style={styles.listingLink}>

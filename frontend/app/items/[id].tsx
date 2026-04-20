@@ -88,7 +88,13 @@ export default function HomeScreen() {
 
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
   const soldOnMarketplace = isItemSoldOnMarketplace(itemData.id);
-  const hasPendingMatchOffer = !soldOnMarketplace && notifications.some((n) => n.targetId === itemData.id);
+  const hasPendingMatchOffer =
+    !soldOnMarketplace &&
+    notifications.some(
+      (n) =>
+        (n.type ?? 'MATCH_OFFER') === 'MATCH_OFFER' &&
+        (n.myId === itemData.id || n.targetId === itemData.id)
+    );
   const pendingMeetup = !soldOnMarketplace && isPendingMeetupReservation(itemData.id);
   const inProgressStatus = !soldOnMarketplace && hasPendingMatchOffer;
   const reservedStatus = !soldOnMarketplace && pendingMeetup && !hasPendingMatchOffer;

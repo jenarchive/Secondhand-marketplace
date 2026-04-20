@@ -38,7 +38,10 @@ type Notification = {
   myId: number;
   targetId: number;
   type: ChatListNotificationType;
+  /** 표시용 시간 (레거시, 마이그레이션용) */
   timestamp: Date;
+  /** 목록 정렬·고정용: 최초 생성 시각만 사용 (재방문 시 변경하지 않음) */
+  createdAt?: Date;
 };
 
 const MyListingsContext = createContext<MyListingsContextType | null>(null);
@@ -80,12 +83,14 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const addNotification = useCallback((myId: number, targetId: number) => {
+    const now = new Date();
     const newNotif: Notification = {
       id: Math.random().toString(),
       myId,
       targetId,
       type: 'MATCH_OFFER',
-      timestamp: new Date(),
+      timestamp: now,
+      createdAt: now,
     };
     setNotifications((prev) => {
       const isDuplicate = prev.some(
@@ -93,26 +98,24 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
       );
       if (isDuplicate) return prev;
 
-      return [newNotif, ...prev];
+      return [...prev, newNotif];
     });
   }, []);
 
   const addPurchaseChatEntry = useCallback((itemId: number) => {
     setNotifications((prev) => {
-      const idx = prev.findIndex((n) => (n.type ?? 'MATCH_OFFER') === 'PURCHASE' && n.targetId === itemId);
-      if (idx >= 0) {
-        const cur = prev[idx];
-        const rest = prev.filter((_, i) => i !== idx);
-        return [{ ...cur, timestamp: new Date() }, ...rest];
-      }
+      const exists = prev.some((n) => (n.type ?? 'MATCH_OFFER') === 'PURCHASE' && n.targetId === itemId);
+      if (exists) return prev;
+      const now = new Date();
       const entry: Notification = {
         id: `purchase-${itemId}-${Date.now()}`,
         myId: 0,
         targetId: itemId,
         type: 'PURCHASE',
-        timestamp: new Date(),
+        timestamp: now,
+        createdAt: now,
       };
-      return [entry, ...prev];
+      return [...prev, entry];
     });
   }, []);
 

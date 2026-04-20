@@ -36,7 +36,7 @@ export default function TransactionScreen() {
   const fromExplore = (Array.isArray(fromExploreParam) ? fromExploreParam[0] : fromExploreParam) === 'true';
   const fromLikedItems = (Array.isArray(fromLikedItemsParam) ? fromLikedItemsParam[0] : fromLikedItemsParam) === 'true';
   const router = useRouter();
-  const { items } = useMyListings();
+  const { items, addPurchaseChatEntry } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
@@ -142,11 +142,13 @@ export default function TransactionScreen() {
   const handlePayOrReserve = () => {
     if (method === 'Collection' && paymentMethod === 'inPerson') {
       markPendingMeetupReservation(id);
+      addPurchaseChatEntry(id);
       router.replace('/(tabs)');
       return;
     }
     if (paymentMethod === 'card') {
       markItemPaidSold(id);
+      addPurchaseChatEntry(id);
       router.push(`/items/transaction/rate/${id}` as any);
     }
   };
