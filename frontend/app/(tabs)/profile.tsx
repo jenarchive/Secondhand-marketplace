@@ -65,8 +65,7 @@ export default function HomeScreen() {
   const Data = [
     { id: 0, iconName: 'git-compare-outline' as const, label: "My Matches", next: require('../../assets/images/next.png'), link: "/items/notification" },
     { id: 1, iconName: 'pricetag-outline' as const, label: "My Listings", next: require('../../assets/images/next.png'), link: "/items/current-listing" },
-    { id: 2, iconName: 'settings-outline' as const, label: "Settings", next: require('../../assets/images/next.png'), link: "/items/setting" },
-    { id: 3, iconName: 'log-out-outline' as const, label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
+    { id: 2, iconName: 'log-out-outline' as const, label: "Log Out", next: require('../../assets/images/next.png'), link: "/items/logout" },
   ];
 
   return (
@@ -80,7 +79,9 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold">{username ? username[0].toUpperCase() : 'U'}</ThemedText>
                 </ThemedView>
                 <ThemedView style={styles.userMeta}>
-                  <ThemedText type="defaultSemiBold" style={styles.userNameText}>Username</ThemedText>
+                  <ThemedText type="defaultSemiBold" style={styles.userNameText}>
+                    {username || 'Username'}
+                  </ThemedText>
                   <View style={styles.userRatingRow}>
                     <View style={styles.userRatingStars}>
                       <Ionicons name="star" size={12} color="#FACC15" />

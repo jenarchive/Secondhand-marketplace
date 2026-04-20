@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { useMyListings } from '@/contexts/MyListingsContext';
@@ -46,11 +46,6 @@ export default function MatchPreviewScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor }]}>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
       <View style={[styles.header, { backgroundColor }]}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
