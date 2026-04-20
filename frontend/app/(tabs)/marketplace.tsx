@@ -1,27 +1,25 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
+import { Alert, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity } from 'react-native';
 import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
-import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import { CATEGORIES } from '@/constants/categories';
-import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
 import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
-  isPendingMeetupReservation,
-  isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
 
 export default function HomeScreen() {
   const router = useRouter();
+  const colorScheme = useColorScheme() ?? 'light';
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
@@ -29,6 +27,13 @@ export default function HomeScreen() {
   const { toggleLike, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+  const cardBg = colorScheme === 'dark' ? '#25282B' : 'rgba(0,0,0,0.12)';
+  const primaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
+  const iconColor = colorScheme === 'dark' ? '#888' : '#6B7280';
+  const searchBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+  const searchTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
+  const modalCardBg = colorScheme === 'dark' ? '#1F2937' : '#FFFFFF';
+  const modalBorderColor = colorScheme === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)';
 
   useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
 
@@ -66,24 +71,24 @@ export default function HomeScreen() {
       headerImage={<Image />}>
       <ThemedView>
         <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
-          <View style={styles.searchInner}>
+          <View style={[styles.searchInner, { backgroundColor: searchBg }]}>
             <Pressable
               onPress={() => setCategoryModalVisible(true)}
               hitSlop={8}
               style={styles.categoryIconWrap}
             >
-              <Ionicons name="pricetag-outline" size={20} color="#888" />
+              <Ionicons name="pricetag-outline" size={20} color={iconColor} />
             </Pressable>
             <TextInput
               value={query}
               onChangeText={setQuery}
               placeholder="Search items, categories or descriptions"
-              placeholderTextColor="#888"
-              style={styles.searchInput}
+              placeholderTextColor={iconColor}
+              style={[styles.searchInput, { color: searchTextColor }]}
               returnKeyType="search"
               clearButtonMode="while-editing"
             />
-            <Ionicons name="search" size={18} color="#888" style={styles.searchIconRight} />
+            <Ionicons name="search" size={18} color={iconColor} style={styles.searchIconRight} />
           </View>
         </View>
 
@@ -95,15 +100,18 @@ export default function HomeScreen() {
         >
           <View style={styles.modalOverlay}>
             <Pressable style={StyleSheet.absoluteFill} onPress={() => setCategoryModalVisible(false)} />
-            <View style={styles.categoryModalContent}>
-              <View style={styles.categoryModalHeader}>
+            <View style={[styles.categoryModalContent, { backgroundColor: modalCardBg }]}>
+              <View style={[styles.categoryModalHeader, { borderBottomColor: modalBorderColor }]}>
                 <ThemedText type="subtitle">Select category</ThemedText>
                 <Pressable onPress={() => setCategoryModalVisible(false)} hitSlop={12}>
-                  <Ionicons name="close" size={24} color="#888" />
+                  <Ionicons name="close" size={24} color={iconColor} />
                 </Pressable>
               </View>
-              <Pressable onPress={() => { setSelectedCategory(null); setCategoryModalVisible(false); }} style={styles.categoryOption}>
-                <ThemedText style={styles.categoryOptionText}>All</ThemedText>
+              <Pressable
+                onPress={() => { setSelectedCategory(null); setCategoryModalVisible(false); }}
+                style={[styles.categoryOption, { borderBottomColor: modalBorderColor }]}
+              >
+                <ThemedText style={[styles.categoryOptionText, { color: primaryTextColor }]}>All</ThemedText>
                 {!selectedCategory && <Ionicons name="checkmark" size={20} color="#0A84FF" />}
               </Pressable>
               <FlatList
@@ -111,14 +119,14 @@ export default function HomeScreen() {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={styles.categoryOption}
+                    style={[styles.categoryOption, { borderBottomColor: modalBorderColor }]}
                     onPress={() => {
                       setSelectedCategory(item.name);
                       setCategoryModalVisible(false);
                     }}
                     activeOpacity={0.7}
                   >
-                    <ThemedText style={styles.categoryOptionText}>{item.name}</ThemedText>
+                    <ThemedText style={[styles.categoryOptionText, { color: primaryTextColor }]}>{item.name}</ThemedText>
                     {selectedCategory === item.name && <Ionicons name="checkmark" size={20} color="#0A84FF" />}
                   </TouchableOpacity>
                 )}
@@ -152,7 +160,7 @@ export default function HomeScreen() {
                   });
                 }}
               >
-                <ThemedView style={styles.listingContainer}>
+                <ThemedView style={[styles.listingContainer, { backgroundColor: cardBg }]}>
                   <ThemedView style={styles.imageWrapper}>
                     <Image
                       alt={item.title}
@@ -165,7 +173,10 @@ export default function HomeScreen() {
                       <Ionicons name="swap-horizontal" size={18} color="#5BA3FF" />
                     </View>
                     <Pressable
-                      style={styles.likeButton}
+                      style={[
+                        styles.likeButton,
+                        { backgroundColor: colorScheme === 'dark' ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.25)' },
+                      ]}
                       onPress={(e) => {
                         e.stopPropagation?.();
                         if (isMyListing(item.id)) {
@@ -183,8 +194,8 @@ export default function HomeScreen() {
                       />
                     </Pressable>
                   </ThemedView>
-                  <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: '#fff' }}>{item.title}</ThemedText>
-                  <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
+                  <ThemedText type="defaultSemiBold" numberOfLines={1} style={{ flexShrink: 1, color: primaryTextColor }}>{item.title}</ThemedText>
+                  <ThemedText type="defaultSemiBold" style={{ color: primaryTextColor }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </ThemedView>
               </Pressable>
             ))}
@@ -223,28 +234,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
   },
-  pendingStampWrap: {
-    position: 'absolute',
-    top: 4,
-    left: 4,
-    zIndex: 2,
-    maxWidth: '55%',
-  },
-  pendingStampRect: {
-    paddingHorizontal: 5,
-    paddingVertical: 3,
-    borderRadius: 4,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-    alignSelf: 'flex-start',
-  },
-  pendingStampText: {
-    fontSize: 9,
-    fontWeight: '800',
-    letterSpacing: 0.45,
-  },
   likeButton: {
     position: 'absolute',
     right: 8,
@@ -263,7 +252,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -288,7 +277,7 @@ const styles = StyleSheet.create({
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: DarkTheme.colors.text,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     opacity: 1,
     borderRadius: 99,
     paddingHorizontal: 12,
@@ -322,7 +311,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   categoryModalContent: {
-    backgroundColor: DarkTheme.colors.card,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     maxHeight: '70%',
     overflow: 'hidden',
@@ -333,7 +322,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: DarkTheme.colors.border,
+    borderBottomColor: 'rgba(0,0,0,0.08)',
   },
   categoryOption: {
     flexDirection: 'row',
@@ -342,10 +331,10 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: DarkTheme.colors.border,
+    borderBottomColor: 'rgba(0,0,0,0.08)',
   },
   categoryOptionText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#111827',
   },
 });

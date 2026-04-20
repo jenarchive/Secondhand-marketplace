@@ -92,7 +92,7 @@ export default function HomeScreen() {
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
   const colorScheme = useColorScheme() ?? 'light';
-  const detailCardBg = colorScheme === 'dark' ? colours.container : 'rgba(0,0,0,0.12)';
+  const detailCardBg = colorScheme === 'dark' ? colours.container : 'rgba(0,0,0,0.16)';
   const detailPrimaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
   const detailSecondaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#374151';
   const router = useRouter();
@@ -163,7 +163,7 @@ export default function HomeScreen() {
           ]}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.detailSection}>
+          <View>
       <ThemedView style={styles.listingContainer}>
         <UserHeader
           itemId={itemData.id}
@@ -391,7 +391,6 @@ const styles = StyleSheet.create({
   scrollContentWrap: {
     paddingHorizontal: 24,
   },
-  detailSection: {},
   listingContainer: {
     gap: 12,
   },
@@ -585,15 +584,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  offerButton: {
-    backgroundColor: colours.button,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderRadius: 16,
-    minWidth: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   removeButton: {
     backgroundColor: '#C44536',
     paddingVertical: 14,
