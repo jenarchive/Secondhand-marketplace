@@ -19,7 +19,7 @@ export default function TabLayout() {
         tabBarShowLabel: true, 
         
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 9,
           marginBottom: 8,
           fontWeight: '600'
         },
@@ -28,7 +28,8 @@ export default function TabLayout() {
           position: 'absolute',
 
           bottom: 20, 
-          marginHorizontal: 16,
+          marginHorizontal: 10,
+          paddingHorizontal: 6,
 
           height: 72,
           
