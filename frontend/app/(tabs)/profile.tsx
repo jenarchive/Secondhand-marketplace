@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginTop: 90,
-    rowGap: '2%',
   },
   profileFrame: {
     flexDirection: "row",

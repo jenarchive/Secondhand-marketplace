@@ -70,6 +70,9 @@ export default function App() {
           router.back();
         },
       },
+      {
+        text: 'Cancel',
+      },
     ]);
   };
 

@@ -27,7 +27,7 @@ export default function HomeScreen() {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
-  const { items: contextItems, isMyListing } = useMyListings();
+  const { items: contextItems, isMyListing, notifications } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
 
   useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
@@ -135,7 +135,9 @@ export default function HomeScreen() {
                 <ThemedText style={styles.emptyTitle}>No listings</ThemedText>
                 <ThemedText style={styles.emptySubtitle}>There are no items to show right now.</ThemedText>
               </View>
-            ) : filtered.map((item) => (
+            ) : filtered.map((item) => {
+              const hasPendingMatchOffer = notifications.some((n) => n.targetId === item.id);
+              return (
               <View key={item.id} style={styles.listingLink}>
                 <Pressable
                   style={({ pressed }) => [styles.listingContainer, pressed && styles.pressed]}
@@ -177,7 +179,7 @@ export default function HomeScreen() {
                         </View>
                       </View>
                     )}
-                    {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
+                    {!isItemSoldOnMarketplace(item.id) && (isPendingMeetupReservation(item.id) || hasPendingMatchOffer) && (
                       <View style={styles.pendingStampWrap}>
                         <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
                           <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
@@ -209,7 +211,7 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </Pressable>
               </View>
-            ))
+            )})
             }
         </ThemedView>
       </ThemedView>
