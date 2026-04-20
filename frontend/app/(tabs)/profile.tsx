@@ -9,6 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 
 const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
+let cachedUsername = '';
+let cachedEmail = '';
 
 function AuthGate() {
   return (
@@ -36,8 +38,8 @@ export default function HomeScreen() {
   const { isLoggedIn, token } = useAuth();
   const colorScheme = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#fff' : '#000';
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState(cachedUsername);
+  const [email, setEmail] = useState(cachedEmail);
 
   const { logout } = useAuth();
 
@@ -52,11 +54,17 @@ export default function HomeScreen() {
       })
       .then((data) => {
         if (!data) return;
-        if (data.username) setUsername(data.username);
-        if (data.email) setEmail(data.email);
+        if (data.username) {
+          setUsername(data.username);
+          cachedUsername = data.username;
+        }
+        if (data.email) {
+          setEmail(data.email);
+          cachedEmail = data.email;
+        }
       })
       .catch(() => {});
-  }, [isLoggedIn, token]);
+  }, [isLoggedIn, token, logout]);
 
   if (!isLoggedIn) {
     return <AuthGate />;

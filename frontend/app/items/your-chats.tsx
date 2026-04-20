@@ -62,6 +62,9 @@ export default function YourChatsScreen() {
                   contentFit="cover"
                 />
                 <View style={styles.infoContainer}>
+                  <ThemedText style={styles.matchInProgressText}>
+                    Match in progress
+                  </ThemedText>
                   <ThemedText style={styles.productName}>
                     {`${getItemById(notif.targetId)?.title || 'Unknown Item'} `}
                     <ThemedText style={styles.withUserText}>
@@ -122,6 +125,12 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     justifyContent: 'center',
+  },
+  matchInProgressText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#3B82F6',
+    marginBottom: 4,
   },
   productName: {
     fontSize: 15,
