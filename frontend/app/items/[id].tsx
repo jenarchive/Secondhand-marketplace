@@ -22,6 +22,7 @@ import {
 import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+const IN_PROGRESS_COLOR = '#16A34A';
 
 export default function HomeScreen() {
   const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string; fromExplore?: string; fromMarketplace?: string; fromLikedItems?: string; source?: string }>();
@@ -33,7 +34,7 @@ export default function HomeScreen() {
   const fromLikedItems = params.fromLikedItems === 'true';
   const sourceParam = params.source;
   const source = Array.isArray(sourceParam) ? sourceParam[0] : sourceParam;
-  const { items, isMyListing: isItemMine, removeItem } = useMyListings();
+  const { items, isMyListing: isItemMine, removeItem, notifications } = useMyListings();
   const myListingItems = useMemo(
     () => items.filter((item) => isItemMine(item.id)),
     [items, isItemMine]
@@ -77,9 +78,22 @@ export default function HomeScreen() {
 
   const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
   const soldOnMarketplace = isItemSoldOnMarketplace(itemData.id);
+  const hasPendingMatchOffer = !soldOnMarketplace && notifications.some((n) => n.targetId === itemData.id);
   const pendingMeetup = !soldOnMarketplace && isPendingMeetupReservation(itemData.id);
-  const listingStampLabel = soldOnMarketplace ? 'SOLD' : pendingMeetup ? 'RESERVED' : null;
-  const stampAccentColor = soldOnMarketplace ? LISTING_STAMP_SOLD_COLOR : LISTING_STAMP_PENDING_COLOR;
+  const inProgressStatus = !soldOnMarketplace && hasPendingMatchOffer;
+  const reservedStatus = !soldOnMarketplace && pendingMeetup && !hasPendingMatchOffer;
+  const listingStampLabel = soldOnMarketplace
+    ? 'SOLD'
+    : inProgressStatus
+      ? 'IN PROGRESS'
+      : reservedStatus
+        ? 'RESERVED'
+        : null;
+  const stampAccentColor = soldOnMarketplace
+    ? LISTING_STAMP_SOLD_COLOR
+    : inProgressStatus
+      ? IN_PROGRESS_COLOR
+      : LISTING_STAMP_PENDING_COLOR;
   const stampInset = 8;
   const stampRectStyle = {
     borderWidth: Math.max(2, 2.4 * detailStampScale),
@@ -87,8 +101,8 @@ export default function HomeScreen() {
     paddingHorizontal: 5 * detailStampScale,
     paddingVertical: 3 * detailStampScale,
   };
-  const buyNowLocked = soldOnMarketplace || pendingMeetup;
-  const buyNowLabel = soldOnMarketplace ? 'Sold' : pendingMeetup ? 'Reserved' : 'Buy Now';
+  const buyNowLocked = soldOnMarketplace || reservedStatus || inProgressStatus;
+  const buyNowLabel = soldOnMarketplace ? 'Sold' : inProgressStatus ? 'In Progress' : reservedStatus ? 'Reserved' : 'Buy Now';
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
@@ -204,11 +218,11 @@ export default function HomeScreen() {
               </View>
             </View>
           )}
-          {!isItemMine(itemData.id) && !soldOnMarketplace && (
+          {!isItemMine(itemData.id) && !soldOnMarketplace && !reservedStatus && !inProgressStatus && (
             <Pressable
               style={({ pressed }) => [
                 styles.matchBadge,
-                listingStampLabel === 'RESERVED' && styles.matchBadgeBelowStamp,
+                (listingStampLabel === 'RESERVED' || listingStampLabel === 'IN PROGRESS') && styles.matchBadgeBelowStamp,
                 pressed && styles.matchBadgePressed,
                 matchPickerVisible && styles.matchBadgeActive,
               ]}
@@ -228,7 +242,7 @@ export default function HomeScreen() {
               />
             </Pressable>
           )}
-          {!isItemMine(itemData.id) && !soldOnMarketplace && matchPickerVisible && (
+          {!isItemMine(itemData.id) && !soldOnMarketplace && !reservedStatus && !inProgressStatus && matchPickerVisible && (
             <Pressable
               style={styles.matchPickerPanel}
               onPress={(e) => {
@@ -355,13 +369,24 @@ export default function HomeScreen() {
         ) : !fromChat ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
-            style={[styles.buyNowButton, buyNowLocked && styles.buyNowButtonStatusLocked]}
+            style={[
+              styles.buyNowButton,
+              buyNowLocked && styles.buyNowButtonStatusLocked,
+              inProgressStatus && styles.buyNowButtonInProgress,
+            ]}
             onPress={async () => {
               if (soldOnMarketplace) {
                 Alert.alert('Unavailable', 'Sorry, this item is no longer available');
                 return;
               }
-              if (pendingMeetup) return;
+              if (hasPendingMatchOffer) {
+                Alert.alert('In Progress', 'Match offer is in progress.');
+                return;
+              }
+              if (pendingMeetup) {
+                Alert.alert('Reserved', 'Sorry, this item is already reserved');
+                return;
+              }
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               router.push({
                 pathname: '/items/transaction/[id]',
@@ -618,6 +643,9 @@ const styles = StyleSheet.create({
   },
   buyNowButtonStatusLocked: {
     backgroundColor: '#C44536',
+  },
+  buyNowButtonInProgress: {
+    backgroundColor: IN_PROGRESS_COLOR,
   },
   buyNowButtonText: {
     color: '#FFFFFF',

@@ -20,6 +20,8 @@ import {
   isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
 
+const IN_PROGRESS_COLOR = '#16A34A';
+
 export default function HomeScreen() {
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -137,6 +139,7 @@ export default function HomeScreen() {
               </View>
             ) : filtered.map((item) => {
               const hasPendingMatchOffer = notifications.some((n) => n.targetId === item.id);
+              const hasReservedMeetup = isPendingMeetupReservation(item.id) && !hasPendingMatchOffer;
               return (
               <View key={item.id} style={styles.listingLink}>
                 <Pressable
@@ -179,11 +182,21 @@ export default function HomeScreen() {
                         </View>
                       </View>
                     )}
-                    {!isItemSoldOnMarketplace(item.id) && (isPendingMeetupReservation(item.id) || hasPendingMatchOffer) && (
+                    {!isItemSoldOnMarketplace(item.id) && (hasReservedMeetup || hasPendingMatchOffer) && (
                       <View style={styles.pendingStampWrap}>
-                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
-                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
-                            RESERVED
+                        <View
+                          style={[
+                            styles.pendingStampRect,
+                            { borderColor: hasPendingMatchOffer ? IN_PROGRESS_COLOR : LISTING_STAMP_PENDING_COLOR },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.pendingStampText,
+                              { color: hasPendingMatchOffer ? IN_PROGRESS_COLOR : LISTING_STAMP_PENDING_COLOR },
+                            ]}
+                          >
+                            {hasPendingMatchOffer ? 'IN PROGRESS' : 'RESERVED'}
                           </Text>
                         </View>
                       </View>
