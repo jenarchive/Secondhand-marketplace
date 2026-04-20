@@ -90,6 +90,8 @@ export default function TabTwoScreen() {
           params: {
             targetId: String(currentItem.id),
             myId: String(myItem.id),
+            source: 'explore',
+            fromExplore: 'true',
           },
         })
       }
@@ -114,6 +116,8 @@ export default function TabTwoScreen() {
         params: {
           targetId: String(currentItem.id),
           myId: String(myItem.id),
+          source: 'explore',
+          fromExplore: 'true',
         },
       })
     }
@@ -236,6 +240,8 @@ export default function TabTwoScreen() {
                                       params: {
                                         targetId: String(item.id),
                                         myId: String(myItem.id),
+                                        source: 'explore',
+                                        fromExplore: 'true',
                                       },
                                     })
                                   }

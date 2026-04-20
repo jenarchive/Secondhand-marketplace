@@ -32,7 +32,16 @@ function formatMessageTime(sentAt: number): string {
 }
 
 export default function ChatScreen() {
-  const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string }>();
+  const params = useLocalSearchParams<{
+    id: string;
+    sellerName?: string;
+    transactionMethod?: string;
+    offerPrice?: string;
+    source?: string;
+    fromMarketplace?: string;
+    fromExplore?: string;
+    fromLikedItems?: string;
+  }>();
   const router = useRouter();
   const { isLoggedIn, token } = useAuth();
   const id = Number(params.id);
@@ -179,7 +188,18 @@ export default function ChatScreen() {
         <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-            onPress={() => router.replace(`/items/transaction/${id}` as any)}
+            onPress={() =>
+              router.replace({
+                pathname: '/items/transaction/[id]',
+                params: {
+                  id: String(id),
+                  ...(params.source ? { source: params.source } : {}),
+                  fromMarketplace: params.fromMarketplace ?? 'false',
+                  fromExplore: params.fromExplore ?? 'false',
+                  fromLikedItems: params.fromLikedItems ?? 'false',
+                },
+              })
+            }
             activeOpacity={0.8}
           >
             <Ionicons name="arrow-back" size={24} color="white" />

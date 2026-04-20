@@ -25,10 +25,20 @@ const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 const IN_PROGRESS_COLOR = '#16A34A';
 
 export default function HomeScreen() {
-  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string; fromExplore?: string; fromMarketplace?: string; fromLikedItems?: string; source?: string }>();
+  const params = useLocalSearchParams<{
+    id: string;
+    fromMyListings?: string;
+    fromChat?: string;
+    fromTransaction?: string;
+    fromExplore?: string;
+    fromMarketplace?: string;
+    fromLikedItems?: string;
+    source?: string;
+  }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
   const fromChat = params.fromChat === 'true';
+  const fromTransaction = params.fromTransaction === 'true';
   const fromExplore = params.fromExplore === 'true';
   const fromMarketplace = params.fromMarketplace === 'true';
   const fromLikedItems = params.fromLikedItems === 'true';
@@ -174,7 +184,7 @@ export default function HomeScreen() {
             styles.scrollContentWrap,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) && !fromChat ? 72 : 0),
+              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) && !fromChat && !fromTransaction ? 72 : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
@@ -291,6 +301,12 @@ export default function HomeScreen() {
                               params: {
                                 targetId: String(itemData.id),
                                 myId: String(myItem.id),
+                                source:
+                                  source ??
+                                  (fromMarketplace ? 'marketplace' : fromExplore ? 'explore' : fromLikedItems ? 'liked-items' : undefined),
+                                fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
+                                fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
+                                fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
                               },
                             });
                           }}
@@ -366,7 +382,7 @@ export default function HomeScreen() {
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
           </Pressable>
         </View>
-        ) : !fromChat ? (
+        ) : !fromChat && !fromTransaction ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
             style={[

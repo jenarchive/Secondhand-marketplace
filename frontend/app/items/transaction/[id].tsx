@@ -119,6 +119,10 @@ export default function TransactionScreen() {
         id: String(id),
         sellerName: `User${id}`,
         transactionMethod: method,
+        ...(source ? { source } : {}),
+        fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
+        fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
+        fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
         offerPrice:
           acceptedItemPrice !== undefined
             ? String(acceptedItemPrice)
@@ -267,6 +271,7 @@ export default function TransactionScreen() {
                     params: {
                       id: String(id),
                       ...(source ? { source } : {}),
+                      fromTransaction: 'true',
                     },
                   })
                 }

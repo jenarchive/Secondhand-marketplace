@@ -34,7 +34,15 @@ export default function App() {
   const colorScheme = useColorScheme() ?? 'light';
   const insets = useSafeAreaInsets();
 
-  const params = useLocalSearchParams<{ myId?: string; targetId?: string; sellerName?: string }>();
+  const params = useLocalSearchParams<{
+    myId?: string;
+    targetId?: string;
+    sellerName?: string;
+    source?: string | string[];
+    fromMarketplace?: string | string[];
+    fromExplore?: string | string[];
+    fromLikedItems?: string | string[];
+  }>();
   const router = useRouter();
   const { getItemById, removeNotification } = useMyListings();
   const myId = Number(params.myId);
@@ -49,6 +57,14 @@ export default function App() {
   const myItem = Number.isFinite(myId) ? getItemById(myId) : undefined;
   const targetItem = Number.isFinite(targetId) ? getItemById(targetId) : undefined;
   const headerTitle = params.sellerName ?? (Number.isFinite(targetId) ? `User${targetId}` : 'Chat');
+  const sourceParam = params.source;
+  const source = Array.isArray(sourceParam) ? sourceParam[0] : sourceParam;
+  const fromMarketplaceParam = params.fromMarketplace;
+  const fromMarketplace = (Array.isArray(fromMarketplaceParam) ? fromMarketplaceParam[0] : fromMarketplaceParam) === 'true';
+  const fromExploreParam = params.fromExplore;
+  const fromExplore = (Array.isArray(fromExploreParam) ? fromExploreParam[0] : fromExploreParam) === 'true';
+  const fromLikedItemsParam = params.fromLikedItems;
+  const fromLikedItems = (Array.isArray(fromLikedItemsParam) ? fromLikedItemsParam[0] : fromLikedItemsParam) === 'true';
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
   const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFF';
@@ -130,6 +146,22 @@ export default function App() {
     setShowMoreMenu(false);
   };
 
+  const handleBack = () => {
+    if (source === 'marketplace' || fromMarketplace) {
+      router.replace('/(tabs)');
+      return;
+    }
+    if (source === 'explore' || fromExplore) {
+      router.replace('/(tabs)/explore');
+      return;
+    }
+    if (source === 'liked-items' || fromLikedItems) {
+      router.replace('/(tabs)/liked-items');
+      return;
+    }
+    router.back();
+  };
+
   const pushAttachmentMessage = (prefix: 'photo' | 'video', fileName?: string | null) => {
     if (!chatKey) return;
     const fallback = prefix === 'photo' ? 'Photo' : 'Video';
@@ -177,7 +209,7 @@ export default function App() {
       <View style={styles.header}>
         <Pressable
           style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-          onPress={() => router.back()}
+          onPress={handleBack}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>
