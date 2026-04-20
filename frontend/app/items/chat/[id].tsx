@@ -11,7 +11,13 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { getMessagesForItem, addMessageForItem, type ChatMessage } from '@/store/chatStore';
-import { setAcceptedOfferItemPrice, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
+import {
+  setAcceptedOfferItemPrice,
+  setOfferForItem,
+  getAcceptedOfferItemPrice,
+  getOfferForItem,
+  hasSentOfferForItem,
+} from '@/store/transactionStore';
 
 const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 
@@ -19,6 +25,25 @@ function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
   if (!offerPrice || Number.isNaN(Number(offerPrice))) return false;
   const stored = getAcceptedOfferItemPrice(itemId);
   return stored !== undefined && stored === Number(offerPrice);
+}
+
+/** URL params → 저장된 오퍼/수락가 순으로 복원 (My Chats 등 재진입 시에도 오퍼 카드 유지) */
+function getEffectiveOfferPrice(
+  itemId: number,
+  offerPriceParam?: string | string[]
+): string {
+  const raw = Array.isArray(offerPriceParam) ? offerPriceParam[0] : offerPriceParam;
+  if (raw && !Number.isNaN(Number(raw)) && Number(raw) > 0) {
+    return String(Number(raw));
+  }
+  if (hasSentOfferForItem(itemId)) {
+    const stored = getOfferForItem(itemId);
+    const n = parseFloat(String(stored).replace(/[^0-9.]/g, ''));
+    if (!Number.isNaN(n) && n > 0) return String(n);
+  }
+  const acc = getAcceptedOfferItemPrice(itemId);
+  if (acc !== undefined && acc > 0) return String(acc);
+  return '';
 }
 
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -47,7 +72,7 @@ export default function ChatScreen() {
   const { isLoggedIn, token } = useAuth();
   const id = Number(params.id);
   const returnToTransactionFlow = params.fromTransaction === 'true';
-  const { items } = useMyListings();
+  const { items, addPurchaseChatEntry } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
@@ -61,15 +86,24 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => getMessagesForItem(id));
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [offerAccepted, setOfferAccepted] = useState(() => isOfferAcceptedForItem(id, params.offerPrice));
+  const effectiveOfferPrice = getEffectiveOfferPrice(id, params.offerPrice);
+  const [offerAccepted, setOfferAccepted] = useState(() =>
+    isOfferAcceptedForItem(id, effectiveOfferPrice || undefined)
+  );
   const [myUsername, setMyUsername] = useState('');
 
   useFocusEffect(
     useCallback(() => {
-      setOfferAccepted(isOfferAcceptedForItem(id, params.offerPrice));
+      const eff = getEffectiveOfferPrice(id, params.offerPrice);
+      setOfferAccepted(isOfferAcceptedForItem(id, eff || undefined));
       setMessages(getMessagesForItem(id));
     }, [id, params.offerPrice])
   );
+
+  useEffect(() => {
+    if (!Number.isFinite(id) || id <= 0) return;
+    addPurchaseChatEntry(id);
+  }, [id, addPurchaseChatEntry]);
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
   const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFF';
@@ -172,7 +206,7 @@ export default function ChatScreen() {
 
   const handleAcceptOffer = () => {
     if (offerAccepted) return;
-    const offerNum = Number(params.offerPrice);
+    const offerNum = Number(effectiveOfferPrice);
     if (!Number.isFinite(offerNum) || offerNum <= 0) return;
     setOfferAccepted(true);
     setAcceptedOfferItemPrice(id, offerNum);
@@ -265,9 +299,9 @@ export default function ChatScreen() {
                 </>
               )}
 
-              {(params.offerPrice && !Number.isNaN(Number(params.offerPrice))) || messages.length > 0 ? (
+              {(effectiveOfferPrice && !Number.isNaN(Number(effectiveOfferPrice))) || messages.length > 0 ? (
                 <View style={styles.messagesContainer}>
-                  {params.offerPrice && !Number.isNaN(Number(params.offerPrice)) && (
+                  {effectiveOfferPrice && !Number.isNaN(Number(effectiveOfferPrice)) && (
                     <>
                       <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
                         <Text style={styles.offerCardTitle}>
@@ -277,7 +311,7 @@ export default function ChatScreen() {
                           {new Intl.NumberFormat('en-GB', {
                             style: 'currency',
                             currency: 'GBP',
-                          }).format(Number(params.offerPrice))}
+                          }).format(Number(effectiveOfferPrice))}
                         </Text>
                         <Pressable
                           style={[

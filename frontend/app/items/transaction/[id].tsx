@@ -97,6 +97,7 @@ export default function TransactionScreen() {
       Alert.alert('Same as list price', 'Your offer is the same as the list price. Please enter a different amount.');
       return;
     }
+    setOfferForItem(id, String(num));
     markOfferSentForItem(id);
     setHasMadeOffer(true);
     router.push({

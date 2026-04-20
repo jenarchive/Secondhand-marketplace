@@ -1,3 +1,4 @@
+import { useMemo, useSyncExternalStore } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
@@ -5,14 +6,59 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '@/components/themed-text';
 import { Ionicons } from '@expo/vector-icons';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import type { ChatListNotificationType } from '@/contexts/MyListingsContext';
 import { Image } from 'expo-image';
+import {
+  subscribePendingMeetup,
+  getPendingMeetupVersion,
+  isPendingMeetupReservation,
+  isItemSoldOnMarketplace,
+} from '@/store/pendingMeetupStore';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+
+const LABEL_MATCH = 'Match in progress';
+const LABEL_PURCHASE = 'Purchase in progress';
+const LABEL_BOUGHT = 'Bought';
+
+const COLOR_MATCH = '#3B82F6';
+const COLOR_PURCHASE = '#16A34A';
+const COLOR_BOUGHT = '#EF4444';
+
+function isBoughtOrReservedItem(itemId: number): boolean {
+  return isItemSoldOnMarketplace(itemId) || isPendingMeetupReservation(itemId);
+}
+
+function statusLabelAndColor(
+  kind: ChatListNotificationType,
+  itemId: number,
+  pendingSnapshot: number
+): { label: string; color: string } {
+  void pendingSnapshot;
+  if (kind === 'MATCH_OFFER') {
+    return { label: LABEL_MATCH, color: COLOR_MATCH };
+  }
+  if (isBoughtOrReservedItem(itemId)) {
+    return { label: LABEL_BOUGHT, color: COLOR_BOUGHT };
+  }
+  return { label: LABEL_PURCHASE, color: COLOR_PURCHASE };
+}
 
 export default function YourChatsScreen() {
   const screenBg = useThemeColor({}, 'background');
   const nav = useRouter();
   const { notifications, getItemById } = useMyListings();
+  const pendingVersion = useSyncExternalStore(
+    subscribePendingMeetup,
+    getPendingMeetupVersion,
+    getPendingMeetupVersion
+  );
+
+  const sortedNotifications = useMemo(
+    () =>
+      [...notifications].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
+    [notifications]
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
@@ -35,49 +81,65 @@ export default function YourChatsScreen() {
         </View>
 
         <ScrollView
-          contentContainerStyle={notifications.length === 0 ? { flex: 1 } : styles.listContent}
+          contentContainerStyle={sortedNotifications.length === 0 ? { flex: 1 } : styles.listContent}
           style={styles.listcontainer}
         >
-          {notifications.length === 0 ? (
+          {sortedNotifications.length === 0 ? (
             <View style={styles.emptyStateCenter}>
               <ThemedText style={styles.emptyText}>
                 No chats yet
               </ThemedText>
             </View>
           ) : (
-            notifications.map((notif) => (
-              <Pressable
-                key={notif.id}
-                onPress={() => {
-                  nav.push({
-                    pathname: '/items/chat',
-                    params: { myId: notif.myId, targetId: notif.targetId },
-                  });
-                }}
-                style={styles.card}
-              >
-                <Image
-                  source={{ uri: getItemById(notif.targetId)?.image }}
-                  style={styles.chatItemThumb}
-                  contentFit="cover"
-                />
-                <View style={styles.infoContainer}>
-                  <ThemedText style={styles.matchInProgressText}>
-                    Match in progress
-                  </ThemedText>
-                  <ThemedText style={styles.productName}>
-                    {`${getItemById(notif.targetId)?.title || 'Unknown Item'} `}
-                    <ThemedText style={styles.withUserText}>
-                      {`with User ${notif.targetId}`}
+            sortedNotifications.map((notif) => {
+              const kind: ChatListNotificationType = notif.type ?? 'MATCH_OFFER';
+              const itemId = notif.targetId;
+              const { label, color } = statusLabelAndColor(kind, itemId, pendingVersion);
+              return (
+                <Pressable
+                  key={notif.id}
+                  onPress={() => {
+                    if (kind === 'MATCH_OFFER') {
+                      nav.push({
+                        pathname: '/items/chat',
+                        params: { myId: notif.myId, targetId: notif.targetId },
+                      });
+                      return;
+                    }
+                    nav.push({
+                      pathname: '/items/chat/[id]',
+                      params: {
+                        id: String(itemId),
+                        sellerName: `User${itemId}`,
+                        fromTransaction: 'true',
+                      },
+                    });
+                  }}
+                  style={styles.card}
+                >
+                  <Image
+                    source={{ uri: getItemById(itemId)?.image }}
+                    style={styles.chatItemThumb}
+                    contentFit="cover"
+                  />
+                  <View style={styles.infoContainer}>
+                    <ThemedText style={[styles.statusLabelText, { color }]}>
+                      {label}
                     </ThemedText>
-                  </ThemedText>
-                  <ThemedText style={styles.matchTimeText}>
-                    {notif.timestamp.toLocaleDateString()} {notif.timestamp.toLocaleTimeString()}
-                  </ThemedText>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color="gray" />
-              </Pressable>
-            ))
+                    <ThemedText style={styles.productName}>
+                      {`${getItemById(itemId)?.title || 'Unknown Item'} `}
+                      <ThemedText style={styles.withUserText}>
+                        {`with User ${itemId}`}
+                      </ThemedText>
+                    </ThemedText>
+                    <ThemedText style={styles.matchTimeText}>
+                      {notif.timestamp.toLocaleDateString()} {notif.timestamp.toLocaleTimeString()}
+                    </ThemedText>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color="gray" />
+                </Pressable>
+              );
+            })
           )}
         </ScrollView>
       </ThemedView>
@@ -126,10 +188,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  matchInProgressText: {
+  statusLabelText: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#3B82F6',
     marginBottom: 4,
   },
   productName: {

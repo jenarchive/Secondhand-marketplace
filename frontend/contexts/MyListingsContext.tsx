@@ -9,6 +9,8 @@ function pickRandomItems<T>(array: T[], count: number): T[] {
   return shuffled.slice(0, Math.min(count, array.length));
 }
 
+export type ChatListNotificationType = 'MATCH_OFFER' | 'PURCHASE';
+
 type MyListingsContextType = {
   items: MyListingItem[];
   myListings: MyListingItem[];
@@ -20,6 +22,7 @@ type MyListingsContextType = {
   recordMatch: (myId: number, targetId: number) => void;
   notifications: Notification[];
   addNotification: (myId: number, targetId: number) => void;
+  addPurchaseChatEntry: (itemId: number) => void;
   removeNotification: (myId: number, targetId: number) => void;
 };
 
@@ -30,11 +33,11 @@ type Match = { // type for storing match
   timestamp: Date;
 };
 
-type Notification = { // for showing in notification page
+type Notification = {
   id: string;
   myId: number;
   targetId: number;
-  type: 'MATCH_OFFER';
+  type: ChatListNotificationType;
   timestamp: Date;
 };
 
@@ -85,16 +88,44 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
       timestamp: new Date(),
     };
     setNotifications((prev) => {
-    const isDuplicate = prev.some((n) => n.targetId === targetId);
-    if (isDuplicate) return prev;
+      const isDuplicate = prev.some(
+        (n) => (n.type ?? 'MATCH_OFFER') === 'MATCH_OFFER' && n.myId === myId && n.targetId === targetId
+      );
+      if (isDuplicate) return prev;
 
-    return [newNotif, ...prev];
-  });
+      return [newNotif, ...prev];
+    });
+  }, []);
+
+  const addPurchaseChatEntry = useCallback((itemId: number) => {
+    setNotifications((prev) => {
+      const idx = prev.findIndex((n) => (n.type ?? 'MATCH_OFFER') === 'PURCHASE' && n.targetId === itemId);
+      if (idx >= 0) {
+        const cur = prev[idx];
+        const rest = prev.filter((_, i) => i !== idx);
+        return [{ ...cur, timestamp: new Date() }, ...rest];
+      }
+      const entry: Notification = {
+        id: `purchase-${itemId}-${Date.now()}`,
+        myId: 0,
+        targetId: itemId,
+        type: 'PURCHASE',
+        timestamp: new Date(),
+      };
+      return [entry, ...prev];
+    });
   }, []);
 
   const removeNotification = useCallback((myId: number, targetId: number) => {
     setNotifications((prev) =>
-      prev.filter((n) => !(n.myId === myId && n.targetId === targetId))
+      prev.filter(
+        (n) =>
+          !(
+            (n.type ?? 'MATCH_OFFER') === 'MATCH_OFFER' &&
+            n.myId === myId &&
+            n.targetId === targetId
+          )
+      )
     );
     setMatches((prev) =>
       prev.filter((m) => !(m.myId === myId && m.targetId === targetId))
@@ -138,6 +169,7 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
       getItemById,
       notifications,
       addNotification,
+      addPurchaseChatEntry,
       removeNotification,
     }),
     [
@@ -151,6 +183,7 @@ export function MyListingsProvider({ children }: { children: React.ReactNode }) 
       getItemById,
       notifications,
       addNotification,
+      addPurchaseChatEntry,
       removeNotification,
     ]
   );
