@@ -187,6 +187,15 @@ export default function TabTwoScreen() {
                   />
                 </Pressable>
                 {matchPickerVisible && (
+                  <Pressable
+                    style={styles.matchPickerDismissLayer}
+                    onPress={() => {
+                      setMatchPickerVisible(false);
+                      setSelectedMatchItemId(null);
+                    }}
+                  />
+                )}
+                {matchPickerVisible && (
                   <View style={styles.matchPickerPanel}>
                     <Text style={styles.matchPickerTitle}>Match with my listing</Text>
                     {myListingItems.length === 0 ? (
@@ -453,7 +462,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 12,
-    zIndex: 10,
+    zIndex: 16,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -468,7 +477,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 56,
     left: 12,
-    zIndex: 12,
+    zIndex: 15,
     minWidth: 210,
     maxWidth: 255,
     borderRadius: 14,
@@ -476,6 +485,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderWidth: 0,
     gap: 8,
+  },
+  matchPickerDismissLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 11,
   },
   matchPickerTitle: {
     color: '#1F2937',

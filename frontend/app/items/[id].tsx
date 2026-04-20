@@ -165,7 +165,14 @@ export default function HomeScreen() {
           ]}
           showsVerticalScrollIndicator={false}
         >
-          <View>
+          <Pressable
+            onPress={() => {
+              if (matchPickerVisible) {
+                setMatchPickerVisible(false);
+                setSelectedMyListingId(null);
+              }
+            }}
+          >
       <ThemedView style={styles.listingContainer}>
         <UserHeader
           itemId={itemData.id}
@@ -206,8 +213,11 @@ export default function HomeScreen() {
                 matchPickerVisible && styles.matchBadgeActive,
               ]}
               onPress={() => {
-                setSelectedMyListingId(null);
                 setMatchPickerVisible((prev) => !prev);
+              }}
+              onPressIn={(e) => {
+                e.stopPropagation();
+                setSelectedMyListingId(null);
               }}
               hitSlop={8}
             >
@@ -219,7 +229,12 @@ export default function HomeScreen() {
             </Pressable>
           )}
           {!isItemMine(itemData.id) && !soldOnMarketplace && matchPickerVisible && (
-            <View style={styles.matchPickerPanel}>
+            <Pressable
+              style={styles.matchPickerPanel}
+              onPress={(e) => {
+                e.stopPropagation();
+              }}
+            >
               <ThemedText style={styles.matchPickerTitle}>Match with my listing</ThemedText>
               {myListingItems.length === 0 ? (
                 <ThemedText style={styles.matchPickerEmpty}>No my listings yet</ThemedText>
@@ -233,7 +248,10 @@ export default function HomeScreen() {
                         styles.matchPickerItem,
                         selected && styles.matchPickerItemSelected,
                       ]}
-                      onPress={() => setSelectedMyListingId(myItem.id)}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        setSelectedMyListingId(myItem.id);
+                      }}
                     >
                       <Image
                         source={{ uri: myItem.image }}
@@ -252,15 +270,16 @@ export default function HomeScreen() {
                       {selected && (
                         <Pressable
                           style={styles.matchInlineConfirmButton}
-                          onPress={() =>
+                          onPress={(e) => {
+                            e.stopPropagation();
                             router.push({
                               pathname: '/items/match-preview',
                               params: {
                                 targetId: String(itemData.id),
                                 myId: String(myItem.id),
                               },
-                            })
-                          }
+                            });
+                          }}
                         >
                           <ThemedText style={styles.matchInlineConfirmButtonText}>
                             Confirm
@@ -271,7 +290,7 @@ export default function HomeScreen() {
                   );
                 })
               )}
-            </View>
+            </Pressable>
           )}
           {!isItemMine(itemData.id) && (
           <Pressable
@@ -302,7 +321,7 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
       </ThemedView>
-          </View>
+          </Pressable>
         </ScrollView>
         {isItemMine(itemData.id) ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
