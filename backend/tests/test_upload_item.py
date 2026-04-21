@@ -1,9 +1,10 @@
 import pytest
+import botocore.exceptions
 from flask import Flask
 from io import BytesIO
 from unittest.mock import patch, MagicMock
 
-from app.routes.upload_item import upload_bp
+from app.routes.upload_item import upload_bp, upload_file_to_s3
 
 # dummy Flask application and client for testing
 @pytest.fixture
@@ -201,3 +202,53 @@ def test_upload_item_missing_fields_no_validation(mock_upload_s3, mock_connect_d
     assert inserted_values[0] is None  # title is None
     assert inserted_values[1] is None  # description is None
     assert inserted_values[3] is None  # category is None
+
+
+# upload_file_to_s3
+
+# test successful s3 upload returns correctly formatted url
+@patch('app.routes.upload_item.boto3.client')
+def test_upload_file_to_s3_success(mock_boto_client, client):
+    mock_s3 = mock_boto_client.return_value
+
+    fake_file = MagicMock()
+    fake_file.content_type = 'image/jpeg'
+
+    url = upload_file_to_s3(fake_file, 'test.jpg')
+
+    assert url == "https://fake_bucket.s3.us-east-1.amazonaws.com/test.jpg"
+    mock_s3.upload_fileobj.assert_called_once_with(
+        fake_file,
+        'fake_bucket',
+        'test.jpg',
+        ExtraArgs={'ContentType': 'image/jpeg'}
+    )
+
+# test s3 upload returns none on BotoCoreError
+@patch('app.routes.upload_item.boto3.client')
+def test_upload_file_to_s3_botocore_error(mock_boto_client, client):
+    mock_s3 = mock_boto_client.return_value
+    mock_s3.upload_fileobj.side_effect = botocore.exceptions.BotoCoreError()
+
+    fake_file = MagicMock()
+    fake_file.content_type = 'image/jpeg'
+
+    url = upload_file_to_s3(fake_file, 'test.jpg')
+
+    assert url is None
+
+# test s3 upload returns none on ClientError
+@patch('app.routes.upload_item.boto3.client')
+def test_upload_file_to_s3_client_error(mock_boto_client, client):
+    mock_s3 = mock_boto_client.return_value
+    mock_s3.upload_fileobj.side_effect = botocore.exceptions.ClientError(
+        {'Error': {'Code': 'NoSuchBucket', 'Message': 'The bucket does not exist'}},
+        'upload_fileobj'
+    )
+
+    fake_file = MagicMock()
+    fake_file.content_type = 'image/jpeg'
+
+    url = upload_file_to_s3(fake_file, 'test.jpg')
+
+    assert url is None
