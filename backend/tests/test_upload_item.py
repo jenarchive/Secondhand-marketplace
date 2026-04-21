@@ -92,3 +92,112 @@ def test_create_item_db_error(mock_connect_db, client):
     mock_conn.commit.assert_not_called()
     
     mock_conn.close.assert_called_once()
+
+# test successful upload closes db connection
+@patch('app.routes.upload_item.connect_db')
+@patch('app.routes.upload_item.upload_file_to_s3')
+def test_upload_item_closes_db_on_success(mock_upload_s3, mock_connect_db, client):
+    mock_conn = mock_connect_db.return_value
+    mock_cur = mock_conn.cursor.return_value
+    mock_cur.fetchone.return_value = [1]
+
+    mock_upload_s3.return_value = "https://fake_bucket.s3.amazonaws.com/1_test.jpg"
+
+    fake_image = (BytesIO(b"fake image binary data"), 'test.jpg')
+
+    response = client.post('/items', data={
+        'title': 'Hat',
+        'description': 'A hat',
+        'price': '5.00',
+        'category': 'Accessories',
+        'images': fake_image
+    }, content_type='multipart/form-data')
+
+    assert response.status_code == 201
+    mock_conn.close.assert_called_once()
+
+# test upload with multiple images inserts an image row for each
+@patch('app.routes.upload_item.connect_db')
+@patch('app.routes.upload_item.upload_file_to_s3')
+def test_upload_item_multiple_images(mock_upload_s3, mock_connect_db, client):
+    mock_conn = mock_connect_db.return_value
+    mock_cur = mock_conn.cursor.return_value
+    mock_cur.fetchone.return_value = [42]
+
+    mock_upload_s3.side_effect = [
+        "https://fake_bucket.s3.amazonaws.com/42_photo1.jpg",
+        "https://fake_bucket.s3.amazonaws.com/42_photo2.jpg",
+    ]
+
+    fake_image_1 = (BytesIO(b"image data one"), 'photo1.jpg')
+    fake_image_2 = (BytesIO(b"image data two"), 'photo2.jpg')
+
+    response = client.post('/items', data={
+        'title': 'Jacket',
+        'description': 'A jacket',
+        'price': '50.00',
+        'category': 'Clothing',
+        'images': [fake_image_1, fake_image_2]
+    }, content_type='multipart/form-data')
+
+    assert response.status_code == 201
+    assert response.get_json() == {"message": "product uploaded successfully", "item_id": 42}
+
+    assert mock_upload_s3.call_count == 2
+    # 1 product insert + 2 image inserts
+    assert mock_cur.execute.call_count == 3
+    mock_conn.commit.assert_called_once()
+
+# test that images with empty filenames are skipped
+@patch('app.routes.upload_item.connect_db')
+@patch('app.routes.upload_item.upload_file_to_s3')
+def test_upload_item_skips_empty_filename(mock_upload_s3, mock_connect_db, client):
+    mock_conn = mock_connect_db.return_value
+    mock_cur = mock_conn.cursor.return_value
+    mock_cur.fetchone.return_value = [7]
+
+    mock_upload_s3.return_value = "https://fake_bucket.s3.amazonaws.com/7_real.jpg"
+
+    real_image = (BytesIO(b"real image data"), 'real.jpg')
+    empty_image = (BytesIO(b""), '')
+
+    response = client.post('/items', data={
+        'title': 'Scarf',
+        'description': 'A scarf',
+        'price': '12.00',
+        'category': 'Accessories',
+        'images': [real_image, empty_image]
+    }, content_type='multipart/form-data')
+
+    assert response.status_code == 201
+    # only the real image should have triggered an s3 upload and image insert
+    assert mock_upload_s3.call_count == 1
+    # 1 product insert + 1 image insert (empty filename skipped)
+    assert mock_cur.execute.call_count == 2
+
+# test upload with missing required form fields still hits the db (no validation guard)
+@patch('app.routes.upload_item.connect_db')
+@patch('app.routes.upload_item.upload_file_to_s3')
+def test_upload_item_missing_fields_no_validation(mock_upload_s3, mock_connect_db, client):
+    mock_conn = mock_connect_db.return_value
+    mock_cur = mock_conn.cursor.return_value
+    mock_cur.fetchone.return_value = [55]
+
+    mock_upload_s3.return_value = "https://fake_bucket.s3.amazonaws.com/55_test.jpg"
+
+    fake_image = (BytesIO(b"fake image binary data"), 'test.jpg')
+
+    # omit title, description, and category — only price provided
+    response = client.post('/items', data={
+        'price': '20.00',
+        'images': fake_image
+    }, content_type='multipart/form-data')
+
+    # no input validation exists, so the route passes None values straight to the db
+    # the mock db accepts them and returns 201 — this documents the missing validation
+    assert response.status_code == 201
+    insert_call_args = mock_cur.execute.call_args_list[0][0]
+    inserted_values = insert_call_args[1]
+    assert inserted_values[0] is None  # title is None
+    assert inserted_values[1] is None  # description is None
+    assert inserted_values[3] is None  # category is None
