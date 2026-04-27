@@ -63,67 +63,63 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 ## User Flow
 ### Basic Flow
-1. ...
+#### Buyer: 
+1. Open the app 
+2. Sign up / Log in
+3. Search/Browse to like / buy: 
+     - Scroll through marketplace
+     - Swipe on explore page (able to match if buyer has listing)
+4. Head to likes page to check items that they liked
+5. Choose one that they like and buy
+6. Fill in details for transaction page and send offer 
+7. Wait for seller to accept offer 
+8. Rate the seller after offer accepted
 
-### Alternative Flow
-1. ...
+#### Seller: 
+1. Open the app 
+2. Sign up / Log in
+3. Add listing using add items page
+4. Edit details or remove listings in MyListings page 
+5. Accept or decline offer sent by buyers
 
 
 ## Project Structure
 ```text
-├── .github                            # Issues & Pr templates, CI/CD workflows
+├── .github                            # Templates & workflows
 ├── README.md                          # Main project overview
 ├── ai-tools                           # Overview of AI tools
-│   └── README.md                      # Details of how AI is used in this project with example prompts 
 ├── backend                            # Flask API: Handles business logic and data processing
 │   ├── README.md                      # Backend overview and structure
 │   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings, Upload Items)
-│   ├── tests                          # Unit tests for testing backend code
+│   ├── tests                          
 │   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
 │   ├── run.py                         # Server entry point: Starts the Flask development server
 │   └── .pylintrc                      # Adjustment for pylint in CI 
 ├── database                           # Data Layer: PostgreSQL configuration and scripts
 │   ├── README.md                      # Database overview and structure 
-│   ├── config.py                      # DB connection strings and environment settings
+│   ├── config.py                      
 │   ├── main.py                        # Management script for DB init and migrations
-│   └── *.sql                          # SQL scripts: Schema(Create), Seed(Insert), Ops(Queries)
+│   └── *.sql                          # SQL scripts
 ├── frontend                           # Frontend React Native (Expo) application
 │   ├── README.md                      # Frontend overview and structure 
 │   ├── app                            # File-based Routing (Crucial for UI)
 │   │   ├── (tabs)                     # Main pages for frontend
-│   │   │   ├── _layout.tsx            # Layout for navigation bar and pages
-│   │   │   ├── sell.tsx               # Sell Page: Item registration
-│   │   │   ├── profile.tsx            # User Profile: Account and my listings 
-│   │   │   ├── explore.tsx            # Explore Page: Swiping and gamification
-│   │   │   ├── liked-items.tsx        # Liked-items Page: Record and edit which items are liked 
-│   │   │   └── index.tsx              # App landing page - Marketplace: Item listings (Matches Figma)
 │   │   ├── auth                       # Authentication flow
-│   │   │   ├── login.tsx              # Sign-in screen
-│   │   │   └── signup.tsx             # New user registration
 │   │   ├── items                      # Item details for sub-pages 
-│   │   │   ├── edit                   # Folder for editing details of my listing
-│   │   │   ├── transaction            # Folder for "what happens after buy button is pressed"
-│   │   │   ├── [id].tsx               # Dynamic Route: Individual item detail view
-│   │   │   ├── current-listing.tsx    # Page showing my current listing items 
-│   │   │   ├── edit-profile.tsx       # Page for editing details for user profile
-│   │   │   └── notification.tsx       # Page for showing notifications
 │   │   └── _layout.tsx                # Root layout and theme providers
-│   ├── assets                         # Images, icons, and animations
 │   ├── components                     # Reusable UI components (Headers, Buttons)
 │   ├── constants                      # Design tokens (Colours, Spacing)
-│   ├── contexts                       # Context used for checking in other pages 
+│   ├── contexts                       
 │   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
-│   ├── scripts                        # To reset project
-│   ├── store                          # Storage for test-data 
+│   ├── store                          
 │   ├── test-data.json                 # Mock data for frontend testing
-│   ├── __tests__                      # Tests for testing frontend code
+│   ├── __tests__                      
 │   ├── package.json                   # Frontend dependencies and scripts
 │   └── *                              # Set up files for linting / testing
 ├── doc                                # Project documentation and diagrams
-│   ├── previous project               # Files related to previous project
-│   ├── others                         # Diagrams and files for explaining / planning 
-│   └── meetings and feedbacks         # Meeting notes and feedbacks for review
-└── package.json                       # Root workspace configuration
+    ├── previous project               # Files related to previous project
+    ├── others                         # Diagrams and files for explaining / planning 
+    └── meetings and feedbacks         # Meeting notes and feedbacks for review
 ```
 
 ## Dev Instructions
