@@ -353,4 +353,15 @@
     * Handover doc: as least as possible
         * What is needed to run the app locally 
         * Set up AWS 
-        * Future thoughts / directions
+        * Future thoughts / directions 
+
+# Mentor 15th Apr:
+* Clean up extra files not supposed to be in repo 
+* Tests: 
+    * Edge case testing - include in slides 
+    * Frontend - include tests for password and username 
+* Handover doc: include more details 
+* Contributing.md - optional 
+* Slides: 
+    * add slide about meeting with client: how and what we discuss / communicate 
+    * other is in notes in slides 
