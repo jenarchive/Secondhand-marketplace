@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,13 +7,11 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
 
-const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
-
 export default function RateAfterPaymentScreen() {
-  const params = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string; fromMyChatsList?: string }>();
   const id = Number(params.id);
   const router = useRouter();
-  const { items } = useMyListings();
+  const { items, updateItem } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
@@ -28,13 +26,6 @@ export default function RateAfterPaymentScreen() {
     <View style={[styles.screen, { backgroundColor }]}>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.header, { backgroundColor }]}>
-        <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-          onPress={() => router.back()}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>Rate seller</Text>
       </View>
 
@@ -79,12 +70,19 @@ export default function RateAfterPaymentScreen() {
 
         <Pressable
           style={styles.submitButton}
-          onPress={() =>
+          onPress={() => {
+            if (Number.isFinite(id) && id > 0) {
+              updateItem(id, { rating });
+            }
             router.replace({
               pathname: '/items/transaction/rating-submitted/[id]',
-              params: { id: String(id), rating: String(rating) },
-            } as any)
-          }
+              params: {
+                id: String(id),
+                rating: String(rating),
+                fromMyChatsList: params.fromMyChatsList ?? 'false',
+              },
+            } as any);
+          }}
         >
           <Text style={styles.submitButtonText}>Submit rating</Text>
         </Pressable>
@@ -117,17 +115,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     color: '#FFFFFF',
-  },
-  backButton: {
-    position: 'absolute',
-    left: 20,
-    bottom: 0,
-    padding: 4,
-    height: 40,
-    width: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
   },
   content: {
     flex: 1,

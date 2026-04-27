@@ -153,8 +153,6 @@ export default function HomeScreen() {
         const result = await response.json();
 
         if (response.ok) {
-          console.log("successfully uploaded item: ", result.item_id);
-
           router.back();
         } else {
           alert("upload failed: " + result.error);

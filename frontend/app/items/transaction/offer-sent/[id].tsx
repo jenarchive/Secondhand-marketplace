@@ -1,13 +1,27 @@
 import { useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Animated, Easing, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
-const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
+const OFFER_SENT_DURATION_MS = 3000;
+
+function firstParam(v: string | string[] | undefined): string | undefined {
+  if (v === undefined) return undefined;
+  return Array.isArray(v) ? v[0] : v;
+}
 
 export default function OfferSentScreen() {
-  const params = useLocalSearchParams<{ id: string; offerPrice?: string; transactionMethod?: string }>();
+  const params = useLocalSearchParams<{
+    id: string | string[];
+    offerPrice?: string | string[];
+    transactionMethod?: string | string[];
+    source?: string | string[];
+    fromMarketplace?: string | string[];
+    fromExplore?: string | string[];
+    fromLikedItems?: string | string[];
+    fromMyChatsList?: string | string[];
+  }>();
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
@@ -50,6 +64,49 @@ export default function OfferSentScreen() {
     ]).start();
   }, []);
 
+  useEffect(() => {
+    const idStr = firstParam(params.id);
+    if (!idStr) return;
+
+    const offerPrice = firstParam(params.offerPrice);
+    const transactionMethod = firstParam(params.transactionMethod);
+    const source = firstParam(params.source);
+    const fromMarketplace = firstParam(params.fromMarketplace) ?? 'false';
+    const fromExplore = firstParam(params.fromExplore) ?? 'false';
+    const fromLikedItems = firstParam(params.fromLikedItems) ?? 'false';
+    const fromMyChatsList = firstParam(params.fromMyChatsList) === 'true';
+
+    const t = setTimeout(() => {
+      router.replace({
+        pathname: '/items/chat/[id]',
+        params: {
+          id: idStr,
+          sellerName: `User${idStr}`,
+          fromTransaction: 'true',
+          ...(transactionMethod ? { transactionMethod } : {}),
+          ...(offerPrice ? { offerPrice } : {}),
+          ...(source ? { source } : {}),
+          fromMarketplace,
+          fromExplore,
+          fromLikedItems,
+          ...(fromMyChatsList ? { fromMyChatsList: 'true' } : {}),
+        },
+      });
+    }, OFFER_SENT_DURATION_MS);
+
+    return () => clearTimeout(t);
+  }, [
+    params.id,
+    params.offerPrice,
+    params.transactionMethod,
+    params.source,
+    params.fromMarketplace,
+    params.fromExplore,
+    params.fromLikedItems,
+    params.fromMyChatsList,
+    router,
+  ]);
+
   const rotateInterpolate = rotate.interpolate({
     inputRange: [0, 1],
     outputRange: ['-25deg', '0deg'],
@@ -59,60 +116,29 @@ export default function OfferSentScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={[styles.screen, { backgroundColor }]}>
-        <View style={[styles.header, { backgroundColor }]}>
-          <TouchableOpacity
-            style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
-            onPress={() => router.back()}
-            activeOpacity={0.8}
+        <View style={styles.centerBlock}>
+          <Animated.View
+            style={[
+              styles.iconWrap,
+              {
+                opacity,
+                transform: [
+                  { translateY },
+                  { translateX },
+                  { rotate: rotateInterpolate },
+                ],
+              },
+            ]}
           >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-          {params.id && (
-            <TouchableOpacity
-              style={[styles.chatIconButton, { backgroundColor: BACK_BUTTON_BG }]}
-              onPress={() =>
-                router.push({
-                  pathname: '/items/chat/[id]',
-                  params: {
-                    id: String(params.id),
-                    sellerName: `User${params.id}`,
-                    transactionMethod: params.transactionMethod,
-                    offerPrice: params.offerPrice,
-                    fromOfferSent: 'true',
-                  },
-                })
-              }
-              activeOpacity={0.8}
-            >
-              <Ionicons name="chatbubble-ellipses-outline" size={28} color="#5BA3FF" />
-            </TouchableOpacity>
-          )}
-          <Text style={[styles.headerTitle, { color: '#FFFFFF' }]} numberOfLines={1}>
-            Offer sent
+            <Ionicons name="paper-plane-outline" size={72} color="#CCF1FF" />
+          </Animated.View>
+          <Text style={[styles.message, { color: textColor }]}>
+            The seller has received your offer
+          </Text>
+          <Text style={[styles.hint, { color: subtextColor }]}>
+            Opening chat with seller…
           </Text>
         </View>
-      <View style={styles.centerBlock}>
-        <Animated.View
-          style={[
-            styles.iconWrap,
-            {
-              opacity,
-              transform: [
-                { translateY },
-                { translateX },
-                { rotate: rotateInterpolate },
-              ],
-            }]}
-        >
-          <Ionicons name="paper-plane-outline" size={72} color="#CCF1FF" />
-        </Animated.View>
-        <Text style={[styles.message, { color: textColor }]}>
-          The seller has received your offer
-        </Text>
-        <Text style={[styles.hint, { color: subtextColor }]}>
-          Message the seller or wait for a reply.
-        </Text>
-      </View>
       </View>
     </>
   );
@@ -122,51 +148,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     paddingHorizontal: 32,
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 100,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    zIndex: 100,
-    paddingHorizontal: 20,
-  },
-  backButton: {
-    position: 'absolute',
-    left: 20,
-    bottom: 0,
-    padding: 4,
-    height: 40,
-    width: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    marginTop: 8,
-  },
-  chatIconButton: {
-    position: 'absolute',
-    right: 20,
-    bottom: 0,
-    padding: 6,
-    height: 40,
-    width: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    marginTop: 8,
-  },
-  headerTitle: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 12,
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    pointerEvents: 'none',
   },
   centerBlock: {
     flex: 1,
@@ -188,5 +169,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     textAlign: 'center',
     lineHeight: 20,
+    fontStyle: 'italic',
   },
 });

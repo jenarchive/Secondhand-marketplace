@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
 import { Alert, StyleSheet, Pressable, View, ScrollView, TouchableOpacity, Text, useWindowDimensions } from 'react-native';
-import { useMemo, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import * as Haptics from 'expo-haptics';
@@ -11,22 +12,48 @@ import UserHeader from '@/components/user-header';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
   isPendingMeetupReservation,
   isItemSoldOnMarketplace,
 } from '@/store/pendingMeetupStore';
-import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
+import {
+  LISTING_STAMP_IN_PROGRESS_COLOR,
+  LISTING_STAMP_PENDING_COLOR,
+  LISTING_STAMP_SOLD_COLOR,
+} from '@/constants/listing-stamp';
 
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
-  const params = useLocalSearchParams<{ id: string; fromMyListings?: string; fromChat?: string }>();
+  const params = useLocalSearchParams<{
+    id: string;
+    fromMyListings?: string;
+    fromChat?: string;
+    fromTransaction?: string;
+    fromExplore?: string;
+    fromMarketplace?: string;
+    fromLikedItems?: string;
+    source?: string;
+    showBuyNowFromPurchaseChat?: string;
+  }>();
   const id = Number(params.id);
   const fromMyListings = params.fromMyListings === 'true';
   const fromChat = params.fromChat === 'true';
-  const { items, isMyListing: isItemMine, removeItem } = useMyListings();
+  const fromTransaction = params.fromTransaction === 'true';
+  const showBuyNowFromPurchaseChat = params.showBuyNowFromPurchaseChat === 'true';
+  const fromExplore = params.fromExplore === 'true';
+  const fromMarketplace = params.fromMarketplace === 'true';
+  const fromLikedItems = params.fromLikedItems === 'true';
+  const sourceParam = params.source;
+  const source = Array.isArray(sourceParam) ? sourceParam[0] : sourceParam;
+  const { items, isMyListing: isItemMine, removeItem, notifications } = useMyListings();
+  const myListingItems = useMemo(
+    () => items.filter((item) => isItemMine(item.id)),
+    [items, isItemMine]
+  );
   const itemData = items.find((item) => item.id === id);
   const { toggleLike, isLiked } = useLikedItems();
   const liked = itemData ? isLiked(itemData.id) : false;
@@ -64,34 +91,58 @@ export default function HomeScreen() {
     location: itemData.location
   };
 
-  const userRatingValue: number = typeof (itemData as any).rating === 'number' ? (itemData as any).rating : 4;
+  const userRatingValue: number =
+    typeof itemData.rating === 'number' ? itemData.rating : 4;
+  const soldOnMarketplace = isItemSoldOnMarketplace(itemData.id);
+  const hasPendingMatchOffer =
+    !soldOnMarketplace &&
+    notifications.some(
+      (n) =>
+        (n.type ?? 'MATCH_OFFER') === 'MATCH_OFFER' &&
+        (n.myId === itemData.id || n.targetId === itemData.id)
+    );
+  const pendingMeetup = !soldOnMarketplace && isPendingMeetupReservation(itemData.id);
+  const inProgressStatus = !soldOnMarketplace && hasPendingMatchOffer;
+  const reservedStatus = !soldOnMarketplace && pendingMeetup && !hasPendingMatchOffer;
+  const listingStampLabel = soldOnMarketplace
+    ? 'SOLD'
+    : inProgressStatus
+      ? 'IN PROGRESS'
+      : reservedStatus
+        ? 'RESERVED'
+        : null;
+  const stampAccentColor = soldOnMarketplace
+    ? LISTING_STAMP_SOLD_COLOR
+    : inProgressStatus
+      ? LISTING_STAMP_IN_PROGRESS_COLOR
+      : LISTING_STAMP_PENDING_COLOR;
+  const stampInset = 8;
+  const stampRectStyle = {
+    borderWidth: Math.max(2, 2.4 * detailStampScale),
+    borderRadius: 4 * detailStampScale,
+    paddingHorizontal: 5 * detailStampScale,
+    paddingVertical: 3 * detailStampScale,
+  };
+  const buyNowLocked = soldOnMarketplace || reservedStatus || inProgressStatus;
+  const buyNowLabel = soldOnMarketplace ? 'Sold' : inProgressStatus ? 'In Progress' : reservedStatus ? 'Reserved' : 'Buy Now';
 
   const insets = useSafeAreaInsets();
   const backgroundColor = useThemeColor({}, 'background');
   const headerTitleColor = useThemeColor({}, 'text');
+  const colorScheme = useColorScheme() ?? 'light';
+  const detailCardBg = colorScheme === 'dark' ? colours.container : 'rgba(0,0,0,0.16)';
+  const detailPrimaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#111827';
+  const detailSecondaryTextColor = colorScheme === 'dark' ? '#FFFFFF' : '#374151';
   const router = useRouter();
+  const [matchPickerVisible, setMatchPickerVisible] = useState(false);
+  const [selectedMyListingId, setSelectedMyListingId] = useState<number | null>(null);
 
-  const listingStampLabel = isItemSoldOnMarketplace(itemData.id)
-    ? 'SOLD'
-    : isPendingMeetupReservation(itemData.id)
-      ? 'PENDING'
-      : null;
-  const buyNowLocked = listingStampLabel !== null;
-  const buyNowLabel =
-    listingStampLabel === 'SOLD' ? 'Sold' : listingStampLabel === 'PENDING' ? 'Pending' : 'Buy Now';
-  const stampAccentColor =
-    listingStampLabel === 'SOLD'
-      ? LISTING_STAMP_SOLD_COLOR
-      : listingStampLabel === 'PENDING'
-        ? LISTING_STAMP_PENDING_COLOR
-        : LISTING_STAMP_SOLD_COLOR;
-  const stampInset = 4 * detailStampScale;
-  const stampRectStyle = {
-    paddingHorizontal: 5 * detailStampScale,
-    paddingVertical: 3 * detailStampScale,
-    borderRadius: 4 * detailStampScale,
-    borderWidth: Math.min(3, Math.max(1.5, 2 * (detailStampScale / 1.85))),
-  };
+  useFocusEffect(
+    useCallback(() => {
+      setMatchPickerVisible(false);
+      setSelectedMyListingId(null);
+    }, []),
+  );
   const stampTextStyle = {
     fontSize: 9 * detailStampScale,
     letterSpacing: 0.45 * detailStampScale,
@@ -108,7 +159,27 @@ export default function HomeScreen() {
               router.back();
               return;
             }
-            router.replace('/(tabs)');
+            if (router.canGoBack()) {
+              router.back();
+              return;
+            }
+            if (source === 'marketplace') {
+              router.replace('/(tabs)');
+              return;
+            }
+            if (source === 'explore') {
+              router.replace('/(tabs)/explore');
+              return;
+            }
+            if (fromMarketplace) {
+              router.replace('/(tabs)');
+              return;
+            }
+            if (fromExplore) {
+              router.replace('/(tabs)/explore');
+              return;
+            }
+            router.replace('/(tabs)/explore');
           }}
           activeOpacity={0.8}
         >
@@ -125,12 +196,26 @@ export default function HomeScreen() {
             styles.scrollContentWrap,
             {
               paddingTop: 112,
-              paddingBottom: 24 + Math.max(insets.bottom, 12) + (!isItemMine(itemData.id) && !fromChat ? 72 : 0),
+              paddingBottom:
+                24 +
+                Math.max(insets.bottom, 12) +
+                (!isItemMine(itemData.id) &&
+                !fromTransaction &&
+                (!fromChat || showBuyNowFromPurchaseChat)
+                  ? 72
+                  : 0),
             },
           ]}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.detailSection}>
+          <Pressable
+            onPress={() => {
+              if (matchPickerVisible) {
+                setMatchPickerVisible(false);
+                setSelectedMyListingId(null);
+              }
+            }}
+          >
       <ThemedView style={styles.listingContainer}>
         <UserHeader
           itemId={itemData.id}
@@ -162,6 +247,100 @@ export default function HomeScreen() {
               </View>
             </View>
           )}
+          {!isItemMine(itemData.id) && !soldOnMarketplace && !reservedStatus && !inProgressStatus && (
+            <Pressable
+              style={({ pressed }) => [
+                styles.matchBadge,
+                (listingStampLabel === 'RESERVED' || listingStampLabel === 'IN PROGRESS') && styles.matchBadgeBelowStamp,
+                pressed && styles.matchBadgePressed,
+                matchPickerVisible && styles.matchBadgeActive,
+              ]}
+              onPress={() => {
+                setMatchPickerVisible((prev) => !prev);
+              }}
+              onPressIn={(e) => {
+                e.stopPropagation();
+                setSelectedMyListingId(null);
+              }}
+              hitSlop={8}
+            >
+              <Ionicons
+                name="swap-horizontal"
+                size={28}
+                color={matchPickerVisible ? '#0A84FF' : '#FFFFFF'}
+              />
+            </Pressable>
+          )}
+          {!isItemMine(itemData.id) && !soldOnMarketplace && !reservedStatus && !inProgressStatus && matchPickerVisible && (
+            <Pressable
+              style={styles.matchPickerPanel}
+              onPress={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <ThemedText style={styles.matchPickerTitle}>Match with my listing</ThemedText>
+              {myListingItems.length === 0 ? (
+                <ThemedText style={styles.matchPickerEmpty}>No my listings yet</ThemedText>
+              ) : (
+                myListingItems.map((myItem) => {
+                  const selected = selectedMyListingId === myItem.id;
+                  return (
+                    <Pressable
+                      key={myItem.id}
+                      style={[
+                        styles.matchPickerItem,
+                        selected && styles.matchPickerItemSelected,
+                      ]}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        setSelectedMyListingId(myItem.id);
+                      }}
+                    >
+                      <Image
+                        source={{ uri: myItem.image }}
+                        style={styles.matchPickerItemThumb}
+                        contentFit="cover"
+                      />
+                      <ThemedText
+                        numberOfLines={1}
+                        style={[
+                          styles.matchPickerItemText,
+                          selected && styles.matchPickerItemTextSelected,
+                        ]}
+                      >
+                        {myItem.title}
+                      </ThemedText>
+                      {selected && (
+                        <Pressable
+                          style={styles.matchInlineConfirmButton}
+                          onPress={(e) => {
+                            e.stopPropagation();
+                            router.push({
+                              pathname: '/items/match-preview',
+                              params: {
+                                targetId: String(itemData.id),
+                                myId: String(myItem.id),
+                                source:
+                                  source ??
+                                  (fromMarketplace ? 'marketplace' : fromExplore ? 'explore' : fromLikedItems ? 'liked-items' : undefined),
+                                fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
+                                fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
+                                fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
+                              },
+                            });
+                          }}
+                        >
+                          <ThemedText style={styles.matchInlineConfirmButtonText}>
+                            Confirm
+                          </ThemedText>
+                        </Pressable>
+                      )}
+                    </Pressable>
+                  );
+                })
+              )}
+            </Pressable>
+          )}
           {!isItemMine(itemData.id) && (
           <Pressable
             style={styles.likeButton}
@@ -172,26 +351,26 @@ export default function HomeScreen() {
           </Pressable>
           )}
         </View>
-        <ThemedView style={styles.listingTitle}>
-          <ThemedText type="defaultSemiBold" style={styles.cardText}>{MyData.title}</ThemedText>
-          <ThemedText type="default" style={styles.cardText}>Category: {MyData.category}</ThemedText>
+        <ThemedView style={[styles.listingTitle, { backgroundColor: detailCardBg }]}>
+          <ThemedText type="defaultSemiBold" style={[styles.cardText, { color: detailPrimaryTextColor }]}>{MyData.title}</ThemedText>
+          <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>Category: {MyData.category}</ThemedText>
           <ThemedView style={styles.priceContainer}>
-            <ThemedText type="default" style={styles.cardText}>
+            <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>
               {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price)}
             </ThemedText>
-            <ThemedText type="default" style={styles.cardText}>
+            <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>
               Price Incl Postage: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'GBP' }).format(MyData.price + 5)}
             </ThemedText>
           </ThemedView>
         </ThemedView>
-        <ThemedView style={styles.listingDescription}>
+        <ThemedView style={[styles.listingDescription, { backgroundColor: detailCardBg }]}>
           <ThemedView style={styles.descriptionInner}>
-            <ThemedText type="defaultSemiBold" style={styles.cardText}>Description</ThemedText>
-            <ThemedText type="default" style={styles.cardText}>{MyData.description}</ThemedText>
+            <ThemedText type="defaultSemiBold" style={[styles.cardText, { color: detailPrimaryTextColor }]}>Description</ThemedText>
+            <ThemedText type="default" style={[styles.cardText, { color: detailSecondaryTextColor }]}>{MyData.description}</ThemedText>
           </ThemedView>
         </ThemedView>
       </ThemedView>
-          </View>
+          </Pressable>
         </ScrollView>
         {isItemMine(itemData.id) ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
@@ -222,14 +401,41 @@ export default function HomeScreen() {
             <ThemedText type="defaultSemiBold" style={styles.cardText}>Remove</ThemedText>
           </Pressable>
         </View>
-        ) : !fromChat ? (
+        ) : !fromTransaction && (!fromChat || showBuyNowFromPurchaseChat) ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
-            style={[styles.buyNowButton, buyNowLocked && styles.buyNowButtonStatusLocked]}
+            style={[
+              styles.buyNowButton,
+              buyNowLocked && styles.buyNowButtonStatusLocked,
+              inProgressStatus && styles.buyNowButtonInProgress,
+            ]}
             onPress={async () => {
-              if (buyNowLocked) return;
+              if (soldOnMarketplace) {
+                Alert.alert('Unavailable', 'Sorry, this item is no longer available');
+                return;
+              }
+              if (hasPendingMatchOffer) {
+                Alert.alert('In Progress', 'Match offer is in progress.');
+                return;
+              }
+              if (pendingMeetup) {
+                Alert.alert('Reserved', 'Sorry, this item is already reserved');
+                return;
+              }
               await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              router.push(`/items/transaction/${id}`);
+              router.push({
+                pathname: '/items/transaction/[id]',
+                params: {
+                  id: String(id),
+                  source:
+                    source ??
+                    (fromMarketplace ? 'marketplace' : fromExplore ? 'explore' : undefined),
+                  fromMarketplace: (source === 'marketplace' || fromMarketplace) ? 'true' : 'false',
+                  fromExplore: (source === 'explore' || fromExplore) ? 'true' : 'false',
+                  fromLikedItems: (source === 'liked-items' || fromLikedItems) ? 'true' : 'false',
+                  ...(showBuyNowFromPurchaseChat ? { fromMyChatsList: 'true' } : {}),
+                },
+              });
             }}
             accessibilityLabel={buyNowLabel}
           >
@@ -283,7 +489,6 @@ const styles = StyleSheet.create({
   scrollContentWrap: {
     paddingHorizontal: 24,
   },
-  detailSection: {},
   listingContainer: {
     gap: 12,
   },
@@ -334,12 +539,95 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  matchBadge: {
+    position: 'absolute',
+    left: 8,
+    top: 8,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 20,
+  },
+  matchBadgeBelowStamp: {
+    top: 54,
+  },
+  matchBadgePressed: {
+    opacity: 0.75,
+  },
+  matchBadgeActive: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  matchPickerPanel: {
+    position: 'absolute',
+    top: 56,
+    left: 8,
+    zIndex: 30,
+    minWidth: 190,
+    maxWidth: 240,
+    borderRadius: 14,
+    padding: 10,
+    backgroundColor: '#FFFFFF',
+    gap: 6,
+  },
+  matchPickerTitle: {
+    color: '#1F2937',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  matchPickerEmpty: {
+    color: '#6B7280',
+    fontSize: 12,
+  },
+  matchPickerItem: {
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  matchPickerItemSelected: {
+    backgroundColor: '#DBEAFE',
+    borderWidth: 1,
+    borderColor: '#60A5FA',
+  },
+  matchPickerItemThumb: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+  },
+  matchPickerItemText: {
+    color: '#111827',
+    fontSize: 12,
+    fontWeight: '500',
+    flex: 1,
+  },
+  matchPickerItemTextSelected: {
+    color: '#1D4ED8',
+  },
+  matchInlineConfirmButton: {
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A84FF',
+  },
+  matchInlineConfirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
 
   priceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 8,
-    backgroundColor: colours.container,
+    backgroundColor: 'transparent',
   },
 
   listingDescription: {
@@ -392,20 +680,14 @@ const styles = StyleSheet.create({
   buyNowButtonStatusLocked: {
     backgroundColor: '#C44536',
   },
+  buyNowButtonInProgress: {
+    backgroundColor: LISTING_STAMP_IN_PROGRESS_COLOR,
+  },
   buyNowButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
   },
 
-  offerButton: {
-    backgroundColor: colours.button,
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderRadius: 16,
-    minWidth: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   removeButton: {
     backgroundColor: '#C44536',
     paddingVertical: 14,

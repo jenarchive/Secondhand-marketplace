@@ -9,8 +9,17 @@ import * as ImagePicker from 'expo-image-picker';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useMyListings } from '@/contexts/MyListingsContext';
-import { getMessagesForItem, addMessageForItem } from '@/store/chatStore';
-import { setAcceptedOfferItemPrice, setOfferForItem, getAcceptedOfferItemPrice } from '@/store/transactionStore';
+import { useAuth } from '@/contexts/AuthContext';
+import { getMessagesForItem, addMessageForItem, type ChatMessage } from '@/store/chatStore';
+import {
+  setAcceptedOfferItemPrice,
+  setOfferForItem,
+  getAcceptedOfferItemPrice,
+  getOfferForItem,
+  hasSentOfferForItem,
+} from '@/store/transactionStore';
+
+const FLASK_SERVER_ADDRESS = 'http://18.133.255.151/test';
 
 function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
   if (!offerPrice || Number.isNaN(Number(offerPrice))) return false;
@@ -18,14 +27,52 @@ function isOfferAcceptedForItem(itemId: number, offerPrice?: string): boolean {
   return stored !== undefined && stored === Number(offerPrice);
 }
 
+function getEffectiveOfferPrice(
+  itemId: number,
+  offerPriceParam?: string | string[]
+): string {
+  const raw = Array.isArray(offerPriceParam) ? offerPriceParam[0] : offerPriceParam;
+  if (raw && !Number.isNaN(Number(raw)) && Number(raw) > 0) {
+    return String(Number(raw));
+  }
+  if (hasSentOfferForItem(itemId)) {
+    const stored = getOfferForItem(itemId);
+    const n = parseFloat(String(stored).replace(/[^0-9.]/g, ''));
+    if (!Number.isNaN(n) && n > 0) return String(n);
+  }
+  const acc = getAcceptedOfferItemPrice(itemId);
+  if (acc !== undefined && acc > 0) return String(acc);
+  return '';
+}
+
 const blurhash = '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
+function formatMessageTime(sentAt: number): string {
+  return new Date(sentAt).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export default function ChatScreen() {
-  const params = useLocalSearchParams<{ id: string; sellerName?: string; transactionMethod?: string; offerPrice?: string; fromOfferSent?: string }>();
+  const params = useLocalSearchParams<{
+    id: string;
+    sellerName?: string;
+    transactionMethod?: string;
+    offerPrice?: string;
+    source?: string;
+    fromMarketplace?: string;
+    fromExplore?: string;
+    fromLikedItems?: string;
+    fromTransaction?: string;
+    fromMyChatsList?: string;
+  }>();
   const router = useRouter();
+  const { isLoggedIn, token } = useAuth();
   const id = Number(params.id);
-  const { items } = useMyListings();
+  const returnToTransactionFlow = params.fromTransaction === 'true';
+  const { items, addPurchaseChatEntry } = useMyListings();
   const itemData = items.find((item) => item.id === id);
   const colorScheme = useColorScheme() ?? 'light';
   const backgroundColor = useThemeColor({}, 'background');
@@ -36,17 +83,27 @@ export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState('');
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [messages, setMessages] = useState<string[]>(() => getMessagesForItem(id));
+  const [messages, setMessages] = useState<ChatMessage[]>(() => getMessagesForItem(id));
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [offerAccepted, setOfferAccepted] = useState(() => isOfferAcceptedForItem(id, params.offerPrice));
+  const effectiveOfferPrice = getEffectiveOfferPrice(id, params.offerPrice);
+  const [offerAccepted, setOfferAccepted] = useState(() =>
+    isOfferAcceptedForItem(id, effectiveOfferPrice || undefined)
+  );
+  const [myUsername, setMyUsername] = useState('');
 
   useFocusEffect(
     useCallback(() => {
-      setOfferAccepted(isOfferAcceptedForItem(id, params.offerPrice));
+      const eff = getEffectiveOfferPrice(id, params.offerPrice);
+      setOfferAccepted(isOfferAcceptedForItem(id, eff || undefined));
       setMessages(getMessagesForItem(id));
     }, [id, params.offerPrice])
   );
+
+  useEffect(() => {
+    if (!Number.isFinite(id) || id <= 0) return;
+    addPurchaseChatEntry(id);
+  }, [id, addPurchaseChatEntry]);
   const inputBarBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
   const menuPanelBg = colorScheme === 'dark' ? 'rgba(30,30,30,0.98)' : '#FFF';
@@ -69,6 +126,24 @@ export default function ChatScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isLoggedIn || !token) {
+      setMyUsername('');
+      return;
+    }
+
+    fetch(`${FLASK_SERVER_ADDRESS}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.username) {
+          setMyUsername(data.username);
+        }
+      })
+      .catch(() => {});
+  }, [isLoggedIn, token]);
+
   const inputBarPadding = (keyboardVisible || showMoreMenu) ? 8 : fullPadding;
   const bottomPadding = keyboardVisible && !showMoreMenu ? keyboardHeight : 0;
 
@@ -84,8 +159,8 @@ export default function ChatScreen() {
   const pushAttachmentMessage = (prefix: 'photo' | 'video', fileName?: string | null) => {
     const fallback = prefix === 'photo' ? 'Photo' : 'Video';
     const label = fileName ? `Sent ${prefix}: ${fileName}` : `Sent ${fallback}`;
-    addMessageForItem(id, label);
-    setMessages((prev) => [...prev, label]);
+    const newMessage = addMessageForItem(id, label);
+    setMessages((prev) => [...prev, newMessage]);
   };
 
   const requestMediaPermission = async () => {
@@ -124,21 +199,28 @@ export default function ChatScreen() {
   const handleSend = () => {
     const trimmed = message.trim();
     if (!trimmed) return;
-    addMessageForItem(id, trimmed);
-    setMessages((prev) => [...prev, trimmed]);
+    const newMessage = addMessageForItem(id, trimmed);
+    setMessages((prev) => [...prev, newMessage]);
     setMessage('');
   };
 
   const handleAcceptOffer = () => {
     if (offerAccepted) return;
-    const offerNum = Number(params.offerPrice);
+    const offerNum = Number(effectiveOfferPrice);
     if (!Number.isFinite(offerNum) || offerNum <= 0) return;
     setOfferAccepted(true);
     setAcceptedOfferItemPrice(id, offerNum);
     setOfferForItem(id, String(offerNum));
     router.replace({
       pathname: '/items/transaction/offer-accepted/[id]',
-      params: { id: String(id) },
+      params: {
+        id: String(id),
+        ...(params.source ? { source: params.source } : {}),
+        fromMarketplace: params.fromMarketplace ?? 'false',
+        fromExplore: params.fromExplore ?? 'false',
+        fromLikedItems: params.fromLikedItems ?? 'false',
+        fromMyChatsList: params.fromMyChatsList ?? 'false',
+      },
     });
   };
 
@@ -150,11 +232,21 @@ export default function ChatScreen() {
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
             onPress={() => {
-              if (params.fromOfferSent === 'true' && params.id) {
-                router.replace({ pathname: '/items/transaction/[id]', params: { id: String(id) } });
-              } else {
+              if (returnToTransactionFlow && router.canGoBack()) {
                 router.back();
+                return;
               }
+              router.replace({
+                pathname: '/items/transaction/[id]',
+                params: {
+                  id: String(id),
+                  ...(params.source ? { source: params.source } : {}),
+                  fromMarketplace: params.fromMarketplace ?? 'false',
+                  fromExplore: params.fromExplore ?? 'false',
+                  fromLikedItems: params.fromLikedItems ?? 'false',
+                  ...(params.fromMyChatsList === 'true' ? { fromMyChatsList: 'true' } : {}),
+                },
+              });
             }}
             activeOpacity={0.8}
           >
@@ -200,7 +292,11 @@ export default function ChatScreen() {
                     onPress={() =>
                       router.push({
                         pathname: '/items/[id]',
-                        params: { id: String(id), fromChat: 'true' },
+                        params: {
+                          id: String(id),
+                          fromChat: 'true',
+                          showBuyNowFromPurchaseChat: 'true',
+                        },
                       })
                     }
                   >
@@ -209,19 +305,19 @@ export default function ChatScreen() {
                 </>
               )}
 
-              {(params.offerPrice && !Number.isNaN(Number(params.offerPrice))) || messages.length > 0 ? (
+              {(effectiveOfferPrice && !Number.isNaN(Number(effectiveOfferPrice))) || messages.length > 0 ? (
                 <View style={styles.messagesContainer}>
-                  {params.offerPrice && !Number.isNaN(Number(params.offerPrice)) && (
+                  {effectiveOfferPrice && !Number.isNaN(Number(effectiveOfferPrice)) && (
                     <>
                       <View style={[styles.offerCard, { backgroundColor: inputBarBg }]}>
                         <Text style={styles.offerCardTitle}>
-                          (Username) has made an offer.
+                          {`${myUsername || 'User'} has made an offer.`}
                         </Text>
                         <Text style={styles.offerCardBody}>
                           {new Intl.NumberFormat('en-GB', {
                             style: 'currency',
                             currency: 'GBP',
-                          }).format(Number(params.offerPrice))}
+                          }).format(Number(effectiveOfferPrice))}
                         </Text>
                         <Pressable
                           style={[
@@ -253,8 +349,9 @@ export default function ChatScreen() {
                   )}
 
                   {messages.map((m, index) => (
-                    <View key={`${index}-${m}`} style={styles.messageBubbleMe}>
-                      <Text style={styles.messageText}>{m}</Text>
+                    <View key={`${m.sentAt}-${index}-${m.text}`} style={styles.messageBubbleMe}>
+                      <Text style={styles.messageText}>{m.text}</Text>
+                      <Text style={styles.messageMeta}>{formatMessageTime(m.sentAt)}</Text>
                     </View>
                   ))}
                 </View>
@@ -548,5 +645,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     lineHeight: 18,
+  },
+  messageMeta: {
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: 11,
+    lineHeight: 14,
+    marginTop: 4,
+    alignSelf: 'flex-end',
   },
 });

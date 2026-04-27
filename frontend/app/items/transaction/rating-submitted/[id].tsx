@@ -5,19 +5,32 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
+function firstParam(v: string | string[] | undefined): string | undefined {
+  if (v === undefined) return undefined;
+  return Array.isArray(v) ? v[0] : v;
+}
+
 export default function RatingSubmittedScreen() {
-  const params = useLocalSearchParams<{ rating?: string }>();
+  const params = useLocalSearchParams<{ rating?: string; fromMyChatsList?: string | string[] }>();
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
   const rating = Math.min(5, Math.max(1, Number(params.rating ?? 5)));
+  const returnToMyChats = firstParam(params.fromMyChatsList) === 'true';
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace('/(tabs)/marketplace');
+      if (returnToMyChats) {
+        router.replace({
+          pathname: '/items/your-chats',
+          params: { backToProfile: 'true' },
+        } as any);
+      } else {
+        router.replace('/(tabs)');
+      }
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [router, returnToMyChats]);
 
   return (
     <View style={[styles.screen, { backgroundColor }]}>

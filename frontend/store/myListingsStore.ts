@@ -1,6 +1,8 @@
 import TestData from '@/test-data.json';
 
-export type MyListingItem = (typeof TestData.items)[number];
+export type MyListingItem = (typeof TestData.items)[number] & {
+  rating?: number;
+};
 
 let items: MyListingItem[] = [...TestData.items];
 const listeners = new Set<(next: MyListingItem[]) => void>();

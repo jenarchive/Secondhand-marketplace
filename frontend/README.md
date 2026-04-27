@@ -60,7 +60,6 @@ frontend                           # Frontend React Native (Expo) application
 │   │   ├── transaction            # Folder for "what happens after buy button is pressed"
 │   │   ├── [id].tsx               # Dynamic Route: Individual item detail view
 │   │   ├── current-listing.tsx    # Page showing my current listing items 
-│   │   ├── edit-profile.tsx       # Page for editing details for user profile
 │   │   └── notification.tsx       # Page for showing notifications
 │   └── _layout.tsx                # Root layout and theme providers
 ├── assets                         # Images, icons, and animations
