@@ -2,12 +2,12 @@
 ## Frontend Development (Expo)
 The frontend is built using Expo, allowing for cross-platform mobile development. 
 ### Installation & Startup server: 
-2. #### Install dependencies
+1. #### Install dependencies
     1. Navigate to the frontend root directory and install dependencies:
         `npm install`
     2. Start the development server:
         `npx expo start`
-3. #### Network Troubleshooting:
+2. #### Network Troubleshooting:
 If you are on a restricted network (e.g., eduroam), use a tunnel to expose the local server:
 ```bash
 npx expo install @expo/ngrok 
@@ -24,7 +24,7 @@ npx expo start --tunnel
     * If using android, use Expo Go app to scan
 
 #### Simulators: 
-* *Android Simulator on Windows:* 
+* **Android Simulator on Windows:** 
     #### Prerequisites
     1. Install Android Studio from the official site.
     2. Open Android Studio, go to Settings > Languages & Frameworks > Android SDK. Ensure the latest Android version (e.g., Android 14) is installed. 
@@ -35,9 +35,7 @@ npx expo start --tunnel
     1. Start the server 
     2. Press 'a' in terminal 
 
-
-
-Simulators: Press the corresponding key in the terminal to open in an iOS Simulator (Mac only) or Android Emulator. 
+Note: iOS simulator does not run on Windows
 
 ## Backend Development (Flask)
 The backend is a Python/Flask application. It requires Python 3.10+. 
@@ -65,4 +63,5 @@ Checklist
 * Verify Node.js and Python 3.10+ are installed.
 * Ensure the Backend is running before performing frontend actions that require API calls.
 * If using a physical device via Expo Go, ensure the phone and computer are on the same Wi-Fi network (unless using the --tunnel flag).
+
 Note: Always keep the .venv active when installing new Python packages or running the Flask server to avoid dependency conflicts.
