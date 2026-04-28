@@ -40,6 +40,11 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
   <img width="918" alt="architecture image" src="docs/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
+### Cloud Architecture 
+<p align="left">
+<img width="918" alt="architecture image" src="image.png" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+</p>
+
 ## Client Information 
 ### Client: 
 Marius Jurt has a strong passion for an online second-hand marketplace platform that masters engagement, user-friendlyness and gamification. He loves working with students and has tasked us with building this online experience.
@@ -121,6 +126,9 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
     ├── others                         # Diagrams and files for explaining / planning 
     └── meetings and feedbacks         # Meeting notes and feedbacks for review
 ```
+
+## User Instructions 
+Note: Ideally this would be a mobile app that can works on both iOS and android, and can be downloaded from app stores. However we can't deploy it as a license is needed for deploying in iOS and android. Users now can only experience this app with using dev instructions. 
 
 ## Dev Instructions
 ### Frontend
