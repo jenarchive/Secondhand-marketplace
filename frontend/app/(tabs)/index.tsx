@@ -78,7 +78,7 @@ export default function HomeScreen() {
               hitSlop={8}
               style={styles.categoryIconWrap}
             >
-              <Ionicons name="pricetag-outline" size={20} color="#888" />
+              <Ionicons testID='pricetag-outline'  name="pricetag-outline" size={20} color="#888" />
             </Pressable>
             <TextInput
               value={query}
@@ -230,6 +230,7 @@ export default function HomeScreen() {
                       <Ionicons
                         name={isLiked(item.id) ? 'heart' : 'heart-outline'}
                         size={20}
+                        testID='heart-outline' 
                         color={isLiked(item.id) ? '#FF3B30' : '#FFFFFF'}
                       />
                     </Pressable>
