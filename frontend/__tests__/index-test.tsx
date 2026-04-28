@@ -75,23 +75,6 @@ describe('HomeScreen Integration Tests', () => {
     expect(screen.getByText('Acoustic Guitar')).toBeTruthy();
   });
 
-//   ## Custom Category Logic
-//   it('correctly maps "Furniture" category when "Home" is selected', async () => {
-//     renderHomeScreen();
-    
-//     // Open Category Modal
-//     const categoryBtn = screen.getByTestId('pricetag-outline').parent;
-//     fireEvent.press(categoryBtn);
-
-//     // Select "Home" (This triggers your logic: sel === 'home' && cat.includes('furniture'))
-//     const homeOption = await screen.findByText('Home');
-//     fireEvent.press(homeOption);
-
-//     // Leather Sofa is "Furniture", so it should show up under "Home"
-//     expect(screen.getByText('Leather Sofa')).toBeTruthy();
-//     expect(screen.queryByText('Vintage Camera')).toBeNull();
-//   });
-
   it('correctly maps "Musical Instruments" when "Entertainment" is selected', async () => {
     renderHomeScreen();
     

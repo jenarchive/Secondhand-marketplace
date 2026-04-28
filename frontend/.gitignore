@@ -3,6 +3,11 @@
 # dependencies
 node_modules/
 
+# ignore all coverage output under frontend
+coverage/
+
+app/(tabs)/.explore.tsx.swp
+
 # Expo
 .expo/
 dist/
