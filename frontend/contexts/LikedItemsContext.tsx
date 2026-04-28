@@ -13,7 +13,7 @@ type LikedItemsContextType = {
   isLiked: (id: string | number) => boolean;
 };
 
-const LikedItemsContext = createContext<LikedItemsContextType | null>(null);
+export const LikedItemsContext = createContext<LikedItemsContextType | null>(null);
 
 export function LikedItemsProvider({ children }: { children: React.ReactNode }) {
   const [likedMap, setLikedMap] = useState<LikedMap>({});

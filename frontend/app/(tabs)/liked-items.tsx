@@ -90,6 +90,7 @@ export default function LikedItemsScreen() {
           headerLeft: isEditMode
             ? () => (
                 <Pressable
+                  testID="header-left-clear-pressable"
                   onPress={async () => {
                     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     Alert.alert(
@@ -121,6 +122,7 @@ export default function LikedItemsScreen() {
             : undefined,
           headerRight: () => (
             <Pressable
+              testID="header-right-pressable"
               onPress={async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setIsEditMode((v) => !v);
