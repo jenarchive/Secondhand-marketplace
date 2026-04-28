@@ -45,3 +45,4 @@ app-example
 .vscode/
 package-lock.json
 yarn.lock
+coverage/
