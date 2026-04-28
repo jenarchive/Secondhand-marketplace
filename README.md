@@ -42,7 +42,7 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 
 ### Cloud Architecture 
 <p align="left">
-<img width="918" alt="architecture image" src="image-1.png" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+<img width="918" alt="architecture image" src="image-2.png" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
 ## Client Information 
