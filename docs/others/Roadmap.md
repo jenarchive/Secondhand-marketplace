@@ -146,10 +146,10 @@
     - Plan to finish before next sprint, or delete it
 
 
-## Sprint 4: Towards Final Release 
+## Sprint 4: Towards Final Release,  Poster day
 ### Week 21 - Easter Break - 22 (15th Mar - 15th Apr), Project Manager: Jen
 ### Features planned to be finish: 
-* High priority:
+* #### High priority:
     - Features: 
         * Matching feature more developed and integrated, Ideas discussion
             - Chat page
@@ -167,7 +167,7 @@
             - How we implement CD and how we change it
         * Docs 
             - Frontend & Backend readme: How to start / run tests 
-* Low priority: 
+* #### Low priority: 
     - Features: 
         * Algorithm consideration for swiping 
             - Only if we have more time 
@@ -180,7 +180,7 @@
         * Takeover instructions - infrastructure code
 
 ### Fully Achieved: 
-* High priority: 
+* #### High priority: 
     - Features: 
         * Matching feature [#196](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/196)
         * Buy button adjustment [#181](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/181)
@@ -192,7 +192,7 @@
         * Final Slides [#229](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/229) 
             * We have improved, but it is still being worked on, will include a pdf once it is finalized
         * Readme docs for frontend / backend folder [#229](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/229)
-* Low priority: 
+* #### Low priority: 
     - Repo: 
         * Doc of meetings [#229](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/229)
         * Update roadmap [#229](https://github.com/spe-uob/2025-SecondhandMarketplace2/pull/229)
@@ -219,10 +219,17 @@
     * This is already done before, not sure why this is listed here. Maybe consider to include a short description of issues for next time when listing. 
 
 
-## Sprint 5: Final Release, Poster day 
-### Week 23 - 24 (13th - 30th Apr), Project Manager: TBC
+## Sprint 5: Final Release 
+### Week 23 - 24 (16th - 30th Apr), Project Manager: Freddie
 ### Features planned to be finish: 
-* 
+* #### High priority: 
+    - Features: 
+        * Make sure it does not crash 
+    - Repo: 
+        * Frontend test coverage 
+    - Viva: 
+        * Slides refinement 
+        * Presentation rehearsal
 
 ### Fully Achieved: 
 * 
