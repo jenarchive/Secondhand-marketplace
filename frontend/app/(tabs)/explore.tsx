@@ -318,6 +318,7 @@ export default function Explore() {
             <Ionicons name="close" size={26} color="#FF453A" />
           </Pressable>
           <Pressable
+            testID='buyButton'
             style={({ pressed }) => [styles.actionBtn, styles.actionBtnBuy, styles.actionBuy, pressed && styles.actionPressed]}
             onPress={handleSwipeUp}
           >
