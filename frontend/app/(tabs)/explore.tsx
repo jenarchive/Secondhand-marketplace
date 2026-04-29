@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState, useMemo } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
@@ -25,8 +25,13 @@ type TestItem = MyListingItem;
 
 export default function TabTwoScreen() {
   const router = useRouter();
-  const { toggleLike: toggleLikeContext, isLiked, likedMap } = useLikedItems();
-  const { items: contextItems, isMyListing } = useMyListings();
+  const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
+  const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();
+  const myItem = myListings[0];
+  const myListingItems = useMemo(
+    () => contextItems.filter((item) => isMyListing(item.id)),
+    [contextItems, isMyListing]
+  );
   const exploreItems = useMemo(
     () => contextItems.filter((item) => !isMyListing(item.id)),
     [contextItems, isMyListing]
@@ -34,18 +39,8 @@ export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
-  const [heartFilledId, setHeartFilledId] = useState<number | null>(null);
-  const [likeButtonHeartFilled, setLikeButtonHeartFilled] = useState(false);
-  const pendingDismissRef = useRef<{ direction: 'left' | 'right'; item: TestItem } | null>(null);
-  const fromLikeButtonRef = useRef(false);
-  const visibleItemsRef = useRef<TestItem[]>([]);
-  const prevItemsLengthRef = useRef(0);
-  const alreadyAddedToLikesRef = useRef(false);
-  const fromItemDetailRef = useRef(false);
-  const likedMapRef = useRef(likedMap);
-  useEffect(() => {
-    likedMapRef.current = likedMap;
-  }, [likedMap]);
+  const [matchPickerVisible, setMatchPickerVisible] = useState(false);
+  const [selectedMatchItemId, setSelectedMatchItemId] = useState<number | null>(null);
 
   useEffect(() => {
     setVisibleItems((prev) => {
@@ -54,12 +49,12 @@ export default function TabTwoScreen() {
     });
   }, [exploreItems]);
 
-  useEffect(() => {
-    setVisibleItems((prev) => {
-      if (prev.length === 0) return [...exploreItems];
-      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
-    });
-  }, [exploreItems]);
+  useFocusEffect(
+    useCallback(() => {
+      setMatchPickerVisible(false);
+      setSelectedMatchItemId(null);
+    }, []),
+  );
 
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -79,102 +74,66 @@ export default function TabTwoScreen() {
     setButterflies((prev) => prev.filter((b) => b.id !== id));
   };
 
-  const handleCardDismiss = (direction?: 'left' | 'right', itemIdOverride?: number) => {
-    const item =
-      itemIdOverride != null
-        ? exploreItems.find((i) => i.id === itemIdOverride)
-        : visibleItems[visibleItems.length - 1];
-    if (direction && item) {
-      pendingDismissRef.current = { direction, item };
-    }
-    const nextItems = visibleItems.slice(0, -1);
-    visibleItemsRef.current = nextItems;
-    setVisibleItems(nextItems);
-  };
-
-  useEffect(() => {
-    const prevLen = prevItemsLengthRef.current;
-    prevItemsLengthRef.current = visibleItems.length;
-    if (prevLen > visibleItems.length && pendingDismissRef.current) {
-      const { direction, item } = pendingDismissRef.current;
-      pendingDismissRef.current = null;
-      const fromLikeButton = fromLikeButtonRef.current;
-      fromLikeButtonRef.current = false;
-      const alreadyAdded = alreadyAddedToLikesRef.current;
-      alreadyAddedToLikesRef.current = false;
-      if (direction === 'right') {
-        if (!alreadyAdded) spawnButterflies('right');
-        if (!alreadyAdded && !isLiked(item.id)) toggleLikeContext(item.id);
-        setHeartFilledId(null);
-        setLikeButtonHeartFilled(false);
-      } else {
-        setHeartFilledId(null);
-      }
-    }
-  }, [visibleItems, isLiked, toggleLikeContext]);
-
-  const resetCards = () => {
-    setVisibleItems(exploreItems.filter((item) => !isLiked(item.id)));
-  };
-
-  useEffect(() => {
-    const items = exploreItems.filter((item) => !likedMap[String(item.id)]);
-    visibleItemsRef.current = items;
-  }, [likedMap, exploreItems]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (fromItemDetailRef.current) {
-        fromItemDetailRef.current = false;
-      } else {
-        const latestLikedMap = likedMapRef.current;
-        const newItems = exploreItems.filter((item) => !latestLikedMap[String(item.id)]);
-        visibleItemsRef.current = newItems;
-        setHeartFilledId(null);
-        setLikeButtonHeartFilled(false);
-        setVisibleItems(newItems);
-      }
-    }, [exploreItems])
-  );
-
-  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
-  visibleItemsRef.current = visibleItems;
-
-  const currentItemLiked = currentItem
-    ? isLiked(currentItem.id) || heartFilledId === currentItem.id || likeButtonHeartFilled
-    : false;
-
-  const getTopItemId = () => {
-    const items = visibleItemsRef.current;
-    if (items.length > 0) return items[items.length - 1].id;
-    const unliked = exploreItems.find((i) => !likedMap[String(i.id)]);
-    return unliked?.id ?? null;
+  const handleCardDismiss = (direction?: 'left' | 'right') => {
+    setMatchPickerVisible(false);
+    setVisibleItems(prev => prev.slice(0, -1));
   };
 
   const handleSwipeDirection = (direction: 'left' | 'right') => {
-    const itemId = getTopItemId();
-    if (direction === 'right' && itemId != null) {
-      setHeartFilledId(itemId);
-      setLikeButtonHeartFilled(true);
-      if (!isLiked(itemId)) {
-        alreadyAddedToLikesRef.current = true;
-        toggleLikeContext(itemId);
+    spawnButterflies(direction);
+    if (direction === 'right' && currentItem) {
+      toggleLikeContext(currentItem.id);
+      if (currentItem === visibleItems[0]) {
+        recordMatch(myItem.id, currentItem.id);
+        router.push({
+          pathname: '/items/match-preview',
+          params: {
+            targetId: String(currentItem.id),
+            myId: String(myItem.id),
+            source: 'explore',
+            fromExplore: 'true',
+          },
+        })
       }
-      spawnButterflies('right');
     }
   };
 
-  const handleLikePress = () => {
-    const itemId = getTopItemId();
-    if (itemId == null) return;
-    handleCardDismiss('right', itemId);
+  const resetCards = () => {
+    setMatchPickerVisible(false);
+    setVisibleItems([...exploreItems]);
+  };
+
+  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
+  const currentItemLiked = currentItem ? isLiked(currentItem.id) : false;
+
+  const toggleLike = () => {
+    if (!currentItem) return;
+    toggleLikeContext(currentItem.id);
+    if (currentItem === visibleItems[0]) {
+      recordMatch(myItem.id, currentItem.id);
+      router.push({
+        pathname: '/items/match-preview',
+        params: {
+          targetId: String(currentItem.id),
+          myId: String(myItem.id),
+          source: 'explore',
+          fromExplore: 'true',
+        },
+      })
+    }
   };
 
   const handleSwipeUp = () => {
     const currentItem = visibleItems[visibleItems.length - 1];
     if (currentItem) {
-      fromItemDetailRef.current = true;
-      router.push(`/items/${currentItem.id}`);
+      router.push({
+        pathname: '/items/[id]',
+        params: {
+          id: String(currentItem.id),
+          source: 'explore',
+          fromExplore: 'true',
+        },
+      });
     }
   };
 
@@ -217,6 +176,86 @@ export default function TabTwoScreen() {
             </ThemedView>
             {index === visibleItems.length - 1 && (
               <>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.matchIconBadge,
+                    pressed && styles.hintsTogglePressed,
+                    matchPickerVisible && styles.matchIconBadgeActive,
+                  ]}
+                  onPress={() => setMatchPickerVisible((prev) => !prev)}
+                >
+                  <Ionicons
+                    name="swap-horizontal"
+                    size={20}
+                    color={matchPickerVisible ? '#0A84FF' : ARROW_COLOR}
+                  />
+                </Pressable>
+                {matchPickerVisible && (
+                  <Pressable
+                    style={styles.matchPickerDismissLayer}
+                    onPress={() => {
+                      setMatchPickerVisible(false);
+                      setSelectedMatchItemId(null);
+                    }}
+                  />
+                )}
+                {matchPickerVisible && (
+                  <View style={styles.matchPickerPanel}>
+                    <Text style={styles.matchPickerTitle}>Match with my listing</Text>
+                    {myListingItems.length === 0 ? (
+                      <Text style={styles.matchPickerEmpty}>No my listings yet</Text>
+                    ) : (
+                      <>
+                        {myListingItems.map((myItem) => {
+                          const selected = selectedMatchItemId === myItem.id;
+                          return (
+                            <Pressable
+                              key={myItem.id}
+                              style={[
+                                styles.matchPickerItem,
+                                selected && styles.matchPickerItemSelected,
+                              ]}
+                              onPress={() => setSelectedMatchItemId(myItem.id)}
+                            >
+                              <Image
+                                source={{ uri: myItem.image }}
+                                style={styles.matchPickerItemThumb}
+                                contentFit="cover"
+                              />
+                              <Text
+                                numberOfLines={1}
+                                style={[
+                                  styles.matchPickerItemText,
+                                  selected && styles.matchPickerItemTextSelected,
+                                ]}
+                              >
+                                {myItem.title}
+                              </Text>
+                              {selected && (
+                                <Pressable
+                                  style={styles.matchInlineConfirmButton}
+                                  onPress={() =>
+                                    router.push({
+                                      pathname: '/items/match-preview',
+                                      params: {
+                                        targetId: String(item.id),
+                                        myId: String(myItem.id),
+                                        source: 'explore',
+                                        fromExplore: 'true',
+                                      },
+                                    })
+                                  }
+                                >
+                                  <Text style={styles.matchInlineConfirmButtonText}>Confirm</Text>
+                                </Pressable>
+                              )}
+                            </Pressable>
+                          );
+                        })}
+                      </>
+                    )}
+                  </View>
+                )}
                 <Pressable
                   style={({ pressed }) => [styles.hintsToggle, pressed && styles.hintsTogglePressed]}
                   onPress={() => setHintsVisible(v => !v)}
@@ -286,7 +325,7 @@ export default function TabTwoScreen() {
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={handleLikePress}
+            onPress={toggleLike}
           >
             <Ionicons
               name={currentItemLiked ? 'heart' : 'heart-outline'}
@@ -424,6 +463,88 @@ const styles = StyleSheet.create({
     right: 12,
     zIndex: 10,
     alignItems: 'center',
+  },
+  matchIconBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    zIndex: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  matchIconBadgeActive: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+  },
+  matchPickerPanel: {
+    position: 'absolute',
+    top: 56,
+    left: 12,
+    zIndex: 15,
+    minWidth: 210,
+    maxWidth: 255,
+    borderRadius: 14,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 0,
+    gap: 8,
+  },
+  matchPickerDismissLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 11,
+  },
+  matchPickerTitle: {
+    color: '#1F2937',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  matchPickerEmpty: {
+    color: '#6B7280',
+    fontSize: 12,
+  },
+  matchPickerItem: {
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  matchPickerItemSelected: {
+    backgroundColor: '#DBEAFE',
+    borderWidth: 1,
+    borderColor: '#60A5FA',
+  },
+  matchPickerItemText: {
+    color: '#111827',
+    fontSize: 12,
+    fontWeight: '500',
+    flex: 1,
+  },
+  matchPickerItemTextSelected: {
+    color: '#1D4ED8',
+  },
+  matchPickerItemThumb: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+  },
+  matchInlineConfirmButton: {
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A84FF',
+  },
+  matchInlineConfirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
   hintsToggleBtn: {
     width: 36,

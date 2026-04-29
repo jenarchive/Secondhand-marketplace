@@ -89,6 +89,7 @@ export default function CurrentListingScreen() {
                 {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
               </ThemedText>
             </View>
+            <Ionicons name="chevron-forward" size={20} color="gray" />
           </Pressable>
         ))}
       </ScrollView>
@@ -138,6 +139,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 24,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.14)',
+    paddingBottom: 16,
   },
   imageWrapper: {
     position: 'relative',

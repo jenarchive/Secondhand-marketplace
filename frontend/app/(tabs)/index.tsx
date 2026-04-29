@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
+import { Alert, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
 import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,7 +12,11 @@ import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { CATEGORIES } from '@/constants/categories';
-import { LISTING_STAMP_PENDING_COLOR, LISTING_STAMP_SOLD_COLOR } from '@/constants/listing-stamp';
+import {
+  LISTING_STAMP_IN_PROGRESS_COLOR,
+  LISTING_STAMP_PENDING_COLOR,
+  LISTING_STAMP_SOLD_COLOR,
+} from '@/constants/listing-stamp';
 import {
   subscribePendingMeetup,
   getPendingMeetupVersion,
@@ -27,7 +31,7 @@ export default function HomeScreen() {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
-  const { items: contextItems, isMyListing } = useMyListings();
+  const { items: contextItems, isMyListing, notifications } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
 
   useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
@@ -66,7 +70,8 @@ export default function HomeScreen() {
       headerImage={<Image />}>
       
       <ThemedView>
-        <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}>
+        {/* Search bar (Apple-native like) */}
+        <View style={[styles.searchContainer, { paddingTop: Math.max(4, insets.top - 20) }]}> 
           <View style={styles.searchInner}>
             <Pressable
               onPress={() => setCategoryModalVisible(true)}
@@ -134,17 +139,38 @@ export default function HomeScreen() {
                 <ThemedText style={styles.emptyTitle}>No listings</ThemedText>
                 <ThemedText style={styles.emptySubtitle}>There are no items to show right now.</ThemedText>
               </View>
-            ) : filtered.map((item) => (
+            ) : filtered.map((item) => {
+              const hasPendingMatchOffer = notifications.some(
+                (n) =>
+                  (n.type ?? 'MATCH_OFFER') === 'MATCH_OFFER' &&
+                  (n.myId === item.id || n.targetId === item.id)
+              );
+              const hasReservedMeetup = isPendingMeetupReservation(item.id) && !hasPendingMatchOffer;
+              return (
               <View key={item.id} style={styles.listingLink}>
                 <Pressable
                   style={({ pressed }) => [styles.listingContainer, pressed && styles.pressed]}
                   onPress={async () => {
                     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.push(`/items/${item.id}`);
+                    router.push({
+                      pathname: '/items/[id]',
+                      params: {
+                        id: String(item.id),
+                        source: 'marketplace',
+                        fromMarketplace: 'true',
+                      },
+                    });
                   }}
                   onLongPress={async () => {
                     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                    router.push(`/items/${item.id}`);
+                    router.push({
+                      pathname: '/items/[id]',
+                      params: {
+                        id: String(item.id),
+                        source: 'marketplace',
+                        fromMarketplace: 'true',
+                      },
+                    });
                   }}
                 >
                   <View style={styles.imageWrapper}>
@@ -162,11 +188,29 @@ export default function HomeScreen() {
                         </View>
                       </View>
                     )}
-                    {!isItemSoldOnMarketplace(item.id) && isPendingMeetupReservation(item.id) && (
+                    {!isItemSoldOnMarketplace(item.id) && (hasReservedMeetup || hasPendingMatchOffer) && (
                       <View style={styles.pendingStampWrap}>
-                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_PENDING_COLOR }]}>
-                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_PENDING_COLOR }]}>
-                            PENDING
+                        <View
+                          style={[
+                            styles.pendingStampRect,
+                            {
+                              borderColor: hasPendingMatchOffer
+                                ? LISTING_STAMP_IN_PROGRESS_COLOR
+                                : LISTING_STAMP_PENDING_COLOR,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.pendingStampText,
+                              {
+                                color: hasPendingMatchOffer
+                                  ? LISTING_STAMP_IN_PROGRESS_COLOR
+                                  : LISTING_STAMP_PENDING_COLOR,
+                              },
+                            ]}
+                          >
+                            {hasPendingMatchOffer ? 'IN PROGRESS' : 'RESERVED'}
                           </Text>
                         </View>
                       </View>
@@ -194,7 +238,7 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </Pressable>
               </View>
-            ))
+            )})
             }
         </ThemedView>
       </ThemedView>
@@ -272,23 +316,27 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 0,
-    paddingVertical: 16,
-    backgroundColor: 'transparent'
+    paddingVertical: 8,
+    marginBottom: 14,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: DarkTheme.colors.text,
-    opacity: 0.95,
+    opacity: 1,
     borderRadius: 99,
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderWidth: 6,
-    borderColor: DarkTheme.colors.border,
-    ...Platform.select({
-      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
-      android: { elevation: 2 }
-    })
+    borderColor: '#25282B',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+    overflow: 'hidden',
   },
   categoryIconWrap: {
     marginRight: 8,

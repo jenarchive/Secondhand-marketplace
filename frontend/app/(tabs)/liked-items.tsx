@@ -85,6 +85,7 @@ export default function LikedItemsScreen() {
           headerShown: likedItems.length > 0,
           headerTitleStyle: { fontWeight: '700' },
           headerStyle: { backgroundColor: screenBg },
+          headerShadowVisible: false,
           headerTintColor: textColor,
           headerLeft: isEditMode
             ? () => (
@@ -168,7 +169,7 @@ export default function LikedItemsScreen() {
             setOrderedItems(data);
             setLikedOrder(data.map((i) => i.id));
           }}
-          contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+          contentContainerStyle={[styles.listContent, { paddingTop: 18 }]}
           style={{ backgroundColor: screenBg }}
           renderItem={({ item, drag, isActive, getIndex }) => (
             <ScaleDecorator>
@@ -231,7 +232,7 @@ export default function LikedItemsScreen() {
         />
       ) : (
       <ScrollView
-        contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: 18 }]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
@@ -242,7 +243,14 @@ export default function LikedItemsScreen() {
               style={[styles.card, index === 0 && styles.firstCard]}
               onPress={async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                router.push(`/items/${item.id}`);
+                router.push({
+                  pathname: '/items/[id]',
+                  params: {
+                    id: String(item.id),
+                    source: 'liked-items',
+                    fromLikedItems: 'true',
+                  },
+                });
               }}
             >
               <View style={styles.imageWrapper}>
@@ -262,6 +270,7 @@ export default function LikedItemsScreen() {
                   {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
                 </ThemedText>
               </View>
+              <Ionicons name="chevron-forward" size={20} color="gray" />
             </Pressable>
           ))}
       </ScrollView>
@@ -327,6 +336,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 24,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.14)',
+    paddingBottom: 16,
   },
   cardContent: {
     flex: 1,

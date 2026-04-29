@@ -16,11 +16,9 @@ export default function ItemsLayout() {
         headerShown: true,
         headerStyle: { backgroundColor: headerBg },
         headerTintColor: headerTint,
-        headerBackTitleVisible: false,
         headerBackTitle: "",
         headerShadowVisible: false,
         headerBackVisible: false,
-        headerLeftContainerStyle: { borderWidth: 0, backgroundColor: "transparent" },
         headerLeft: () => (
           <View style={{ marginLeft: Platform.OS === "ios" ? 0 : 4, marginTop: 8 }}>
             <TouchableOpacity
@@ -81,6 +79,7 @@ export default function ItemsLayout() {
         options={{
           headerShown: false,
           animation: "slide_from_right",
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen
@@ -91,17 +90,17 @@ export default function ItemsLayout() {
         }}
       />
       <Stack.Screen name="current-listing" options={{ title: "My Listings" }} />
-      <Stack.Screen name="edit" options={{ headerShown: false }} />
       <Stack.Screen
-        name="setting"
+        name="match-preview"
         options={{
           headerShown: false,
+          animation: "none",
+          gestureEnabled: false,
         }}
       />
-      <Stack.Screen name="edit-profile" />
+      <Stack.Screen name="edit" options={{ headerShown: false }} />
       <Stack.Screen name="logout" />
-      <Stack.Screen name="purchase-history" />
-      <Stack.Screen name="notification" />
+      <Stack.Screen name="your-chats" />
       <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
     </Stack>
   );
