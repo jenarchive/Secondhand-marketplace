@@ -255,6 +255,7 @@ describe('Item HomeScreen', () => {
       expect(Alert.alert).toHaveBeenCalledWith(
         'Remove listing',
         'Are you sure you want to remove this listing? This action cannot be undone.',
+        [{ "style": "cancel", "text": "Cancel" }, { "onPress": expect.any(Function), "style": "destructive", "text": "Remove" }]
       );
 
       const alertButtons = (Alert.alert as jest.Mock).mock.calls[0][2];
