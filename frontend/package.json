@@ -15,6 +15,9 @@
     "preset": "jest-expo",
     "collectCoverage": true,
     "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+    "scripts/**"
+  ],
     "collectCoverageFrom": [
     "**/*.{js,jsx,ts,tsx}",
     "!**/coverage/**",
