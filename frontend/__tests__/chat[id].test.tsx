@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
 import ChatScreen from '../app/items/chat/[id]';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -110,7 +110,7 @@ const mockItem = {
   location: 'London',
 };
 
-const renderChat = (params: Partial<Record<string, string>> = {}) => {
+const renderChat = async (params: Partial<Record<string, string>> = {}) => {
   (useLocalSearchParams as jest.Mock).mockReturnValue({
     id: '1',
     sellerName: 'Seller One',
@@ -158,7 +158,13 @@ const renderChat = (params: Partial<Record<string, string>> = {}) => {
     json: async () => ({ username: 'Buyer' }),
   });
 
-  return render(<ChatScreen />);
+  const renderResult = render(<ChatScreen />);
+
+  await act(async () => {
+    await Promise.resolve();
+  });
+
+  return renderResult;
 };
 
 describe('RoutedChatScreen', () => {
@@ -168,7 +174,7 @@ describe('RoutedChatScreen', () => {
   });
 
   it('renders the chat screen and the purchase offer controls', async () => {
-    renderChat();
+    await renderChat();
 
     expect(screen.getByText('Seller One')).toBeTruthy();
     expect(screen.getByText('My Guitar')).toBeTruthy();
@@ -183,8 +189,8 @@ describe('RoutedChatScreen', () => {
     });
   });
 
-  it('navigates to the item details screen', () => {
-    renderChat();
+  it('navigates to the item details screen', async () => {
+    await renderChat();
 
     fireEvent.press(screen.getByText('View details'));
 
@@ -199,7 +205,7 @@ describe('RoutedChatScreen', () => {
   });
 
   it('sends a message and appends it to the thread', async () => {
-    renderChat();
+    await renderChat();
 
     fireEvent.changeText(screen.getByPlaceholderText('Enter your message.'), 'Hello there');
     fireEvent.press(screen.getByLabelText('Send message'));
@@ -210,8 +216,8 @@ describe('RoutedChatScreen', () => {
     });
   });
 
-  it('accepts the offer and routes to the accepted transaction screen', () => {
-    renderChat();
+  it('accepts the offer and routes to the accepted transaction screen', async () => {
+    await renderChat();
 
     fireEvent.press(screen.getByText('Accept offer'));
 
@@ -230,9 +236,9 @@ describe('RoutedChatScreen', () => {
     });
   });
 
-  it('goes back when the transaction flow can pop history', () => {
+  it('goes back when the transaction flow can pop history', async () => {
     mockCanGoBack.mockReturnValue(true);
-    renderChat({ fromTransaction: 'true' });
+    await renderChat({ fromTransaction: 'true' });
 
     fireEvent.press(screen.getByLabelText('Back'));
 
@@ -240,9 +246,9 @@ describe('RoutedChatScreen', () => {
     expect(mockReplace).not.toHaveBeenCalled();
   });
 
-  it('returns to the transaction screen when it cannot pop history', () => {
+  it('returns to the transaction screen when it cannot pop history', async () => {
     mockCanGoBack.mockReturnValue(false);
-    renderChat({ fromTransaction: 'true' });
+    await renderChat({ fromTransaction: 'true' });
 
     fireEvent.press(screen.getByLabelText('Back'));
 
@@ -258,8 +264,8 @@ describe('RoutedChatScreen', () => {
     });
   });
 
-  it('opens the more menu and shows attachment options', () => {
-    renderChat();
+  it('opens the more menu and shows attachment options', async () => {
+    await renderChat();
 
     fireEvent.press(screen.getByLabelText('More options'));
 
