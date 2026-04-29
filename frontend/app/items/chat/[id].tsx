@@ -231,6 +231,7 @@ export default function ChatScreen() {
         <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity
             style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
+            accessibilityLabel="Back"
             onPress={() => {
               if (returnToTransactionFlow && router.canGoBack()) {
                 router.back();
@@ -362,7 +363,11 @@ export default function ChatScreen() {
 
         <View style={styles.bottomWrap}>
           <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: inputBarPadding, paddingTop: 12 }]}>
-            <Pressable style={[styles.moreButton, { backgroundColor: BACK_BUTTON_BG }]} onPress={handleMorePress}>
+            <Pressable
+              style={[styles.moreButton, { backgroundColor: BACK_BUTTON_BG }]}
+              accessibilityLabel="More options"
+              onPress={handleMorePress}
+            >
               <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
             </Pressable>
             <TextInput
@@ -376,6 +381,7 @@ export default function ChatScreen() {
             />
             <Pressable
               style={[styles.sendButton, { backgroundColor: message.trim() ? borderColor : BACK_BUTTON_BG }]}
+              accessibilityLabel="Send message"
               onPress={handleSend}
             >
               <Ionicons name="arrow-up" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
