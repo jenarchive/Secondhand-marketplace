@@ -1,5 +1,4 @@
-# Welcome to your Expo app 👋
-
+# Overview
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
@@ -7,6 +6,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 1. Install dependencies
 
    ```bash
+   cd frontend
    npm install
    ```
 
@@ -25,26 +25,52 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+## Testing 
+1. Install dependencies
 
-When you're ready, run:
+   ```bash
+   cd frontend
+   npm install
+   ```
 
-```bash
-npm run reset-project
+2. Run tests
+
+   ```bash
+   npm run test 
+   ```
+
+
+## Project Structure
+```text
+frontend                           # Frontend React Native (Expo) application
+├── README.md                      # Frontend overview and structure 
+├── app                            # File-based Routing (Crucial for UI)
+│   ├── (tabs)                     # Main pages for frontend
+│   │   ├── _layout.tsx            # Layout for navigation bar and pages
+│   │   ├── sell.tsx               # Sell Page: Item registration
+│   │   ├── profile.tsx            # User Profile: Account and my listings 
+│   │   ├── explore.tsx            # Explore Page: Swiping and gamification
+│   │   ├── liked-items.tsx        # Liked-items Page: Record and edit which items are liked 
+│   │   └── index.tsx              # App landing page - Marketplace: Item listings (Matches Figma)
+│   ├── auth                       # Authentication flow
+│   │   ├── login.tsx              # Sign-in screen
+│   │   └── signup.tsx             # New user registration
+│   ├── items                      # Item details for sub-pages 
+│   │   ├── edit                   # Folder for editing details of my listing
+│   │   ├── transaction            # Folder for "what happens after buy button is pressed"
+│   │   ├── [id].tsx               # Dynamic Route: Individual item detail view
+│   │   ├── current-listing.tsx    # Page showing my current listing items 
+│   │   └── notification.tsx       # Page for showing notifications
+│   └── _layout.tsx                # Root layout and theme providers
+├── assets                         # Images, icons, and animations
+├── components                     # Reusable UI components (Headers, Buttons)
+├── constants                      # Design tokens (Colours, Spacing)
+├── contexts                       # Context used for checking in other pages 
+├── hooks                          # Custom React hooks (Theme, Colour schemes)
+├── scripts                        # To reset project
+├── store                          # Storage for test-data 
+├── test-data.json                 # Mock data for frontend testing
+├── __tests__                      # Tests for testing frontend code
+├── package.json                   # Frontend dependencies and scripts
+└── *                              # Set up files for linting / testing
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

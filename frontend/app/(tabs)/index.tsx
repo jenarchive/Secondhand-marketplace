@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { Alert, Platform, StyleSheet, Pressable, TextInput, View } from 'react-native';
-import { useState, useMemo, useEffect } from 'react';
+import { Alert, StyleSheet, Pressable, TextInput, View, Modal, FlatList, TouchableOpacity, Text } from 'react-native';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
@@ -8,31 +8,58 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { DarkTheme } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import * as Haptics from 'expo-haptics';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
 import { useMyListings } from '@/contexts/MyListingsContext';
+import { CATEGORIES } from '@/constants/categories';
+import {
+  LISTING_STAMP_IN_PROGRESS_COLOR,
+  LISTING_STAMP_PENDING_COLOR,
+  LISTING_STAMP_SOLD_COLOR,
+} from '@/constants/listing-stamp';
+import {
+  subscribePendingMeetup,
+  getPendingMeetupVersion,
+  isPendingMeetupReservation,
+  isItemSoldOnMarketplace,
+} from '@/store/pendingMeetupStore';
 
 export default function HomeScreen() {
-  const colourScheme = useColorScheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
   const { toggleLike, isLiked } = useLikedItems();
-  const { items: contextItems, isMyListing } = useMyListings();
+  const { items: contextItems, isMyListing, notifications } = useMyListings();
   const [displayItems, setDisplayItems] = useState<typeof contextItems>([]);
+
+  useSyncExternalStore(subscribePendingMeetup, getPendingMeetupVersion, getPendingMeetupVersion);
 
   useEffect(() => {
     setDisplayItems([...contextItems]);
   }, [contextItems]);
 
   const filtered = useMemo(() => {
+    let list = displayItems;
+    if (selectedCategory) {
+      const sel = selectedCategory.toLowerCase();
+      list = list.filter((i) => {
+        const cat = (i.category || '').toLowerCase();
+        if (cat.includes(sel)) return true;
+        if (sel === 'home' && cat.includes('furniture')) return true;
+        if (sel === 'entertainment' && (cat.includes('musical') || cat.includes('entertainment'))) return true;
+        return false;
+      });
+    }
     const q = query.trim().toLowerCase();
-    if (!q) return displayItems;
-    return displayItems.filter(i =>
-      i.title.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || (i.category || '').toLowerCase().includes(q)
+    if (!q) return list;
+    return list.filter((i) =>
+      i.title.toLowerCase().includes(q) ||
+      i.description.toLowerCase().includes(q) ||
+      (i.category || '').toLowerCase().includes(q)
     );
-  }, [query, displayItems]);
+  }, [query, selectedCategory, displayItems]);
 
   const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
@@ -44,9 +71,15 @@ export default function HomeScreen() {
       
       <ThemedView>
         {/* Search bar (Apple-native like) */}
-        <View style={[styles.searchContainer, { paddingTop: insets.top + 8 }]}> 
+        <View style={[styles.searchContainer, { paddingTop: Math.max(4, insets.top - 20) }]}> 
           <View style={styles.searchInner}>
-            <Ionicons name="search" size={18} color="#888" style={styles.searchIcon} />
+            <Pressable
+              onPress={() => setCategoryModalVisible(true)}
+              hitSlop={8}
+              style={styles.categoryIconWrap}
+            >
+              <Ionicons name="pricetag-outline" size={20} color="#888" />
+            </Pressable>
             <TextInput
               value={query}
               onChangeText={setQuery}
@@ -56,25 +89,88 @@ export default function HomeScreen() {
               returnKeyType="search"
               clearButtonMode="while-editing"
             />
+            <Ionicons name="search" size={18} color="#888" style={styles.searchIconRight} />
           </View>
         </View>
+
+        <Modal
+          visible={categoryModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setCategoryModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setCategoryModalVisible(false)} />
+            <View style={styles.categoryModalContent}>
+              <View style={styles.categoryModalHeader}>
+                <ThemedText type="subtitle">Select category</ThemedText>
+                <Pressable onPress={() => setCategoryModalVisible(false)} hitSlop={12}>
+                  <Ionicons name="close" size={24} color="#888" />
+                </Pressable>
+              </View>
+              <Pressable onPress={() => { setSelectedCategory(null); setCategoryModalVisible(false); }} style={styles.categoryOption}>
+                <ThemedText style={styles.categoryOptionText}>All</ThemedText>
+                {!selectedCategory && <Ionicons name="checkmark" size={20} color="#0A84FF" />}
+              </Pressable>
+              <FlatList
+                data={CATEGORIES}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.categoryOption}
+                    onPress={() => {
+                      setSelectedCategory(item.name);
+                      setCategoryModalVisible(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <ThemedText style={styles.categoryOptionText}>{item.name}</ThemedText>
+                    {selectedCategory === item.name && <Ionicons name="checkmark" size={20} color="#0A84FF" />}
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </View>
+        </Modal>
+
         <ThemedView style={styles.flexbox}>
             {filtered.length === 0 ? (
               <View style={styles.emptyState}>
                 <ThemedText style={styles.emptyTitle}>No listings</ThemedText>
                 <ThemedText style={styles.emptySubtitle}>There are no items to show right now.</ThemedText>
               </View>
-            ) : filtered.map((item) => (
+            ) : filtered.map((item) => {
+              const hasPendingMatchOffer = notifications.some(
+                (n) =>
+                  (n.type ?? 'MATCH_OFFER') === 'MATCH_OFFER' &&
+                  (n.myId === item.id || n.targetId === item.id)
+              );
+              const hasReservedMeetup = isPendingMeetupReservation(item.id) && !hasPendingMatchOffer;
+              return (
               <View key={item.id} style={styles.listingLink}>
                 <Pressable
                   style={({ pressed }) => [styles.listingContainer, pressed && styles.pressed]}
                   onPress={async () => {
                     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                    router.push(`/items/${item.id}`);
+                    router.push({
+                      pathname: '/items/[id]',
+                      params: {
+                        id: String(item.id),
+                        source: 'marketplace',
+                        fromMarketplace: 'true',
+                      },
+                    });
                   }}
                   onLongPress={async () => {
                     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                    router.push(`/items/${item.id}`);
+                    router.push({
+                      pathname: '/items/[id]',
+                      params: {
+                        id: String(item.id),
+                        source: 'marketplace',
+                        fromMarketplace: 'true',
+                      },
+                    });
                   }}
                 >
                   <View style={styles.imageWrapper}>
@@ -85,6 +181,40 @@ export default function HomeScreen() {
                       contentFit="cover"
                       source={{ uri: item.image }}
                     />
+                    {isItemSoldOnMarketplace(item.id) && (
+                      <View style={styles.pendingStampWrap}>
+                        <View style={[styles.pendingStampRect, { borderColor: LISTING_STAMP_SOLD_COLOR }]}>
+                          <Text style={[styles.pendingStampText, { color: LISTING_STAMP_SOLD_COLOR }]}>SOLD</Text>
+                        </View>
+                      </View>
+                    )}
+                    {!isItemSoldOnMarketplace(item.id) && (hasReservedMeetup || hasPendingMatchOffer) && (
+                      <View style={styles.pendingStampWrap}>
+                        <View
+                          style={[
+                            styles.pendingStampRect,
+                            {
+                              borderColor: hasPendingMatchOffer
+                                ? LISTING_STAMP_IN_PROGRESS_COLOR
+                                : LISTING_STAMP_PENDING_COLOR,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.pendingStampText,
+                              {
+                                color: hasPendingMatchOffer
+                                  ? LISTING_STAMP_IN_PROGRESS_COLOR
+                                  : LISTING_STAMP_PENDING_COLOR,
+                              },
+                            ]}
+                          >
+                            {hasPendingMatchOffer ? 'IN PROGRESS' : 'RESERVED'}
+                          </Text>
+                        </View>
+                      </View>
+                    )}
                     <Pressable
                       style={styles.likeButton}
                       onPress={(e) => {
@@ -108,7 +238,7 @@ export default function HomeScreen() {
                   <ThemedText type="defaultSemiBold" style={{ color: '#fff' }}>{new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}</ThemedText>
                 </Pressable>
               </View>
-            ))
+            )})
             }
         </ThemedView>
       </ThemedView>
@@ -139,6 +269,30 @@ const styles = StyleSheet.create({
   imageWrapper: {
     position: 'relative',
     marginBottom: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  pendingStampWrap: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    zIndex: 2,
+    maxWidth: '55%',
+  },
+  pendingStampRect: {
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 4,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    alignSelf: 'flex-start',
+  },
+  pendingStampText: {
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.45,
   },
   likeButton: {
     position: 'absolute',
@@ -162,32 +316,73 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 0,
-    paddingVertical: 16,
-    backgroundColor: 'transparent'
+    paddingVertical: 8,
+    marginBottom: 14,
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   searchInner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: DarkTheme.colors.text,
-    opacity: 0.95,
+    opacity: 1,
     borderRadius: 99,
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderWidth: 6,
-    borderColor: DarkTheme.colors.border,
-    ...Platform.select({
-      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4 },
-      android: { elevation: 2 }
-    })
+    borderColor: '#25282B',
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
+    overflow: 'hidden',
   },
-  searchIcon: {
-    marginRight: 8
+  categoryIconWrap: {
+    marginRight: 8,
+    padding: 4,
   },
   searchInput: {
     flex: 1,
     padding: 0,
     margin: 0,
-    color: '#111'
+    color: '#111',
+  },
+  searchIconRight: {
+    marginLeft: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  categoryModalContent: {
+    backgroundColor: DarkTheme.colors.card,
+    borderRadius: 12,
+    maxHeight: '70%',
+    overflow: 'hidden',
+  },
+  categoryModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: DarkTheme.colors.border,
+  },
+  categoryOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: DarkTheme.colors.border,
+  },
+  categoryOptionText: {
+    fontSize: 16,
+    color: '#fff',
   },
   emptyState: {
     flex: 1,

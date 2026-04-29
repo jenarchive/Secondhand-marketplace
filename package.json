@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "eas-cli": "^0.0.0",
-    "expo": "^54.0.32"
+    "expo": "^54.0.32",
+    "react-native-gifted-chat": "^3.3.2"
   },
   "devDependencies": {
     "@expo/ngrok": "^4.1.3",

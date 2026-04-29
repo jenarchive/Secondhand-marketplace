@@ -6,7 +6,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { ThemedText } from '@/components/themed-text';
 import { useState, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-
+import { CATEGORIES } from '@/constants/categories';
+import { useThemeColor } from '@/hooks/use-theme-color';
 // dimension variables
 const screenWidth = Dimensions.get('window').width;
 const padding = 32;
@@ -17,18 +18,10 @@ const gapSpace = gapSize * (columns - 1);
 const availableSpace = screenWidth - padding - gapSpace - 64;
 const photoSize = Math.floor(availableSpace / columns);
 
-// list of options for the category input
-const categories = [
-  { id: '1', name: 'Clothing' },
-  { id: '2', name: 'Electronics' },
-  { id: '3', name: 'Home' },
-  { id: '4', name: 'Entertainment' },
-  { id: '5', name: 'Sports' },
-  { id: '6', name: 'Collectables' },
-  { id: '7', name: 'Other' },
-]
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function HomeScreen() {
+  const headerBg = useThemeColor({}, 'background');
   // form variables
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -138,7 +131,7 @@ export default function HomeScreen() {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('price', price);
-        formData.append('category', categories.find(c => c.name === category));
+        formData.append('category', category);
 
         images.forEach((uri, index) => {
           formData.append('images', {
@@ -160,8 +153,6 @@ export default function HomeScreen() {
         const result = await response.json();
 
         if (response.ok) {
-          console.log("successfully uploaded item: ", result.item_id);
-
           router.back();
         } else {
           alert("upload failed: " + result.error);
@@ -309,11 +300,12 @@ export default function HomeScreen() {
       </ParallaxScrollView>
       
       {/* header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: headerBg }]}>
         {/* back button */}
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}
+          activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
@@ -343,7 +335,7 @@ export default function HomeScreen() {
             </View>
 
             <FlatList
-              data={categories}
+              data={CATEGORIES}
               keyExtractor={(item) => item.id}
               renderItem={({item}) => (
                 <TouchableOpacity
@@ -391,8 +383,8 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
     borderRadius: 20,
+    marginTop: 8,
   },
   pageTitle: {
     fontSize: 18,

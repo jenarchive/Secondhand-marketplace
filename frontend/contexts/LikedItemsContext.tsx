@@ -8,6 +8,7 @@ type LikedItemsContextType = {
   likedMap: LikedMap;
   likedOrder: number[];
   toggleLike: (id: string | number) => void;
+  clearAllLikes: () => void;
   setLikedOrder: (order: number[]) => void;
   isLiked: (id: string | number) => boolean;
 };
@@ -30,6 +31,11 @@ export function LikedItemsProvider({ children }: { children: React.ReactNode }) 
     });
   }, []);
 
+  const clearAllLikes = useCallback(() => {
+    setLikedMap({});
+    setLikedOrderState([]);
+  }, []);
+
   const setLikedOrder = useCallback((order: number[]) => {
     setLikedOrderState(order);
   }, []);
@@ -39,7 +45,7 @@ export function LikedItemsProvider({ children }: { children: React.ReactNode }) 
   }, [likedMap]);
 
   return (
-    <LikedItemsContext.Provider value={{ likedMap, likedOrder, toggleLike, setLikedOrder, isLiked }}>
+    <LikedItemsContext.Provider value={{ likedMap, likedOrder, toggleLike, clearAllLikes, setLikedOrder, isLiked }}>
       {children}
     </LikedItemsContext.Provider>
   );

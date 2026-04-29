@@ -10,6 +10,7 @@ import { useMyListings } from '@/contexts/MyListingsContext';
 
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+const BACK_BUTTON_BG = 'rgba(0,0,0,0.4)';
 
 export default function CurrentListingScreen() {
   const router = useRouter();
@@ -22,9 +23,9 @@ export default function CurrentListingScreen() {
   return (
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: screenBg }]}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
           onPress={() => router.back()}
           activeOpacity={0.8}
         >
@@ -88,6 +89,7 @@ export default function CurrentListingScreen() {
                 {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
               </ThemedText>
             </View>
+            <Ionicons name="chevron-forward" size={20} color="gray" />
           </Pressable>
         ))}
       </ScrollView>
@@ -119,7 +121,7 @@ const styles = StyleSheet.create({
     width: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    marginTop: 8,
     borderRadius: 20,
   },
   pageTitle: {
@@ -137,6 +139,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 24,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.14)',
+    paddingBottom: 16,
   },
   imageWrapper: {
     position: 'relative',

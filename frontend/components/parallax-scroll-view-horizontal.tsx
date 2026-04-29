@@ -15,30 +15,35 @@ import * as Haptics from 'expo-haptics';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 50;
 const SWIPE_UP_THRESHOLD = 80;
+const SWIPE_DOWN_THRESHOLD = 80;
 
 type Props = PropsWithChildren<{
   headerImage?: ReactElement;
   headerBackgroundColor?: { dark: string; light: string };
   onCardDismiss?: (direction?: 'left' | 'right') => void;
   onSwipeDirection?: (direction: 'left' | 'right') => void;
-  onSwipeUp?: () => void;
+  onSwipeDown?: () => void;
 }>;
 
 export default function ParallaxScrollView({
   children,
   onCardDismiss,
   onSwipeDirection,
-  onSwipeUp,
+  onSwipeDown,
 }: Props) {
   const backgroundColor = useThemeColor({}, 'background');
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const hasTriggeredHaptic = useSharedValue(false);
+  const hasCalledDismiss = useSharedValue(false);
 
   const gesture = Gesture.Pan()
+    .onStart(() => {
+      hasCalledDismiss.value = false;
+    })
     .onUpdate((event) => {
       translateX.value = event.translationX;
-      translateY.value = event.translationY;
+      translateY.value = event.translationY > 0 ? event.translationY : 0;
 
       if (Math.abs(event.translationX) > SWIPE_THRESHOLD && !hasTriggeredHaptic.value) {
         hasTriggeredHaptic.value = true;
@@ -50,13 +55,14 @@ export default function ParallaxScrollView({
       }
     })
     .onEnd((event) => {
-      const isSwipeUp = event.translationY < -SWIPE_UP_THRESHOLD && Math.abs(event.translationY) > Math.abs(event.translationX);
+      const isSwipeDown = event.translationY > SWIPE_DOWN_THRESHOLD && Math.abs(event.translationY) > Math.abs(event.translationX);
       const isSwipeHorizontal = Math.abs(event.translationX) > SWIPE_THRESHOLD;
 
-      if (isSwipeUp && onSwipeUp) {
+      if (isSwipeDown && onSwipeDown) {
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
-        runOnJS(onSwipeUp)();
-      } else if (isSwipeHorizontal) {
+        runOnJS(onSwipeDown)();
+      } else if (isSwipeHorizontal && !hasCalledDismiss.value) {
+        hasCalledDismiss.value = true;
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
         const direction = event.translationX > 0 ? 'right' : 'left';
         if (onCardDismiss) runOnJS(onCardDismiss)(direction);

@@ -1,16 +1,17 @@
+import { useEffect, useCallback, useState, useMemo } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useState, useEffect, useMemo } from 'react';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
-import { useMyListings } from '@/contexts/MyListingsContext';
 import * as Haptics from 'expo-haptics';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { useMyListings, type MyListingItem } from '@/contexts/MyListingsContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_MARGIN = 32;
@@ -23,11 +24,17 @@ const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
 const ARROW_COLOR = '#5a5a5a';
 
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
+type TestItem = MyListingItem;
 
 export default function TabTwoScreen() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
-  const { items: contextItems, isMyListing } = useMyListings();
+  const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();
+  const myItem = myListings[0];
+  const myListingItems = useMemo(
+    () => contextItems.filter((item) => isMyListing(item.id)),
+    [contextItems, isMyListing]
+  );
   const exploreItems = useMemo(
     () => contextItems.filter((item) => !isMyListing(item.id) && !isLiked(item.id)),
     [contextItems, isMyListing, isLiked]
@@ -35,6 +42,8 @@ export default function TabTwoScreen() {
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
+  const [matchPickerVisible, setMatchPickerVisible] = useState(false);
+  const [selectedMatchItemId, setSelectedMatchItemId] = useState<number | null>(null);
 
   useEffect(() => {
     setVisibleItems((prev) => {
@@ -43,13 +52,20 @@ export default function TabTwoScreen() {
     });
   }, [exploreItems]);
 
+  useFocusEffect(
+    useCallback(() => {
+      setMatchPickerVisible(false);
+      setSelectedMatchItemId(null);
+    }, []),
+  );
+
   const blurhash =
     '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
   const spawnButterflies = (direction: 'left' | 'right') => {
     if (direction !== 'right') return;
     const baseId = Date.now();
-    const count = 3 + Math.floor(Math.random() * 2);
+    const count = 2 + Math.floor(Math.random() * 2);
     const newOnes: ButterflyInstance[] = Array.from({ length: count }, (_, i) => ({
       id: baseId + i,
       direction: direction,
@@ -62,6 +78,7 @@ export default function TabTwoScreen() {
   };
 
   const handleCardDismiss = (direction?: 'left' | 'right') => {
+    setMatchPickerVisible(false);
     setVisibleItems(prev => prev.slice(0, -1));
   };
 
@@ -69,10 +86,23 @@ export default function TabTwoScreen() {
     spawnButterflies(direction);
     if (direction === 'right' && currentItem) {
       toggleLikeContext(currentItem.id);
+      if (currentItem === visibleItems[0]) {
+        recordMatch(myItem.id, currentItem.id);
+        router.push({
+          pathname: '/items/match-preview',
+          params: {
+            targetId: String(currentItem.id),
+            myId: String(myItem.id),
+            source: 'explore',
+            fromExplore: 'true',
+          },
+        })
+      }
     }
   };
 
   const resetCards = () => {
+    setMatchPickerVisible(false);
     setVisibleItems([...exploreItems]);
   };
 
@@ -82,11 +112,32 @@ export default function TabTwoScreen() {
   const toggleLike = () => {
     if (!currentItem) return;
     toggleLikeContext(currentItem.id);
+    if (currentItem === visibleItems[0]) {
+      recordMatch(myItem.id, currentItem.id);
+      router.push({
+        pathname: '/items/match-preview',
+        params: {
+          targetId: String(currentItem.id),
+          myId: String(myItem.id),
+          source: 'explore',
+          fromExplore: 'true',
+        },
+      })
+    }
   };
 
   const handleSwipeUp = () => {
-    const topItem = visibleItems[visibleItems.length - 1];
-    if (topItem) router.push(`/items/${topItem.id}`);
+    const currentItem = visibleItems[visibleItems.length - 1];
+    if (currentItem) {
+      router.push({
+        pathname: '/items/[id]',
+        params: {
+          id: String(currentItem.id),
+          source: 'explore',
+          fromExplore: 'true',
+        },
+      });
+    }
   };
 
   return (
@@ -103,7 +154,7 @@ export default function TabTwoScreen() {
         headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
         onSwipeDirection={handleSwipeDirection}
-        onSwipeUp={handleSwipeUp}
+        onSwipeDown={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
           <ThemedView
@@ -129,6 +180,86 @@ export default function TabTwoScreen() {
             {index === visibleItems.length - 1 && (
               <>
                 <Pressable
+                  style={({ pressed }) => [
+                    styles.matchIconBadge,
+                    pressed && styles.hintsTogglePressed,
+                    matchPickerVisible && styles.matchIconBadgeActive,
+                  ]}
+                  onPress={() => setMatchPickerVisible((prev) => !prev)}
+                >
+                  <Ionicons
+                    name="swap-horizontal"
+                    size={20}
+                    color={matchPickerVisible ? '#0A84FF' : ARROW_COLOR}
+                  />
+                </Pressable>
+                {matchPickerVisible && (
+                  <Pressable
+                    style={styles.matchPickerDismissLayer}
+                    onPress={() => {
+                      setMatchPickerVisible(false);
+                      setSelectedMatchItemId(null);
+                    }}
+                  />
+                )}
+                {matchPickerVisible && (
+                  <View style={styles.matchPickerPanel}>
+                    <Text style={styles.matchPickerTitle}>Match with my listing</Text>
+                    {myListingItems.length === 0 ? (
+                      <Text style={styles.matchPickerEmpty}>No my listings yet</Text>
+                    ) : (
+                      <>
+                        {myListingItems.map((myItem) => {
+                          const selected = selectedMatchItemId === myItem.id;
+                          return (
+                            <Pressable
+                              key={myItem.id}
+                              style={[
+                                styles.matchPickerItem,
+                                selected && styles.matchPickerItemSelected,
+                              ]}
+                              onPress={() => setSelectedMatchItemId(myItem.id)}
+                            >
+                              <Image
+                                source={{ uri: myItem.image }}
+                                style={styles.matchPickerItemThumb}
+                                contentFit="cover"
+                              />
+                              <Text
+                                numberOfLines={1}
+                                style={[
+                                  styles.matchPickerItemText,
+                                  selected && styles.matchPickerItemTextSelected,
+                                ]}
+                              >
+                                {myItem.title}
+                              </Text>
+                              {selected && (
+                                <Pressable
+                                  style={styles.matchInlineConfirmButton}
+                                  onPress={() =>
+                                    router.push({
+                                      pathname: '/items/match-preview',
+                                      params: {
+                                        targetId: String(item.id),
+                                        myId: String(myItem.id),
+                                        source: 'explore',
+                                        fromExplore: 'true',
+                                      },
+                                    })
+                                  }
+                                >
+                                  <Text style={styles.matchInlineConfirmButtonText}>Confirm</Text>
+                                </Pressable>
+                              )}
+                            </Pressable>
+                          );
+                        })}
+                      </>
+                    )}
+                  </View>
+                )}
+                <Pressable
                   style={({ pressed }) => [styles.hintsToggle, pressed && styles.hintsTogglePressed]}
                   onPress={() => setHintsVisible(v => !v)}
                 >
@@ -143,28 +274,34 @@ export default function TabTwoScreen() {
                 {hintsVisible && (
               <View style={styles.swipeHints} pointerEvents="none">
                 <View style={styles.hintUp}>
-                  <Ionicons name="arrow-up" size={28} color={ARROW_COLOR} />
-                  <View style={styles.hintTextUp}>
-                    <Text style={styles.hintText}>Swipe up</Text>
-                    <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                  <View style={styles.hintBackdrop}>
+                    <Ionicons name="arrow-down" size={28} color={ARROW_COLOR} />
+                    <View style={styles.hintTextUp}>
+                      <Text style={styles.hintText}>Swipe down</Text>
+                      <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.hintLeft}>
-                  <View style={styles.arrowLeft}>
-                    <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
-                  </View>
-                  <View style={styles.hintTextLeft}>
-                    <Text style={styles.hintText}>Swipe left</Text>
-                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropLeft]}>
+                    <View style={styles.arrowLeft}>
+                      <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextLeft}>
+                      <Text style={styles.hintText}>Swipe left</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                    </View>
                   </View>
                 </View>
                 <View style={styles.hintRight}>
-                  <View style={styles.arrowRight}>
-                    <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
-                  </View>
-                  <View style={styles.hintTextRight}>
-                    <Text style={styles.hintText}>Swipe right</Text>
-                    <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropRight]}>
+                    <View style={styles.arrowRight}>
+                      <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextRight}>
+                      <Text style={styles.hintText}>Swipe right</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -229,11 +366,13 @@ export default function TabTwoScreen() {
               </Pressable>
             </Link>
           </View>
-          <View style={styles.emptyStateBelow}>
-            <Pressable style={styles.emptyStateReset} onPress={resetCards}>
-              <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
-            </Pressable>
-          </View>
+          {!exploreItems.every((item) => isLiked(item.id)) && (
+            <View style={styles.emptyStateBelow}>
+              <Pressable style={styles.emptyStateReset} onPress={resetCards}>
+                <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
+              </Pressable>
+            </View>
+          )}
         </View>
       )}
       </>
@@ -329,11 +468,93 @@ const styles = StyleSheet.create({
     zIndex: 10,
     alignItems: 'center',
   },
+  matchIconBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    zIndex: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  matchIconBadgeActive: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+  },
+  matchPickerPanel: {
+    position: 'absolute',
+    top: 56,
+    left: 12,
+    zIndex: 15,
+    minWidth: 210,
+    maxWidth: 255,
+    borderRadius: 14,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 0,
+    gap: 8,
+  },
+  matchPickerDismissLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 11,
+  },
+  matchPickerTitle: {
+    color: '#1F2937',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  matchPickerEmpty: {
+    color: '#6B7280',
+    fontSize: 12,
+  },
+  matchPickerItem: {
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  matchPickerItemSelected: {
+    backgroundColor: '#DBEAFE',
+    borderWidth: 1,
+    borderColor: '#60A5FA',
+  },
+  matchPickerItemText: {
+    color: '#111827',
+    fontSize: 12,
+    fontWeight: '500',
+    flex: 1,
+  },
+  matchPickerItemTextSelected: {
+    color: '#1D4ED8',
+  },
+  matchPickerItemThumb: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+  },
+  matchInlineConfirmButton: {
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A84FF',
+  },
+  matchInlineConfirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
   hintsToggleBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.55)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -349,7 +570,7 @@ const styles = StyleSheet.create({
   },
   hintUp: {
     position: 'absolute',
-    top: 12,
+    bottom: 12,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -382,6 +603,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   hintTextRight: {
+    alignItems: 'flex-end',
+  },
+  hintBackdrop: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hintBackdropLeft: {
+    alignItems: 'flex-start',
+  },
+  hintBackdropRight: {
     alignItems: 'flex-end',
   },
   hintText: {

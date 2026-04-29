@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, TouchableOpacity, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useRouter } from 'expo-router';
@@ -41,7 +41,7 @@ function getOrderedLikedItems(
 export default function LikedItemsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { likedMap, likedOrder, toggleLike, setLikedOrder } = useLikedItems();
+  const { likedMap, likedOrder, toggleLike, clearAllLikes, setLikedOrder } = useLikedItems();
   const [isEditMode, setIsEditMode] = useState(false);
   const [orderedItems, setOrderedItems] = useState<TestItem[]>([]);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -81,11 +81,44 @@ export default function LikedItemsScreen() {
     <View style={[styles.container, { backgroundColor: screenBg }]}>
       <Stack.Screen
         options={{
-          title: 'Liked Items',
+          title: 'Likes',
           headerShown: likedItems.length > 0,
           headerTitleStyle: { fontWeight: '700' },
           headerStyle: { backgroundColor: screenBg },
+          headerShadowVisible: false,
           headerTintColor: textColor,
+          headerLeft: isEditMode
+            ? () => (
+                <Pressable
+                  onPress={async () => {
+                    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    Alert.alert(
+                      'Clear all items',
+                      'Remove all items from your liked list?',
+                      [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                          text: 'Clear all',
+                          style: 'destructive',
+                          onPress: () => {
+                            clearAllLikes();
+                            setIsEditMode(false);
+                          },
+                        },
+                      ]
+                    );
+                  }}
+                  style={({ pressed }) => [
+                    { padding: 8, marginLeft: 8, opacity: pressed ? 0.7 : 1 },
+                  ]}
+                  hitSlop={8}
+                >
+                  <ThemedText style={[styles.clearAllText, { color: '#FF3B30' }]}>
+                    Clear all
+                  </ThemedText>
+                </Pressable>
+              )
+            : undefined,
           headerRight: () => (
             <Pressable
               onPress={async () => {
@@ -136,7 +169,7 @@ export default function LikedItemsScreen() {
             setOrderedItems(data);
             setLikedOrder(data.map((i) => i.id));
           }}
-          contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+          contentContainerStyle={[styles.listContent, { paddingTop: 18 }]}
           style={{ backgroundColor: screenBg }}
           renderItem={({ item, drag, isActive, getIndex }) => (
             <ScaleDecorator>
@@ -199,7 +232,7 @@ export default function LikedItemsScreen() {
         />
       ) : (
       <ScrollView
-        contentContainerStyle={[styles.listContent, { paddingTop: 12 }]}
+        contentContainerStyle={[styles.listContent, { paddingTop: 18 }]}
         contentInsetAdjustmentBehavior="never"
         style={{ backgroundColor: screenBg }}
         showsVerticalScrollIndicator={false}
@@ -210,7 +243,14 @@ export default function LikedItemsScreen() {
               style={[styles.card, index === 0 && styles.firstCard]}
               onPress={async () => {
                 await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                router.push(`/items/${item.id}`);
+                router.push({
+                  pathname: '/items/[id]',
+                  params: {
+                    id: String(item.id),
+                    source: 'liked-items',
+                    fromLikedItems: 'true',
+                  },
+                });
               }}
             >
               <View style={styles.imageWrapper}>
@@ -230,6 +270,7 @@ export default function LikedItemsScreen() {
                   {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
                 </ThemedText>
               </View>
+              <Ionicons name="chevron-forward" size={20} color="gray" />
             </Pressable>
           ))}
       </ScrollView>
@@ -295,6 +336,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 24,
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.14)',
+    paddingBottom: 16,
   },
   cardContent: {
     flex: 1,
@@ -351,5 +395,9 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  clearAllText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
