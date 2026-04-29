@@ -4,7 +4,6 @@ import HomeScreen from '../app/(tabs)/index';
 import { LikedItemsContext } from '@/contexts/LikedItemsContext';
 import { MyListingsContext } from '@/contexts/MyListingsContext';
 
-// 1. DATASET FROM YOUR JSON
 const TEST_DATA = [
   { id: 1, title: "Used Bicycle", price: 150, category: "Sports & Outdoors", description: "well-maintained" },
   { id: 2, title: "Vintage Camera", price: 300.5, category: "Electronics", description: "classic" },
@@ -14,7 +13,6 @@ const TEST_DATA = [
   { id: 9, title: "Acoustic Guitar", price: 200, category: "Musical Instruments", description: "rich sound" },
 ];
 
-// 2. MOCKS
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
@@ -24,8 +22,6 @@ jest.mock('@expo/vector-icons', () => {
   const { View } = require('react-native');
   return {
     Ionicons: (props: any) => {
-      // This creates a dummy view that looks like the icon to the test engine
-      // We use the 'name' as the testID so your tests can find it
       return <View testID={props.name} {...props} />;
     },
   };
@@ -36,7 +32,6 @@ jest.mock('expo-haptics', () => ({
   ImpactFeedbackStyle: { Medium: 'medium', Heavy: 'heavy', Light: 'light' },
 }));
 
-// Mock for ParallaxScrollView and safe area
 jest.mock('@/components/parallax-scroll-view', () => ({ children }: any) => <>{children}</>);
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 50, bottom: 0 }),
@@ -60,17 +55,14 @@ const renderHomeScreen = (items = TEST_DATA) => {
 describe('HomeScreen Integration Tests', () => {
   beforeEach(() => jest.clearAllMocks());
 
-//   ## Search Logic
   it('filters items by title or description', async () => {
     renderHomeScreen();
     const searchInput = screen.getByPlaceholderText(/Search items/i);
 
-    // Search for "Leather"
     fireEvent.changeText(searchInput, 'Leather');
     expect(screen.getByText('Leather Sofa')).toBeTruthy();
     expect(screen.queryByText('Used Bicycle')).toBeNull();
 
-    // Search for description keyword "rich"
     fireEvent.changeText(searchInput, 'rich');
     expect(screen.getByText('Acoustic Guitar')).toBeTruthy();
   });
@@ -80,16 +72,13 @@ describe('HomeScreen Integration Tests', () => {
     
     fireEvent.press(screen.getByTestId('pricetag-outline').parent!);
     
-    // Select "Entertainment"
     const entertainmentOption = await screen.findByText('Entertainment');
     fireEvent.press(entertainmentOption);
 
-    // Both guitars are "Musical Instruments", should show up under "Entertainment"
     expect(screen.getByText('Electric Guitar')).toBeTruthy();
     expect(screen.getByText('Acoustic Guitar')).toBeTruthy();
   });
 
-//   ## Navigation & Routing
   it('navigates to the correct item details with params', async () => {
     renderHomeScreen();
     
@@ -109,14 +98,11 @@ describe('HomeScreen Integration Tests', () => {
     });
   });
 
-//   ## Context Interaction (Liking)
   it('triggers toggleLike context function on heart press', async () => {
   const { mockToggleLike } = renderHomeScreen();
 
-  // Find the heart icon
   const heartButtons = screen.getAllByTestId('heart-outline'); 
   
-  // PASS A MOCK EVENT OBJECT
   fireEvent.press(heartButtons[0], {
     stopPropagation: jest.fn(),
   });
