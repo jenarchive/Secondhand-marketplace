@@ -23,7 +23,7 @@ const ARROW_COLOR = '#5a5a5a';
 type ButterflyInstance = { id: number; direction: 'left' | 'right' };
 type TestItem = MyListingItem;
 
-export default function TabTwoScreen() {
+export default function Explore() {
   const router = useRouter();
   const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
   const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();

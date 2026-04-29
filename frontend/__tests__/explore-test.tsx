@@ -1,10 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react-native';
-import TabTwoScreen from '../app/(tabs)/explore'; // Adjust path
+import TabTwoScreen from '../app/(tabs)/explore'; 
 import { LikedItemsContext } from '@/contexts/LikedItemsContext';
 import { MyListingsContext } from '@/contexts/MyListingsContext';
-
-// --- MOCKS ---
 
 const TEST_DATA = [
   { id: 1, title: "Used Bicycle", price: 150, category: "Sports & Outdoors", description: "well-maintained" },
@@ -78,30 +76,24 @@ describe('Explore Page (TabTwoScreen)', () => {
     jest.clearAllMocks();
   });
 
-  // ## Initial Rendering
   it('renders the top card from the explore items', () => {
     renderExplore();
-    // Item 1 and 2 are explore items, Item 99 is "My Item" (filtered out)
-    // The stack logic shows the last item in visibleItems array
     expect(screen.getByText('Item Two')).toBeTruthy();
   });
 
-  // ## Swiping & Dismissing
   it('removes an item from the stack on dismiss', async () => {
     renderExplore();
     const dismissBtn = screen.getByText('TriggerDismiss');
 
     fireEvent.press(dismissBtn);
     
-    // After dismiss, 'Item Two' is sliced off, 'Item One' becomes visible
     expect(screen.queryByText('Item Two')).toBeNull();
     expect(screen.getByText('Item One')).toBeTruthy();
   });
 
-  // ## Buying (Swipe Down/Up Logic)
   it('navigates to details page when "Buy" button is pressed', () => {
     renderExplore();
-    const buyButton = screen.getByTestId('bag').parent; // Ionicons bag inside Pressable
+    const buyButton = screen.getByTestId('bag').parent; 
 
     fireEvent.press(buyButton!);
 
@@ -111,40 +103,32 @@ describe('Explore Page (TabTwoScreen)', () => {
     }));
   });
 
-  // ## Liking & Butterfly Spawning
   it('toggles like and spawns butterflies when swiping right', async () => {
     const { mockToggleLike } = renderExplore();
     const swipeRightTrigger = screen.getByText('TriggerSwipeRight');
 
     fireEvent.press(swipeRightTrigger);
 
-    // Context check
     expect(mockToggleLike).toHaveBeenCalledWith(2);
     
-    // Butterfly check
     const butterflies = screen.getAllByTestId('butterfly-instance');
     expect(butterflies.length).toBeGreaterThan(0);
 
-    // Test butterfly disappearance
     fireEvent.press(screen.getAllByText('Finish')[0]);
     expect(screen.queryAllByTestId('butterfly-instance').length).toBe(butterflies.length - 1);
   });
 
-  // ## Matching Flow
   it('shows the match picker and allows matching with my listing', async () => {
     const { mockRecordMatch } = renderExplore();
 
-    // 1. Open Match Picker
     const pickerToggle = screen.getByTestId('swap-horizontal').parent;
     fireEvent.press(pickerToggle!);
 
     expect(screen.getByText('Match with my listing')).toBeTruthy();
     
-    // 2. Select my item
     const myItemOption = screen.getByText('My Item');
     fireEvent.press(myItemOption);
 
-    // 3. Confirm match
     const confirmBtn = screen.getByText('Confirm');
     fireEvent.press(confirmBtn);
 
