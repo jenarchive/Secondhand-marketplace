@@ -75,6 +75,7 @@ export default function YourChatsScreen() {
               }
               nav.back();
             }}
+            accessibilityLabel="Back"
             style={({ pressed }) => [
               styles.headerBackButton,
               { backgroundColor: BACK_BUTTON_BG },

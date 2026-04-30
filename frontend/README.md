@@ -54,6 +54,11 @@ You can start developing by editing the files inside the **app** directory. This
    npm run test 
    ```
 
+3. Get test coverage
+
+   ```bash
+   npm test -- --coverage
+   ```
 
 ## Project Structure
 ```text

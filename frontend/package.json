@@ -13,7 +13,15 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "testEnvironment": "node"
+    "collectCoverage": true,
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+    "**/*.{js,jsx,ts,tsx}",
+    "!**/coverage/**",
+    "!**/node_modules/**",
+    "!**/babel.config.js",
+    "!**/jest.setup.js"
+  ]
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

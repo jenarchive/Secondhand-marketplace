@@ -56,6 +56,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Marketplace',
+          tabBarButtonTestID: 'marketplace',
           tabBarIcon: ({ color }) => <FontAwesome6 name="bag-shopping" size={28} color={color} />,
         }}
       />
@@ -63,6 +64,7 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: 'Explore',
+          tabBarButtonTestID: 'explore',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
@@ -70,6 +72,7 @@ export default function TabLayout() {
         name="sell"
         options={{
           title: 'Sell',
+          tabBarButtonTestID: 'sell',
           tabBarIcon: ({ color }) => <Ionicons name="add-circle" size={28} color={color} />,
           tabBarStyle: { display: 'none' },
         }}
@@ -79,6 +82,7 @@ export default function TabLayout() {
         options={{
           title: 'Likes',
           tabBarLabel: 'Likes',
+          tabBarButtonTestID: 'like',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="heart.fill" color={color} />,
         }}
       />
@@ -86,6 +90,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
+          tabBarButtonTestID: 'profile',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />

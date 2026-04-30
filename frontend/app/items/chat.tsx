@@ -209,13 +209,14 @@ export default function App() {
       <View style={styles.header}>
         <Pressable
           style={[styles.backButton, { backgroundColor: BACK_BUTTON_BG }]}
+          accessibilityLabel="Back"
           onPress={handleBack}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>
         <ThemedText style={styles.headerTitle}>{headerTitle}</ThemedText>
         {myItem && (
-          <Pressable style={styles.unmatchButton} onPress={handleUnmatch}>
+          <Pressable style={styles.unmatchButton} accessibilityLabel="Unmatch" onPress={handleUnmatch}>
             <Ionicons name="close" size={19} color="#FFFFFF" />
           </Pressable>
         )}
@@ -299,7 +300,11 @@ export default function App() {
       </TouchableWithoutFeedback>
       <View style={styles.bottomWrap}>
         <View style={[styles.inputBar, { backgroundColor: inputBarBg, paddingBottom: inputBarPadding, paddingTop: 12 }]}>
-          <Pressable style={[styles.moreButton, { backgroundColor: BACK_BUTTON_BG }]} onPress={handleMorePress}>
+            <Pressable
+              style={[styles.moreButton, { backgroundColor: BACK_BUTTON_BG }]}
+              accessibilityLabel="More options"
+              onPress={handleMorePress}
+            >
             <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
           </Pressable>
           <TextInput
@@ -314,6 +319,7 @@ export default function App() {
           />
           <Pressable
             style={[styles.sendButton, { backgroundColor: message.trim() ? borderColor : BACK_BUTTON_BG }]}
+              accessibilityLabel="Send message"
             onPress={handleSend}
           >
             <Ionicons name="arrow-up" size={22} color={colorScheme === 'dark' ? '#fff' : '#000'} />
@@ -421,6 +427,10 @@ const styles = StyleSheet.create({
     width: '94%',
     alignSelf: 'center',
   },
+  singleCardWrap: {
+    width: '94%',
+    alignSelf: 'center',
+  },
   itemColumn: {
     flex: 1,
     alignItems: 'center',
@@ -439,6 +449,12 @@ const styles = StyleSheet.create({
   },
   itemCard: {
     width: '86%',
+    borderRadius: 14,
+    padding: 10,
+    backgroundColor: '#25282B',
+  },
+  itemCardSingle: {
+    width: '100%',
     borderRadius: 14,
     padding: 10,
     backgroundColor: '#25282B',
