@@ -255,8 +255,10 @@ describe('EditItemScreen', () => {
       const sportOption = screen.getByText('Sports');
       fireEvent.press(sportOption);
 
+      // setCategory('Sports') fires synchronously; verify the selector button now
+      // shows 'Sports' (it appears in both the FlatList and the selector button)
       await waitFor(() => {
-        expect(screen.queryByText('Select Category')).not.toBeTruthy();
+        expect(screen.getAllByText('Sports').length).toBeGreaterThanOrEqual(2);
       });
     });
   });
