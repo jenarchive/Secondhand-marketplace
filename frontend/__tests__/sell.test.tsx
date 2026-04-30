@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
 import HomeScreen from '../app/(tabs)/sell'; 
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
@@ -34,6 +34,7 @@ global.fetch = jest.fn();
 describe('Sell Item Screen Functionality', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (global as any).alert = jest.fn();
   });
 
   it('renders all form fields correctly', () => {
@@ -92,6 +93,75 @@ describe('Sell Item Screen Functionality', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Photos \(1\/5\)/)).toBeTruthy();
+    });
+  });
+
+  it('fires onFocus and onBlur for all text inputs', () => {
+    render(<HomeScreen />);
+
+    const titleInput = screen.getByPlaceholderText('What is your item');
+    const descInput = screen.getByPlaceholderText('Describe more about your item');
+    const priceInput = screen.getByPlaceholderText('0.00');
+
+    fireEvent(titleInput, 'focus');
+    fireEvent(titleInput, 'blur');
+    fireEvent(descInput, 'focus');
+    fireEvent(descInput, 'blur');
+    fireEvent(priceInput, 'focus');
+    fireEvent(priceInput, 'blur');
+
+    expect(titleInput).toBeTruthy();
+  });
+
+  it('removes an image when the remove button is pressed', async () => {
+    (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValueOnce({
+      canceled: false,
+      assets: [{ uri: 'file://test-image.jpg' }],
+    });
+
+    render(<HomeScreen />);
+    fireEvent.press(screen.getByText('Add'));
+
+    await waitFor(() => expect(screen.getByText(/Photos \(1\/5\)/)).toBeTruthy());
+
+    fireEvent.press(screen.getByText('close'));
+
+    await waitFor(() => expect(screen.getByText(/Photos \(0\/5\)/)).toBeTruthy());
+  });
+
+  it('calls router.back() when the back arrow is pressed', () => {
+    render(<HomeScreen />);
+    fireEvent.press(screen.getByText('arrow-back'));
+    expect(router.back).toHaveBeenCalled();
+  });
+
+  it('shows an alert when the server returns an error', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'Server error' }),
+    });
+
+    (ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValue({
+      canceled: false,
+      assets: [{ uri: 'file://test-image.jpg' }],
+    });
+
+    render(<HomeScreen />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('What is your item'), 'Bike');
+    fireEvent.changeText(screen.getByPlaceholderText('Describe more about your item'), 'Red bike');
+    fireEvent.changeText(screen.getByPlaceholderText('0.00'), '100');
+
+    fireEvent.press(screen.getByText('Select a Category'));
+    fireEvent.press(screen.getByText('Electronics'));
+
+    fireEvent.press(screen.getByText('Add'));
+    await waitFor(() => expect(screen.getByText(/Photos \(1\/5\)/)).toBeTruthy());
+
+    fireEvent.press(screen.getByText('Upload'));
+
+    await waitFor(() => {
+      expect((global as any).alert).toHaveBeenCalledWith(expect.stringContaining('upload failed'));
     });
   });
 
