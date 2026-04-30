@@ -58,7 +58,7 @@ export default function MatchPreviewScreen() {
   return (
     <View style={[styles.screen, { backgroundColor }]}>
       <View style={[styles.header, { backgroundColor }]}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Pressable testID='back-button' style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>
         <ThemedText type="title" style={styles.headerTitle}>Trade Match</ThemedText>

@@ -66,12 +66,25 @@ I have used Microsoft Powerpoint Designer AI once for getting MVP slides templat
 
 **Tools used**
 * ChatGPT
+* Copilot 
 
 **Where did you use AI tools and why**
+
 - Frontend: 
 I have used ChatGPT to generate test data for our frontend prototype in `frontend/test-data.json`. I asked for data in JSON format. It generated an id, title, description, price, image, category and location. 
 Prompt Example:  
 "Can you give me test data in a JSON format for 10 items in a second hand marketplace with ids, titles, descriptions, prices, images, categories and locations."
+
+- Tests:
+I used copilot to generate tests for the frontend. Due to me not being too familiar with jest, copilot helped to generate the structure of the tests, using the code that copilot gave me I was able to write my own subsequent tests. 
+Prompt Example: 
+"Can you give me a structure of how to write tests for the explore page and what type of tests do I need?"
+
+- Debugging: 
+
+I have used ChatGPT and Copilot to help me debug code. If there is a non-trivial solution to fixing a bug, I have used AI tools to look at error messages, give me the reason for the error, and how I should fix the error.  
+
+
 ### Jen
 **Tools used**
 * ChatGPT

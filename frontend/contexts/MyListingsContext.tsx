@@ -42,7 +42,7 @@ type Notification = {
   createdAt?: Date;
 };
 
-const MyListingsContext = createContext<MyListingsContextType | null>(null);
+export const MyListingsContext = createContext<MyListingsContextType | null>(null);
 
 export type { MyListingItem };
 

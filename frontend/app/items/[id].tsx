@@ -185,7 +185,7 @@ export default function HomeScreen() {
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <ThemedText type="title" style={[styles.customHeaderTitle, { color: headerTitleColor }]} numberOfLines={1}>
+        <ThemedText type="title" testID='title' style={[styles.customHeaderTitle, { color: headerTitleColor }]} numberOfLines={1}>
           {fromMyListings ? 'Edit Item' : MyData.title}
         </ThemedText>
       </View>
@@ -249,6 +249,7 @@ export default function HomeScreen() {
           )}
           {!isItemMine(itemData.id) && !soldOnMarketplace && !reservedStatus && !inProgressStatus && (
             <Pressable
+              testID='matchBadge'
               style={({ pressed }) => [
                 styles.matchBadge,
                 (listingStampLabel === 'RESERVED' || listingStampLabel === 'IN PROGRESS') && styles.matchBadgeBelowStamp,
@@ -343,6 +344,7 @@ export default function HomeScreen() {
           )}
           {!isItemMine(itemData.id) && (
           <Pressable
+            testID='likeButton'
             style={styles.likeButton}
             onPress={() => toggleLike(itemData.id)}
             hitSlop={8}
@@ -404,6 +406,7 @@ export default function HomeScreen() {
         ) : !fromTransaction && (!fromChat || showBuyNowFromPurchaseChat) ? (
         <View style={[styles.floatingContainer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
           <Pressable
+            testID='BuyButton'
             style={[
               styles.buyNowButton,
               buyNowLocked && styles.buyNowButtonStatusLocked,
