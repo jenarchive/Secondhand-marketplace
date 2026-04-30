@@ -1,7 +1,8 @@
 import React from 'react';
 import { Alert, Text } from 'react-native';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react-native';
 import ChatScreen from '../app/items/chat';
+import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMyListings } from '@/contexts/MyListingsContext';
 import { addMessageForItem, getMessagesForItem } from '@/store/chatStore';
@@ -203,5 +204,80 @@ describe('ChatScreen', () => {
 
 		expect(mockRemoveNotification).toHaveBeenCalledWith(1, 2);
 		expect(mockBack).toHaveBeenCalledTimes(1);
+	});
+
+	it('opens the more options panel when More options is pressed', () => {
+		renderChat();
+		fireEvent.press(screen.getByLabelText('More options'));
+		expect(screen.getByText('Send photo')).toBeTruthy();
+		expect(screen.getByText('Send video')).toBeTruthy();
+	});
+
+	it('navigates back to the marketplace tab when source is marketplace', () => {
+		renderChat({ source: 'marketplace', fromMarketplace: 'false' });
+		fireEvent.press(screen.getByLabelText('Back'));
+		expect(mockReplace).toHaveBeenCalledWith('/(tabs)');
+	});
+
+	it('navigates back to liked-items when source is liked-items', () => {
+		renderChat({ source: 'liked-items', fromLikedItems: 'false', fromExplore: 'false' });
+		fireEvent.press(screen.getByLabelText('Back'));
+		expect(mockReplace).toHaveBeenCalledWith('/(tabs)/liked-items');
+	});
+
+	it('calls router.back() when source has no matching route', () => {
+		renderChat({ source: '', fromMarketplace: 'false', fromExplore: 'false', fromLikedItems: 'false' });
+		fireEvent.press(screen.getByLabelText('Back'));
+		expect(mockBack).toHaveBeenCalled();
+	});
+
+	it('sends a photo when permission is granted', async () => {
+		(ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock).mockResolvedValueOnce({ granted: true });
+		(ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValueOnce({
+			canceled: false,
+			assets: [{ uri: 'file://photo.jpg', fileName: 'photo.jpg' }],
+		});
+
+		renderChat();
+		fireEvent.press(screen.getByLabelText('More options'));
+
+		await act(async () => {
+			fireEvent.press(screen.getByText('Send photo'));
+		});
+
+		await waitFor(() => {
+			expect(screen.getByText('Sent photo: photo.jpg')).toBeTruthy();
+		});
+	});
+
+	it('sends a video when permission is granted', async () => {
+		(ImagePicker.requestMediaLibraryPermissionsAsync as jest.Mock).mockResolvedValueOnce({ granted: true });
+		(ImagePicker.launchImageLibraryAsync as jest.Mock).mockResolvedValueOnce({
+			canceled: false,
+			assets: [{ uri: 'file://video.mp4', fileName: 'video.mp4' }],
+		});
+
+		renderChat();
+		fireEvent.press(screen.getByLabelText('More options'));
+
+		await act(async () => {
+			fireEvent.press(screen.getByText('Send video'));
+		});
+
+		await waitFor(() => {
+			expect(screen.getByText('Sent video: video.mp4')).toBeTruthy();
+		});
+	});
+
+	it('navigates to the my item details when the item card is pressed', () => {
+		renderChat();
+		fireEvent.press(screen.getByText('My Guitar'));
+		expect(mockPush).toHaveBeenCalledWith('/items/1');
+	});
+
+	it('navigates to the target item details when the target card is pressed', () => {
+		renderChat();
+		fireEvent.press(screen.getByText('Vintage Camera'));
+		expect(mockPush).toHaveBeenCalledWith('/items/2');
 	});
 });
