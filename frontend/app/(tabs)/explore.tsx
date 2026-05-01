@@ -1,154 +1,842 @@
+import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Animated, Button, Pressable} from 'react-native';
+import { View, StyleSheet, Dimensions, Pressable, Text, Animated, Easing } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import TestData from '@/test-data.json'
-import { useState } from 'react';
 import { Butterfly } from '@/components/butterfly';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import { useLikedItems } from '@/contexts/LikedItemsContext';
+import * as Haptics from 'expo-haptics';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { useMyListings, type MyListingItem } from '@/contexts/MyListingsContext';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const CARD_MARGIN = 32;
+const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
+const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
+const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
+const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
+const LIKE_HEART_SIZE = 72;
 
 
-export default function TabTwoScreen() {
-  const [visibleItems, setVisibleItems] = useState(TestData.items);
-  const [butterflies, setButterflies] = useState<number[]>([]);
+const ARROW_COLOR = '#5a5a5a';
+
+type ButterflyInstance = { id: number; direction: 'left' | 'right' };
+type TestItem = MyListingItem;
+
+export default function Explore() {
+  const router = useRouter();
+  const { toggleLike: toggleLikeContext, isLiked } = useLikedItems();
+  const { items: contextItems, isMyListing, recordMatch, myListings } = useMyListings();
+  const myItem = myListings[0];
+  const myListingItems = useMemo(
+    () => contextItems.filter((item) => isMyListing(item.id)),
+    [contextItems, isMyListing]
+  );
+  const exploreItems = useMemo(
+    () => contextItems.filter((item) => !isMyListing(item.id) && !isLiked(item.id)),
+    [contextItems, isMyListing, isLiked]
+  );
+  const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
+  const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
+  const [hintsVisible, setHintsVisible] = useState(true);
+  const [matchPickerVisible, setMatchPickerVisible] = useState(false);
+  const [selectedMatchItemId, setSelectedMatchItemId] = useState<number | null>(null);
+  const likeAnimScale = useRef(new Animated.Value(0.8)).current;
+  const likeAnimOpacity = useRef(new Animated.Value(0)).current;
+  const likeFillProgress = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    setVisibleItems((prev) => {
+      if (prev.length === 0) return [...exploreItems];
+      return prev.map((item) => isLiked(item.id) ? exploreItems.find((c) => c.id === item.id) ?? item : item);
+    });
+  }, [exploreItems]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setMatchPickerVisible(false);
+      setSelectedMatchItemId(null);
+    }, []),
+  );
 
   const blurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
-  
-  const spawnButterfly = () => {
-    const id = Date.now();
-    setButterflies((prev) => [...prev, id]);
+    '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+
+  const spawnButterflies = (direction: 'left' | 'right') => {
+    if (direction !== 'right') return;
+    const baseId = Date.now();
+    const count = 2 + Math.floor(Math.random() * 2);
+    const newOnes: ButterflyInstance[] = Array.from({ length: count }, (_, i) => ({
+      id: baseId + i,
+      direction: direction,
+    }));
+    setButterflies((prev) => [...prev, ...newOnes]);
   };
 
   const removeButterfly = (id: number) => {
-    setButterflies((prev) => prev.filter((b) => b !== id));
+    setButterflies((prev) => prev.filter((b) => b.id !== id));
   };
 
-  const handleCardDismiss = () => {
+  const handleCardDismiss = (direction?: 'left' | 'right') => {
+    setMatchPickerVisible(false);
     setVisibleItems(prev => prev.slice(0, -1));
   };
 
+  const showLikeFeedback = () => {
+    likeAnimScale.stopAnimation();
+    likeAnimOpacity.stopAnimation();
+    likeFillProgress.stopAnimation();
+    likeAnimScale.setValue(0.8);
+    likeAnimOpacity.setValue(0);
+    likeFillProgress.setValue(0);
+
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(likeAnimOpacity, {
+          toValue: 1,
+          duration: 130,
+          useNativeDriver: true,
+        }),
+        Animated.timing(likeAnimOpacity, {
+          toValue: 0,
+          duration: 380,
+          delay: 260,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(likeAnimScale, {
+          toValue: 1.2,
+          duration: 180,
+          easing: Easing.out(Easing.back(1.6)),
+          useNativeDriver: true,
+        }),
+        Animated.timing(likeAnimScale, {
+          toValue: 1,
+          duration: 150,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(likeFillProgress, {
+          toValue: 1,
+          duration: 300,
+          delay: 70,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false,
+        }),
+      ]),
+    ]).start();
+  };
+
+  const handleSwipeDirection = (direction: 'left' | 'right') => {
+    spawnButterflies(direction);
+    if (direction === 'right' && currentItem) {
+      showLikeFeedback();
+      toggleLikeContext(currentItem.id);
+      if (currentItem === visibleItems[0]) {
+        recordMatch(myItem.id, currentItem.id);
+        router.push({
+          pathname: '/items/match-preview',
+          params: {
+            targetId: String(currentItem.id),
+            myId: String(myItem.id),
+            source: 'explore',
+            fromExplore: 'true',
+          },
+        })
+      }
+    }
+  };
+
   const resetCards = () => {
-    setVisibleItems(TestData.items);
-  }
+    setMatchPickerVisible(false);
+    setVisibleItems([...exploreItems]);
+  };
+
+  const currentItem = visibleItems.length > 0 ? visibleItems[visibleItems.length - 1] : null;
+  const currentItemLiked = currentItem ? isLiked(currentItem.id) : false;
+
+  const toggleLike = () => {
+    if (!currentItem) return;
+    toggleLikeContext(currentItem.id);
+    if (currentItem === visibleItems[0]) {
+      recordMatch(myItem.id, currentItem.id);
+      router.push({
+        pathname: '/items/match-preview',
+        params: {
+          targetId: String(currentItem.id),
+          myId: String(myItem.id),
+          source: 'explore',
+          fromExplore: 'true',
+        },
+      })
+    }
+  };
+
+  const handleSwipeUp = () => {
+    const currentItem = visibleItems[visibleItems.length - 1];
+    if (currentItem) {
+      router.push({
+        pathname: '/items/[id]',
+        params: {
+          id: String(currentItem.id),
+          source: 'explore',
+          fromExplore: 'true',
+        },
+      });
+    }
+  };
 
   return (
-    <ThemedView>
+    <View style={styles.screen}>
+      {exploreItems.length === 0 ? (
+        <View style={styles.emptyState}>
+          <ThemedText style={styles.emptyTitle}>No items to explore</ThemedText>
+          <ThemedText style={styles.emptySubtitle}>Listings will appear here when available.</ThemedText>
+        </View>
+      ) : (
+      <>
       <ParallaxScrollView
         headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-        headerImage={<Image/>
-        }
+        headerImage={<Image />}
         onCardDismiss={handleCardDismiss}
+        onSwipeDirection={handleSwipeDirection}
+        onSwipeDown={handleSwipeUp}
       >
         {visibleItems.map((item, index) => (
-        <ThemedView 
-          style={[styles.cardContainer, { zIndex: index+1 }]} 
-          key={item.id}
-          pointerEvents={index === visibleItems.length - 1 ? 'auto' : 'none'}
-        >
-          <Image 
-            placeholder={{ blurhash }}
-            alt={item.title}
-            style={styles.cardImage}
-            contentFit="cover"
-            source={{ uri: item.image }}
-            ></Image>
-          <ThemedView style={styles.cardTextWrapper}>
-            <ThemedText style={styles.cardText}>
-              {item.title}
-            </ThemedText>
-            <ThemedText style={styles.cardTextPrice}>
-              {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
-            </ThemedText>
-          </ThemedView>
-        </ThemedView>
-        ))}
-        <ThemedView style={{ zIndex: 0 }}>
-          {/* <Button title='generate butterfly' onPress={spawnButterfly} />
-            {butterflies.map((id) => (
-            <Butterfly
-              key={id}
-              onFinish={() => removeButterfly(id)}
-            />
-      ))} */}
-          {visibleItems.length === 0 && (
-        <Link href="../items/liked-items" asChild>
-          <Pressable>
-            <ThemedView style={styles.row}>
-              <ThemedText style={styles.text}>
-                Check items that you liked
+          <ThemedView
+            style={[styles.cardContainer, { zIndex: index + 1 }]}
+            key={item.id}
+            pointerEvents={index === visibleItems.length - 1 ? 'auto' : 'none'}
+          >
+            <View style={styles.imageWrapper}>
+              <Image
+                placeholder={{ blurhash }}
+                alt={item.title}
+                style={styles.cardImage}
+                contentFit="cover"
+                source={{ uri: item.image }}
+              />
+            </View>
+            <ThemedView style={styles.cardTextWrapper}>
+              <ThemedText style={styles.cardText}>{item.title}</ThemedText>
+              <ThemedText style={styles.cardTextPrice}>
+                {new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(item.price)}
               </ThemedText>
             </ThemedView>
-          </Pressable>
-        </Link>
-    )}
-        </ThemedView>
-    </ParallaxScrollView>
-    {visibleItems.length === 0 && (
-      <Animated.View style={{ alignItems: 'center', marginTop: 0}}>
-          <ThemedText style={{ fontSize: 16, marginBottom: 12 }}>No more items!</ThemedText>
-          <ThemedText 
-            style={{ fontSize: 16, color: 'blue' }}
-            onPress={resetCards}
+            {index === visibleItems.length - 1 && (
+              <>
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.matchIconBadge,
+                    pressed && styles.hintsTogglePressed,
+                    matchPickerVisible && styles.matchIconBadgeActive,
+                  ]}
+                  onPress={() => setMatchPickerVisible((prev) => !prev)}
+                >
+                  <Ionicons
+                    name="swap-horizontal"
+                    size={20}
+                    color={matchPickerVisible ? '#0A84FF' : ARROW_COLOR}
+                  />
+                </Pressable>
+                {matchPickerVisible && (
+                  <Pressable
+                    style={styles.matchPickerDismissLayer}
+                    onPress={() => {
+                      setMatchPickerVisible(false);
+                      setSelectedMatchItemId(null);
+                    }}
+                  />
+                )}
+                {matchPickerVisible && (
+                  <View style={styles.matchPickerPanel}>
+                    <Text style={styles.matchPickerTitle}>Match with my listing</Text>
+                    {myListingItems.length === 0 ? (
+                      <Text style={styles.matchPickerEmpty}>No my listings yet</Text>
+                    ) : (
+                      <>
+                        {myListingItems.map((myItem) => {
+                          const selected = selectedMatchItemId === myItem.id;
+                          return (
+                            <Pressable
+                              key={myItem.id}
+                              style={[
+                                styles.matchPickerItem,
+                                selected && styles.matchPickerItemSelected,
+                              ]}
+                              onPress={() => setSelectedMatchItemId(myItem.id)}
+                            >
+                              <Image
+                                source={{ uri: myItem.image }}
+                                style={styles.matchPickerItemThumb}
+                                contentFit="cover"
+                              />
+                              <Text
+                                numberOfLines={1}
+                                style={[
+                                  styles.matchPickerItemText,
+                                  selected && styles.matchPickerItemTextSelected,
+                                ]}
+                              >
+                                {myItem.title}
+                              </Text>
+                              {selected && (
+                                <Pressable
+                                  style={styles.matchInlineConfirmButton}
+                                  onPress={() =>
+                                    router.push({
+                                      pathname: '/items/match-preview',
+                                      params: {
+                                        targetId: String(item.id),
+                                        myId: String(myItem.id),
+                                        source: 'explore',
+                                        fromExplore: 'true',
+                                      },
+                                    })
+                                  }
+                                >
+                                  <Text style={styles.matchInlineConfirmButtonText}>Confirm</Text>
+                                </Pressable>
+                              )}
+                            </Pressable>
+                          );
+                        })}
+                      </>
+                    )}
+                  </View>
+                )}
+                <Pressable
+                  style={({ pressed }) => [styles.hintsToggle, pressed && styles.hintsTogglePressed]}
+                  onPress={() => setHintsVisible(v => !v)}
+                >
+                  <View style={styles.hintsToggleBtn}>
+                    <Ionicons
+                      name={hintsVisible ? 'eye-off-outline' : 'eye-outline'}
+                      size={20}
+                      color={ARROW_COLOR}
+                    />
+                  </View>
+                </Pressable>
+                {hintsVisible && (
+              <View style={styles.swipeHints} pointerEvents="none">
+                <View style={styles.hintUp}>
+                  <View style={styles.hintBackdrop}>
+                    <Ionicons name="arrow-down" size={28} color={ARROW_COLOR} />
+                    <View style={styles.hintTextUp}>
+                      <Text style={styles.hintText}>Swipe down</Text>
+                      <Text style={styles.hintText}>to <Text style={styles.hintTextAccent}>buy</Text></Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.hintLeft}>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropLeft]}>
+                    <View style={styles.arrowLeft}>
+                      <Ionicons name="arrow-back" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextLeft}>
+                      <Text style={styles.hintText}>Swipe left</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextRed]}>skip</Text></Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.hintRight}>
+                  <View style={[styles.hintBackdrop, styles.hintBackdropRight]}>
+                    <View style={styles.arrowRight}>
+                      <Ionicons name="arrow-forward" size={28} color={ARROW_COLOR} />
+                    </View>
+                    <View style={styles.hintTextRight}>
+                      <Text style={styles.hintText}>Swipe right</Text>
+                      <Text style={styles.hintText}>to <Text style={[styles.hintTextAccent, styles.hintTextGreen]}>like</Text></Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+                )}
+              </>
+            )}
+          </ThemedView>
+        ))}
+      </ParallaxScrollView>
+
+      {visibleItems.length > 0 && (
+        <View style={styles.actionBar}>
+          <Pressable
+            style={({ pressed }) => [styles.actionBtn, styles.actionSkip, pressed && styles.actionPressed]}
+            onPress={() => {handleCardDismiss('left'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
           >
-            Reset items
-          </ThemedText>
+            <Ionicons name="close" size={26} color="#FF453A" />
+          </Pressable>
+          <Pressable
+            testID='buyButton'
+            style={({ pressed }) => [styles.actionBtn, styles.actionBtnBuy, styles.actionBuy, pressed && styles.actionPressed]}
+            onPress={() => {handleSwipeUp(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
+          >
+            <Ionicons name="bag" size={32} color="#fff" />
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
+            onPress={() => {
+              handleCardDismiss('right');
+              toggleLike();
+              showLikeFeedback();
+              spawnButterflies('right');
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            }}
+            onLongPress={() => {
+              handleCardDismiss('right');
+              toggleLike();
+              showLikeFeedback();
+              spawnButterflies('right');
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            }}
+          >
+            <Ionicons
+              name={currentItemLiked ? 'heart' : 'heart-outline'}
+              size={26}
+              color="#32D74B"
+            />
+          </Pressable>
+        </View>
+      )}
+
+      <View style={styles.butterflyOverlay} pointerEvents="none">
+        {butterflies.map((b, i) => (
+          <Butterfly
+            key={b.id}
+            direction={b.direction}
+            startY={CARD_TOP + CARD_HEIGHT - 120}
+            onFinish={() => removeButterfly(b.id)}
+            clusterIndex={i}
+            duration={4200}
+          />
+        ))}
+      </View>
+
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.likeFeedbackOverlay,
+          {
+            opacity: likeAnimOpacity,
+            transform: [{ scale: likeAnimScale }],
+          },
+        ]}
+      >
+        <View style={styles.likeFeedbackIconWrap}>
+          <Ionicons name="heart-outline" size={LIKE_HEART_SIZE} color="rgba(50, 215, 75, 0.8)" />
+          <Animated.View
+            style={[
+              styles.likeFeedbackFill,
+              {
+                height: likeFillProgress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, LIKE_HEART_SIZE],
+                }),
+              },
+            ]}
+          >
+            <Ionicons name="heart" size={LIKE_HEART_SIZE} color="rgba(50, 215, 75, 0.8)" style={styles.likeFillIcon} />
+          </Animated.View>
+        </View>
       </Animated.View>
-    )}
-    </ThemedView>
+
+      {visibleItems.length === 0 && (
+        <View style={styles.emptyStateCenter}>
+          <View style={styles.emptyStateButtonAtCenter}>
+            <Link href="/(tabs)/liked-items" asChild>
+              <Pressable>
+                <ThemedView style={styles.row}>
+                  <ThemedText style={styles.text}>
+                    Check items that you liked
+                  </ThemedText>
+                </ThemedView>
+              </Pressable>
+            </Link>
+          </View>
+          {!exploreItems.every((item) => isLiked(item.id)) && (
+            <View style={styles.emptyStateBelow}>
+              <Pressable style={styles.emptyStateReset} onPress={resetCards}>
+                <ThemedText style={styles.emptyStateResetText}>Reset items</ThemedText>
+              </Pressable>
+            </View>
+          )}
+        </View>
+      )}
+      </>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  screen: {
+    flex: 1,
+    backgroundColor: '#353636',
+  },
+  emptyState: {
+    flex: 1,
+    paddingVertical: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#fff',
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    opacity: 0.8,
+    color: '#fff',
   },
   cardContainer: {
     position: 'absolute',
-    marginTop: 32,
+    left: CARD_LEFT,
+    top: CARD_TOP,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
     borderRadius: 32,
-    height: '100%',
     alignItems: 'center',
-    aspectRatio: 9/16,
     justifyContent: 'center',
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  cardImage:{ 
+  imageWrapper: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
+  cardImage: {
     borderRadius: 16,
     position: 'absolute',
+    width: '100%',
     height: '100%',
-    aspectRatio: 9/16,
   },
-  cardText:{
+  cardText: {
     fontSize: 24,
     fontWeight: '600',
     color: '#fff',
   },
-  cardTextPrice:{
+  cardTextPrice: {
     fontSize: 18,
     fontWeight: '600',
     color: '#fff',
-    textAlign: 'center'
+    textAlign: 'center',
   },
-  cardTextWrapper:{
+  cardTextWrapper: {
     backgroundColor: 'rgba(0,0,0,0.15)',
     padding: 6,
     borderRadius: 8,
-  },
-  linkToLikedItems:{
-    alignItems: 'center',
   },
   row: {
     width: 300,
     height: 60,
     borderRadius: 25,
-    alignItems: "center", 
+    alignItems: "center",
     justifyContent: 'center',
-    fontSize:18, 
-    backgroundColor: '#28289D'
+    fontSize: 18,
+    backgroundColor: '#28289D',
   },
-  text:{
-    fontSize: 18, 
+  text: {
+    fontSize: 18,
+    color: '#fff',
+  },
+  hintsToggle: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 10,
+    alignItems: 'center',
+  },
+  matchIconBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    zIndex: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  matchIconBadgeActive: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+  },
+  matchPickerPanel: {
+    position: 'absolute',
+    top: 56,
+    left: 12,
+    zIndex: 15,
+    minWidth: 210,
+    maxWidth: 255,
+    borderRadius: 14,
+    padding: 12,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 0,
+    gap: 8,
+  },
+  matchPickerDismissLayer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 11,
+  },
+  matchPickerTitle: {
+    color: '#1F2937',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  matchPickerEmpty: {
+    color: '#6B7280',
+    fontSize: 12,
+  },
+  matchPickerItem: {
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  matchPickerItemSelected: {
+    backgroundColor: '#DBEAFE',
+    borderWidth: 1,
+    borderColor: '#60A5FA',
+  },
+  matchPickerItemText: {
+    color: '#111827',
+    fontSize: 12,
+    fontWeight: '500',
+    flex: 1,
+  },
+  matchPickerItemTextSelected: {
+    color: '#1D4ED8',
+  },
+  matchPickerItemThumb: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+  },
+  matchInlineConfirmButton: {
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A84FF',
+  },
+  matchInlineConfirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  hintsToggleBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  hintsTogglePressed: {
+    opacity: 0.7,
+  },
+  swipeHints: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  },
+  hintUp: {
+    position: 'absolute',
+    bottom: 12,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arrowLeft: {
+    marginBottom: 6,
+  },
+  arrowRight: {
+    marginBottom: 6,
+    alignItems: 'flex-end',
+  },
+  hintLeft: {
+    position: 'absolute',
+    left: 8,
+    top: '42%',
+    alignItems: 'flex-start',
+  },
+  hintRight: {
+    position: 'absolute',
+    right: 8,
+    top: '42%',
+    alignItems: 'flex-end',
+  },
+  hintTextUp: {
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  hintTextLeft: {
+    alignItems: 'flex-start',
+  },
+  hintTextRight: {
+    alignItems: 'flex-end',
+  },
+  hintBackdrop: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    paddingHorizontal: 6,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hintBackdropLeft: {
+    alignItems: 'flex-start',
+  },
+  hintBackdropRight: {
+    alignItems: 'flex-end',
+  },
+  hintText: {
+    fontSize: 11,
+    color: ARROW_COLOR,
+    fontWeight: '500',
+  },
+  hintTextAccent: {
+    fontWeight: '700',
+    color: '#0A84FF',
+  },
+  hintTextRed: {
+    color: '#FF453A',
+  },
+  hintTextGreen: {
+    color: '#32D74B',
+  },
+  emptyStateCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+  },
+  emptyStateButtonAtCenter: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '50%',
+    alignItems: 'center',
+    transform: [{ translateY: -30 }],
+  },
+  emptyStateBelow: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '50%',
+    marginTop: 38,
+    alignItems: 'center',
+  },
+  emptyStateReset: {
+    marginTop: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyStateResetText: {
+    fontSize: 16,
+    color: '#0a84ff',
+  },
+  butterflyOverlay: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 9999,
+  },
+  likeFeedbackOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10000,
+  },
+  likeFeedbackIconWrap: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  likeFeedbackFill: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'hidden',
+  },
+  likeFillIcon: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+  },
+  actionBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: CARD_TOP + CARD_HEIGHT + 16,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 32,
+  },
+  actionBtn: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  actionPressed: {
+    opacity: 0.7,
+  },
+  actionSkip: {
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: 'rgba(255, 69, 58, 0.7)',
+  },
+  actionBtnBuy: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+  },
+  actionBuy: {
+    backgroundColor: '#0A84FF',
+  },
+  actionLike: {
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: 'rgba(50, 215, 75, 0.7)',
   },
 });

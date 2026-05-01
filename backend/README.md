@@ -38,3 +38,14 @@ pip install -r requirements.txt
 ```bash
 flask --app app run
 ```
+
+## Structure
+```text
+backend                            # Flask API: Handles business logic and data processing
+├── README.md                      # Backend overview and structure
+├── app                            # Core Flask app (Routes: Auth, Home, Item listings, Upload Items)
+├── tests                          
+├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
+├── run.py                         # Server entry point: Starts the Flask development server
+└── .pylintrc                      # Adjustment for pylint in CI 
+```

@@ -37,7 +37,12 @@ Secondhand Marketplace is a online platform for selling, browsing and purchasing
 * Github Actions
 
 <p align="left">
-  <img width="918" alt="architecture image" src="doc/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="architecture image" src="docs/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+</p>
+
+### Cloud Architecture 
+<p align="left">
+<img width="918" alt="architecture image" src="docs/others/image-2.png" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
 </p>
 
 ## Client Information 
@@ -63,50 +68,67 @@ Marius Jurt has a strong passion for an online second-hand marketplace platform 
 
 ## User Flow
 ### Basic Flow
-1. ...
+#### Buyer: 
+1. Open the app 
+2. Sign up / Log in
+3. Search/Browse to like / buy: 
+     - Scroll through marketplace
+     - Swipe on explore page (able to match if buyer has listing)
+4. Head to likes page to check items that they liked
+5. Choose one that they like and buy
+6. Fill in details for transaction page and send offer 
+7. Wait for seller to accept offer 
+8. Rate the seller after offer accepted
 
-### Alternative Flow
-1. ...
+#### Seller: 
+1. Open the app 
+2. Sign up / Log in
+3. Add listing using add items page
+4. Edit details or remove listings in MyListings page 
+5. Accept or decline offer sent by buyers
 
 
 ## Project Structure
 ```text
+├── .github                            # Templates & workflows
 ├── README.md                          # Main project overview
 ├── ai-tools                           # Overview of AI tools
-│   └── README.md
 ├── backend                            # Flask API: Handles business logic and data processing
-│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings)
+│   ├── README.md                      # Backend overview and structure
+│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings, Upload Items)
+│   ├── tests                          
 │   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
-│   └── run.py                         # Server entry point: Starts the Flask development server
+│   ├── run.py                         # Server entry point: Starts the Flask development server
+│   └── .pylintrc                      # Adjustment for pylint in CI 
 ├── database                           # Data Layer: PostgreSQL configuration and scripts
-│   ├── config.py                      # DB connection strings and environment settings
+│   ├── README.md                      # Database overview and structure 
+│   ├── config.py                      
 │   ├── main.py                        # Management script for DB init and migrations
-│   └── *.sql                          # SQL scripts: Schema(Create), Seed(Insert), Ops(Queries)
+│   └── *.sql                          # SQL scripts
 ├── frontend                           # Frontend React Native (Expo) application
+│   ├── README.md                      # Frontend overview and structure 
 │   ├── app                            # File-based Routing (Crucial for UI)
-│   │   ├── (tabs)                     # Main navigation tab screens
-│   │   │   ├── marketplace.tsx        # Main Marketplace: Item listings (Matches Figma)
-│   │   │   ├── sell.tsx               # Sell Page: Item registration
-│   │   │   ├── profile.tsx            # User Profile: Account and history
-│   │   │   └── index.tsx              # App landing logic
+│   │   ├── (tabs)                     # Main pages for frontend
 │   │   ├── auth                       # Authentication flow
-│   │   │   ├── login.tsx              # Sign-in screen
-│   │   │   └── signup.tsx             # New user registration
-│   │   ├── items                      # Item details
-│   │   │   └── [id].tsx               # Dynamic Route: Individual item detail view
+│   │   ├── items                      # Item details for sub-pages 
 │   │   └── _layout.tsx                # Root layout and theme providers
-│   ├── assets                         # Images, icons, and animations
 │   ├── components                     # Reusable UI components (Headers, Buttons)
 │   ├── constants                      # Design tokens (Colours, Spacing)
+│   ├── contexts                       
 │   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
+│   ├── store                          
 │   ├── test-data.json                 # Mock data for frontend testing
-│   └── package.json                   # Frontend dependencies and scripts
+│   ├── __tests__                      
+│   ├── package.json                   # Frontend dependencies and scripts
+│   └── *                              # Set up files for linting / testing
 ├── doc                                # Project documentation and diagrams
-│   ├── previous project               # Files related to previous project
-│   ├── others                         # Diagrams and files for explain / plan
-│   └── meetings and feedbacks         # Meeting notes and feedbacks for review
-└── package.json                       # Root workspace configuration
+    ├── previous project               # Files related to previous project
+    ├── others                         # Diagrams and files for explaining / planning 
+    └── meetings and feedbacks         # Meeting notes and feedbacks for review
 ```
+
+## User Instructions 
+Note: Ideally this would be a mobile app that can works on both iOS and android, and can be downloaded from app stores. However we can't deploy it as a license is needed for deploying in iOS and android. Users now can only experience this app with using dev instructions. 
 
 ## Dev Instructions
 ### Frontend

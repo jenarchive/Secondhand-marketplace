@@ -1,5 +1,6 @@
+# trigger change
 from flask import Blueprint, request, jsonify, current_app
-import os
+import botocore.exceptions
 import psycopg2
 import boto3
 from werkzeug.utils import secure_filename
@@ -31,10 +32,12 @@ def upload_file_to_s3(file, filename):
             ExtraArgs={'ContentType': file.content_type}
         )
 
-        url = f"https://{current_app.config['S3_BUCKET']}.s3.{current_app.config['S3_REGION']}.amazonaws.com/{filename}"
+        bucket = current_app.config['S3_BUCKET']
+        region = current_app.config['S3_REGION']
+        url = f"https://{bucket}.s3.{region}.amazonaws.com/{filename}"
         return url
 
-    except Exception as e:
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         print(f"S3 upload error: {e}")
         return None
 
@@ -51,6 +54,9 @@ def create_item():
 
         # change later when we add authentication
         seller_id = 1
+
+        if 'images' not in request.files or not request.files.getlist('images')[0].filename:
+            return jsonify({"error": "at least one image is required"}), 400
 
         conn = connect_db()
         cur = conn.cursor()
@@ -73,41 +79,41 @@ def create_item():
         new_item_id = cur.fetchone()[0]
 
         # insert images to db
-        if 'images' in request.files:
-            files = request.files.getlist('images')
+        files = request.files.getlist('images')
 
-            for file in files:
-                if file.filename == '':
-                    continue
+        for file in files:
+            if file.filename == '':
+                continue
 
-                filename = secure_filename(file.filename)
-                unique_filename = f"{new_item_id}_{filename}"
-                
-                image_url = upload_file_to_s3(file, unique_filename)
+            filename = secure_filename(file.filename)
+            unique_filename = f"{new_item_id}_{filename}"
 
-                if image_url:
-                    insert_image_query = """
-                        INSERT INTO product_images (product_id, image_url)
-                        VALUES (%s, %s);
-                    """
+            image_url = upload_file_to_s3(file, unique_filename)
 
-                    cur.execute(insert_image_query, (new_item_id, image_url))
+            if image_url:
+                insert_image_query = """
+                    INSERT INTO product_images (product_id, image_url)
+                    VALUES (%s, %s);
+                """
+
+                cur.execute(insert_image_query, (new_item_id, image_url))
 
         conn.commit()
         cur.close()
-        
+
         # POST response
         return jsonify({
             "message": "product uploaded successfully",
             "item_id": new_item_id
         }), 201
 
+    # pylint: disable=broad-exception-caught
     except Exception as e:
         if conn:
             conn.rollback()
         print("error:", e)
         return jsonify({"error": str(e)}), 500
-    
+
     finally:
         if conn:
             conn.close()

@@ -1,15 +1,13 @@
+
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   return (
     <Tabs
       screenOptions={{
@@ -21,7 +19,7 @@ export default function TabLayout() {
         tabBarShowLabel: true, 
         
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 9,
           marginBottom: 8,
           fontWeight: '600'
         },
@@ -30,7 +28,8 @@ export default function TabLayout() {
           position: 'absolute',
 
           bottom: 20, 
-          marginHorizontal: 16,
+          marginHorizontal: 10,
+          paddingHorizontal: 6,
 
           height: 72,
           
@@ -57,6 +56,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Marketplace',
+          tabBarButtonTestID: 'marketplace',
           tabBarIcon: ({ color }) => <FontAwesome6 name="bag-shopping" size={28} color={color} />,
         }}
       />
@@ -64,6 +64,7 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: 'Explore',
+          tabBarButtonTestID: 'explore',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
@@ -71,6 +72,7 @@ export default function TabLayout() {
         name="sell"
         options={{
           title: 'Sell',
+          tabBarButtonTestID: 'sell',
           tabBarIcon: ({ color }) => <Ionicons name="add-circle" size={28} color={color} />,
           tabBarStyle: { display: 'none' },
         }}
@@ -79,6 +81,8 @@ export default function TabLayout() {
         name="liked-items"
         options={{
           title: 'Likes',
+          tabBarLabel: 'Likes',
+          tabBarButtonTestID: 'like',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="heart.fill" color={color} />,
         }}
       />
@@ -86,7 +90,14 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
+          tabBarButtonTestID: 'profile',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="log-in"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
