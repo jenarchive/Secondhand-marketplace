@@ -14,8 +14,7 @@ import * as Haptics from 'expo-haptics';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 50;
-const TRIGGER_THRESHOLD = 10;
-
+const SWIPE_UP_THRESHOLD = 80;
 const SWIPE_DOWN_THRESHOLD = 80;
 
 type Props = PropsWithChildren<{
@@ -46,12 +45,13 @@ export default function ParallaxScrollView({
       translateX.value = event.translationX;
       translateY.value = event.translationY > 0 ? event.translationY : 0;
 
-      if (Math.abs(event.translationX) > TRIGGER_THRESHOLD && !hasTriggeredHaptic.value) {
+      if (Math.abs(event.translationX) > SWIPE_THRESHOLD && !hasTriggeredHaptic.value) {
         hasTriggeredHaptic.value = true;
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
-        if (onSwipeDirection) {
-          runOnJS(onSwipeDirection)(event.translationX > 0 ? 'right' : 'left');
-        }
+      }
+      if (Math.abs(event.translationY) > SWIPE_UP_THRESHOLD && !hasTriggeredHaptic.value) {
+        hasTriggeredHaptic.value = true;
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
       }
     })
     .onEnd((event) => {
@@ -66,8 +66,10 @@ export default function ParallaxScrollView({
         runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
         const direction = event.translationX > 0 ? 'right' : 'left';
         if (onCardDismiss) runOnJS(onCardDismiss)(direction);
+        if (onSwipeDirection) {
+          runOnJS(onSwipeDirection)(direction);
+        }
       }
-
       translateX.value = withSpring(0);
       translateY.value = withSpring(0);
       hasTriggeredHaptic.value = false;

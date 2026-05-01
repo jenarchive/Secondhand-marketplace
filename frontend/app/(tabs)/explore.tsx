@@ -1,7 +1,7 @@
-import { useEffect, useCallback, useState, useMemo } from 'react';
+import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Image } from 'expo-image';
-import { View, StyleSheet, Dimensions, Pressable, Text } from 'react-native';
+import { View, StyleSheet, Dimensions, Pressable, Text, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
@@ -9,6 +9,8 @@ import { ThemedView } from '@/components/themed-view';
 import { Butterfly } from '@/components/butterfly';
 import { Link, useRouter } from 'expo-router';
 import { useLikedItems } from '@/contexts/LikedItemsContext';
+import * as Haptics from 'expo-haptics';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { useMyListings, type MyListingItem } from '@/contexts/MyListingsContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -17,6 +19,8 @@ const CARD_WIDTH = SCREEN_WIDTH - CARD_MARGIN * 2;
 const CARD_HEIGHT = CARD_WIDTH * (16 / 9);
 const CARD_LEFT = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 const CARD_TOP = Math.max(24, (SCREEN_HEIGHT - CARD_HEIGHT) / 2 - 60);
+const LIKE_HEART_SIZE = 72;
+
 
 const ARROW_COLOR = '#5a5a5a';
 
@@ -33,19 +37,22 @@ export default function Explore() {
     [contextItems, isMyListing]
   );
   const exploreItems = useMemo(
-    () => contextItems.filter((item) => !isMyListing(item.id)),
-    [contextItems, isMyListing]
+    () => contextItems.filter((item) => !isMyListing(item.id) && !isLiked(item.id)),
+    [contextItems, isMyListing, isLiked]
   );
   const [visibleItems, setVisibleItems] = useState<typeof contextItems>([]);
   const [butterflies, setButterflies] = useState<ButterflyInstance[]>([]);
   const [hintsVisible, setHintsVisible] = useState(true);
   const [matchPickerVisible, setMatchPickerVisible] = useState(false);
   const [selectedMatchItemId, setSelectedMatchItemId] = useState<number | null>(null);
+  const likeAnimScale = useRef(new Animated.Value(0.8)).current;
+  const likeAnimOpacity = useRef(new Animated.Value(0)).current;
+  const likeFillProgress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     setVisibleItems((prev) => {
       if (prev.length === 0) return [...exploreItems];
-      return prev.map((item) => exploreItems.find((c) => c.id === item.id) ?? item);
+      return prev.map((item) => isLiked(item.id) ? exploreItems.find((c) => c.id === item.id) ?? item : item);
     });
   }, [exploreItems]);
 
@@ -79,9 +86,58 @@ export default function Explore() {
     setVisibleItems(prev => prev.slice(0, -1));
   };
 
+  const showLikeFeedback = () => {
+    likeAnimScale.stopAnimation();
+    likeAnimOpacity.stopAnimation();
+    likeFillProgress.stopAnimation();
+    likeAnimScale.setValue(0.8);
+    likeAnimOpacity.setValue(0);
+    likeFillProgress.setValue(0);
+
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(likeAnimOpacity, {
+          toValue: 1,
+          duration: 130,
+          useNativeDriver: true,
+        }),
+        Animated.timing(likeAnimOpacity, {
+          toValue: 0,
+          duration: 380,
+          delay: 260,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(likeAnimScale, {
+          toValue: 1.2,
+          duration: 180,
+          easing: Easing.out(Easing.back(1.6)),
+          useNativeDriver: true,
+        }),
+        Animated.timing(likeAnimScale, {
+          toValue: 1,
+          duration: 150,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(likeFillProgress, {
+          toValue: 1,
+          duration: 300,
+          delay: 70,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: false,
+        }),
+      ]),
+    ]).start();
+  };
+
   const handleSwipeDirection = (direction: 'left' | 'right') => {
     spawnButterflies(direction);
     if (direction === 'right' && currentItem) {
+      showLikeFeedback();
       toggleLikeContext(currentItem.id);
       if (currentItem === visibleItems[0]) {
         recordMatch(myItem.id, currentItem.id);
@@ -313,20 +369,33 @@ export default function Explore() {
         <View style={styles.actionBar}>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionSkip, pressed && styles.actionPressed]}
-            onPress={() => handleCardDismiss('left')}
+            onPress={() => {handleCardDismiss('left'); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
           >
             <Ionicons name="close" size={26} color="#FF453A" />
           </Pressable>
           <Pressable
             testID='buyButton'
             style={({ pressed }) => [styles.actionBtn, styles.actionBtnBuy, styles.actionBuy, pressed && styles.actionPressed]}
-            onPress={handleSwipeUp}
+            onPress={() => {handleSwipeUp(); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);}}
           >
             <Ionicons name="bag" size={32} color="#fff" />
           </Pressable>
           <Pressable
             style={({ pressed }) => [styles.actionBtn, styles.actionLike, pressed && styles.actionPressed]}
-            onPress={toggleLike}
+            onPress={() => {
+              handleCardDismiss('right');
+              toggleLike();
+              showLikeFeedback();
+              spawnButterflies('right');
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            }}
+            onLongPress={() => {
+              handleCardDismiss('right');
+              toggleLike();
+              showLikeFeedback();
+              spawnButterflies('right');
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            }}
           >
             <Ionicons
               name={currentItemLiked ? 'heart' : 'heart-outline'}
@@ -349,6 +418,34 @@ export default function Explore() {
           />
         ))}
       </View>
+
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          styles.likeFeedbackOverlay,
+          {
+            opacity: likeAnimOpacity,
+            transform: [{ scale: likeAnimScale }],
+          },
+        ]}
+      >
+        <View style={styles.likeFeedbackIconWrap}>
+          <Ionicons name="heart-outline" size={LIKE_HEART_SIZE} color="rgba(50, 215, 75, 0.8)" />
+          <Animated.View
+            style={[
+              styles.likeFeedbackFill,
+              {
+                height: likeFillProgress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, LIKE_HEART_SIZE],
+                }),
+              },
+            ]}
+          >
+            <Ionicons name="heart" size={LIKE_HEART_SIZE} color="rgba(50, 215, 75, 0.8)" style={styles.likeFillIcon} />
+          </Animated.View>
+        </View>
+      </Animated.View>
 
       {visibleItems.length === 0 && (
         <View style={styles.emptyStateCenter}>
@@ -671,6 +768,33 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     zIndex: 9999,
+  },
+  likeFeedbackOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10000,
+  },
+  likeFeedbackIconWrap: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  likeFeedbackFill: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'hidden',
+  },
+  likeFillIcon: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
   },
   actionBar: {
     position: 'absolute',
