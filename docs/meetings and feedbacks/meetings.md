@@ -313,4 +313,55 @@
         - Script to auto set up aws 
         - Infrastructure code: easy to set up database (I think we have some part of this in CD for deploying backend on AWS)
 
+# Mentor 20th Mar: 
+* Project structure: Hard to read, simplify and condense, esp. frontend
+* Missing user instructions 
+* Tests - missing edge cases, test coverage
+* Docs - handover docs 
+* Working issues link to PR / branches
+* PR: Consistency and comments 
+* Workload - prepare to bring up workload distribution 
+* Issues: make it clearer with details 
 
+# Mentor 15th Apr:
+* Get rid of root json 
+* Comment all the recent PRs 
+* Remove things from template if not used 
+* Database - dev instruction needed 
+* Update tech stack diagram and include architecture diagram 
+* User flow 
+* Slide: include case studies 
+    * condense challenges 
+    * Client requirements: explain research and idea 
+    * Before and after Agile
+    * Greencheck (brief mention of how we spent 5 weeks researching)
+* TODOs: 
+    1. tests and test coverage
+    2. keep commiting 
+    3. Handover doc
+
+# Client 15th Apr: 
+* Happy about: 
+    * Transaction page: looks nice and complete
+    * Great progress 
+    * Ratings & matching
+* Worried about: 
+    * App crashed during meeting 
+* Feedback: 
+    * Focus on Wrapping up 
+    * Slides should be more compact 
+    * Handover doc: as least as possible
+        * What is needed to run the app locally 
+        * Set up AWS 
+        * Future thoughts / directions 
+
+# Mentor 15th Apr:
+* Clean up extra files not supposed to be in repo 
+* Tests: 
+    * Edge case testing - include in slides 
+    * Frontend - include tests for password and username 
+* Handover doc: include more details 
+* Contributing.md - optional 
+* Slides: 
+    * add slide about meeting with client: how and what we discuss / communicate 
+    * other is in notes in slides 

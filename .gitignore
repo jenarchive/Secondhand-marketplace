@@ -7,4 +7,5 @@ package-lock.json
 node_modules/*
 *.Identifier
 .expo/ 
+.DS_store
 frontend/coverage/

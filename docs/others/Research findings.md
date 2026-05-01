@@ -1,14 +1,14 @@
 # Research findings on UX and gamification:
-### [A comparison of the effects of haptic and visual feedback on presence in virtual reality](https://www.sciencedirect.com/science/article/pii/S107158192100135X )
+### A comparison of the effects of haptic and visual feedback on presence in virtual reality [(Gibbs et al., 2022)](https://www.sciencedirect.com/science/article/pii/S107158192100135X )
 *  Presence was enhanced when they could both see and feel the ball’s action; with a strong suggestion that haptic feedback alone gave rise to a greater sense of presence than visual alone.  
 * Although its for VR, it can also be applied in mobile apps
 
-### [Expectations for User Experience in HapticCommunication with Mobile Devices](https://dl.acm.org/doi/epdf/10.1145/1613858.1613895)
+### Expectations for User Experience in HapticCommunication with Mobile Devices [(Heikkinen et al., 2009)](https://dl.acm.org/doi/epdf/10.1145/1613858.1613895) 
 * Subjective quality of haptic feedback: pleasant vibration, meaningful distinguishable patterns, realistic tactile sensations and customizable feedback
 * Spontaneity & lightweight interaction: quick, effortless, immediate, yes/no signals
 * Reassurance (of swiping actually does something) can be also considered
 
-### [Analyzing Gamification of “Duolingo” with Focus on Its Course Structure](https://www.researchgate.net/publication/310623230_Analyzing_Gamification_of_Duolingo_with_Focus_on_Its_Course_Structure )
+### Analyzing Gamification of “Duolingo” with Focus on Its Course Structure [(Huynh et al., 2016)](https://www.researchgate.net/publication/310623230_Analyzing_Gamification_of_Duolingo_with_Focus_on_Its_Course_Structure )
 * Gamification is a term that refers to the use of game-based elements such as mechanics, aesthetics, and game thinking in non-game contexts aimed at engaging people, motivating action, enhancing learning and solving problem
 * Game refinement theory
 * The essence of gamification is that it occurs in a non-game context
@@ -17,7 +17,7 @@
 * The result shows that Duolingo is enjoyable for new comers who start from the first milestone, however, less enjoyable for advanced users who start at the third milestone.
 * It is essential to increase the degree of gamification of Duolingo by decreasing the number of lessons or increasing the number of skills in the target courses.
     
-### [Defining Haptic Experience: Foundations for Understanding](https://dl.acm.org/doi/pdf/10.1145/3313831.3376280)
+### Defining Haptic Experience: Foundations for Understanding [(Kim & Schneider, 2020)](https://dl.acm.org/doi/pdf/10.1145/3313831.3376280)
 * Key dimensions for user experience:
     * Harmony: Does it fit with other senses? Most important: how tightly coupled the haptics are perceived to be with other sensory outputs. e.g. A sword swing in a game that vibrates exactly when the blade hits a shield.
     * Expressivity: Is there distinction between effects? - allows user to feel their impact makes an impact on the feedback. e.g. A phone that can distinguish between a "gentle tap" and a "heavy thud."
@@ -30,7 +30,7 @@
     * Consistency - Is it reliable?
     * Saliency - Is it appropriately noticeable?
 
-### [A systematic mapping study on gamification applied to e-marketing](https://www.emerald.com/jrim/article-abstract/13/3/392/456914/A-systematic-mapping-study-on-gamification-applied?redirectedFrom=fulltext)
+### A systematic mapping study on gamification applied to e-marketing [(Noorbehbahani et al., 2019)](https://www.emerald.com/jrim/article-abstract/13/3/392/456914/A-systematic-mapping-study-on-gamification-applied?redirectedFrom=fulltext)
 * Summary of existing researches on how gamification applies and affects e-marketing
 * benefits of applying gamification:
     * Increasing psychological responses to advertising
@@ -43,14 +43,14 @@
     * Increasing user interaction with the website
 
 
-### [Swiping vs. Scrolling in Mobile Shopping Applications](https://link.springer.com/chapter/10.1007/978-3-319-39396-4_16)
+### Swiping vs. Scrolling in Mobile Shopping Applications [(Choi et al., 2016)](https://link.springer.com/chapter/10.1007/978-3-319-39396-4_16)
 * Suggests: 
     * Swiping interface leads to greater cognitive absorption and playfulness in shopping applications - is significant in increasing reuse intentions and task performance.
     * Cognitive absorption: a state of deep involvement with software
     * Greater level of cognitive absorption, greater levels of engagement and enjoyment -> more accurate assessments of the streamed products & greater intention to reuse the app
     * Playfulness is associated with higher reuse intention BUT may reduce task performance -> saving products that are not of sufficient interest -> choice overload
 
-### [Swiping Angles Differentially Influence Young and Old Users’ Performance and Experience on Swiping Gestures](https://link.springer.com/chapter/10.1007/978-3-031-06086-1_3)
+### Swiping Angles Differentially Influence Young and Old Users’ Performance and Experience on Swiping Gestures [(Jiang et al., 2022)](https://link.springer.com/chapter/10.1007/978-3-031-06086-1_3)
 * States:
     * Horizontal swiping generally leads to better interaction performance (speed and accuracy) for most users.
     * Vertical movements require higher cognitive effort and mental concentration compared to horizontal ones.
