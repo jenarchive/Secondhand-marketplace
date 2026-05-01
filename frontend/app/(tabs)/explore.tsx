@@ -1,11 +1,12 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet, Animated, Button} from 'react-native';
+import { Platform, StyleSheet, Animated, Button, Pressable} from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view-horizontal';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import TestData from '@/test-data.json'
 import { useState } from 'react';
 import { Butterfly } from '@/components/butterfly';
+import { Link } from 'expo-router';
 
 
 export default function TabTwoScreen() {
@@ -64,24 +65,35 @@ export default function TabTwoScreen() {
         </ThemedView>
         ))}
         <ThemedView style={{ zIndex: 0 }}>
-          <Button title='generate butterfly' onPress={spawnButterfly} />
+          {/* <Button title='generate butterfly' onPress={spawnButterfly} />
             {butterflies.map((id) => (
             <Butterfly
               key={id}
               onFinish={() => removeButterfly(id)}
             />
-      ))}
+      ))} */}
+          {visibleItems.length === 0 && (
+        <Link href="../items/liked-items" asChild>
+          <Pressable>
+            <ThemedView style={styles.row}>
+              <ThemedText style={styles.text}>
+                Check items that you liked
+              </ThemedText>
+            </ThemedView>
+          </Pressable>
+        </Link>
+    )}
         </ThemedView>
     </ParallaxScrollView>
     {visibleItems.length === 0 && (
       <Animated.View style={{ alignItems: 'center', marginTop: 0}}>
-        <ThemedText style={{ fontSize: 18, marginBottom: 12 }}>No more items!</ThemedText>
-        <ThemedText 
-          style={{ fontSize: 16, color: 'blue' }}
-          onPress={resetCards}
-        >
-          Reset Items
-        </ThemedText>
+          <ThemedText style={{ fontSize: 16, marginBottom: 12 }}>No more items!</ThemedText>
+          <ThemedText 
+            style={{ fontSize: 16, color: 'blue' }}
+            onPress={resetCards}
+          >
+            Reset items
+          </ThemedText>
       </Animated.View>
     )}
     </ThemedView>
@@ -123,5 +135,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.15)',
     padding: 6,
     borderRadius: 8,
-  }
+  },
+  linkToLikedItems:{
+    alignItems: 'center',
+  },
+  row: {
+    width: 300,
+    height: 60,
+    borderRadius: 25,
+    alignItems: "center", 
+    justifyContent: 'center',
+    fontSize:18, 
+    backgroundColor: '#28289D'
+  },
+  text:{
+    fontSize: 18, 
+  },
 });

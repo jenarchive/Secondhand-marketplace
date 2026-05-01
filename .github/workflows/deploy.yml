@@ -1,0 +1,33 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          scripts: |
+            cd /home/ubuntu/2025-SecondhandMarketplace2/backend
+            # pull latest code from dev
+            git pull origin dev
+            # create virtual environment
+            source venv/bin/activate
+            # install required dependencies
+            pip install -r requirements.txt
+            # restart the flask app
+            sudo systemctl restart marketplace
+            # log the status of the flask app
+            sudo systemctl status marketplace --no-pager
