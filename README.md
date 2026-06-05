@@ -1,6 +1,10 @@
-# 2025-Secondhand Marketplace
-
-A mobile-first, gamified secondhand marketplace platform designed to maximise user engagement, trust, and trading efficiency.
+# 2025-Secondhand Marketplace2
+[![Static Badge](https://img.shields.io/badge/React-61DBFB?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev/)
+[![Static Badge](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Static Badge](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Amazon RDS](https://img.shields.io/badge/AWS%20RDS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/rds/)
+[![Amazon S3](https://img.shields.io/badge/AWS%20S3-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/s3/)
+[![Amazon EC2](https://img.shields.io/badge/AWS%20EC2-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/ec2/)
 
 ---
 
@@ -10,9 +14,8 @@ Secondhand Marketplace is an online platform for selling, browsing, and purchasi
 
 ### Core Focus Areas:
 * **Reputation-Based User System:** Builds trust through transparent seller ratings, reviews, and community history.
-* **Smart Recommendation Engine:** Delivers personalised item feeds based on granular user interactions.
-* **Interactive Browsing Experience:** Enhances discovery using playful exploration paradigms like swipe mechanics.
-* **Streamlined Buyer–Seller Flows:** Optimises negotiation, low-latency communication, and secure transaction success rates.
+* **Tinder-Style Product Discovery:** Enables intuitive swipe-based browsing where users can quickly like, skip, or save items, making product exploration fast and engaging.
+* **Streamlined Transaction Flow:** Provides an intuitive end-to-end purchase experience, with easy chat access, an organised Likes list, and a fully manageable My Listings page for sellers.
 
 ---
 
@@ -36,44 +39,75 @@ Secondhand Marketplace is an online platform for selling, browsing, and purchasi
 
 ---
 
-## Client & Stakeholders
-
-### Client
-* **Marius Jurt:** A secondhand marketplace enthusiast focused on engagement, user-friendliness, and gamification. This project was developed in close collaboration with him to deliver an interactive, next-generation online marketplace experience.
-
-### Key Stakeholders
+## Key Stakeholders
 * **Buyers:** Users looking to purchase items. They can search for specific items fitting their requirements or explore AI-recommended feeds. Since reliability is paramount, buyers can view detailed reviews of individual sellers and a directory of the platform's top-rated traders. They also utilise a user-friendly chat system for queries.
 * **Sellers:** Users who list items for sale. They want to list and manage inventories with ease and be formally recognised for delivering accurate items on time through a transparent review and rating infrastructure.
 * **Viewers:** Users who browse to explore availability or curate their aesthetic tastes (e.g., fashion, style trends) without immediate purchase intent. They require a fun, highly interactive system to discover items and effortlessly track sellers they might like.
 * **Postal Service Providers:** External services responsible for logistics and fulfilment. They require accurate shipping data and streamlined application integration. Reliable delivery speeds directly protect the reputation of sellers and the marketplace's integrity.
-* **Payment Service Providers:** External partners facilitating secure split-payment and refund architectures. High-volume security protocols are essential to solidify overall platform consumer trust.
-
----
-
-## User Stories
-
-* **As a Buyer,** I want my experience of online second-hand shopping to feel playful and exciting, unlike other static online stores. I want an engaging, interactive marketplace to easily discover target items, check seller ratings, and receive personalised recommendations tailored to my filters.
-* **As a Seller,** I want a user-friendly interface to quickly list items I want to sell so that they seamlessly reach the right target audience. This friction-free loop encourages me to contribute to the circular economy instead of discarding usable goods.
-* **As a Highly Rated Seller,** I want a robust reputation system that allows buyers to trust me explicitly, enabling me to build a distinct personal brand/identity and take an impactful, leading role within the trading community.
+* **Payment Service Providers:** External partners facilitating secure split-payment and refund architectures. High-volume security protocols are essential to build consumer trust in the platform.
 
 ---
 
 ## User Flow
 
-### Buyer Flow
-1. **Authentication:** Open the app and sign up or log in securely.
-2. **Discovery:** Scroll through the dashboard feed or swipe on the dedicated interactive exploration page with automatic item matching if the buyer also has active listings.
-3. **Engagement:** Like specific items to save them to a personal collection.
-4. **Review:** Navigate to the Likes page to review bookmarked items.
-5. **Action:** Fill in required parameters on the transaction page and submit an official purchase offer.
-6. **Fulfilment:** Await seller confirmation/acceptance and item dispatching.
-7. **Feedback:** Submit a rating and review for the seller to update community reputation metrics.
+The overall flow of the second-hand marketplace app is as follows.
 
-### Seller Flow
-1. **Authentication:** Open the app and sign up or log in securely.
-2. **Creation:** Create image-backed product listings using the Add Items page.
-3. **Management:** Dynamically edit details, update stock, or remove listings inside the MyListings dashboard.
-4. **Negotiation:** Review incoming transaction requests to officially accept or decline consumer offers.
+## Marketplace
+
+The Marketplace home screen displays both products listed by other users and products uploaded by the current user. When a user selects a product card, they are redirected to the Product Detail page. From there, users can save items to the Likes page using the heart button or proceed directly to purchase through the Buy Now button.
+
+_If a product has already been sold, reserved, or is currently involved in a match offer process, a corresponding status badge (e.g., Sold, Reserved) is displayed on the product card, and purchasing is restricted._
+
+### Transactions
+
+When the Buy Now button is selected, the user is redirected to the Transaction page. Two transaction methods are available: Delivery/Meet-up
+
+_If Delivery is selected, users can complete the payment using a card payment system. If Meet-up is selected, the payment method is automatically fixed to Pay in Person._
+
+After a successful delivery payment, the product status changes to Sold. If a meet-up transaction is confirmed, the product status changes to Reserved.
+
+Buyers can also initiate a chat with the seller directly from the Transaction page to ask questions, discuss product details, or arrange a meeting location and time. Once the transaction is completed, buyers can rate the seller, and the rating is reflected in the seller’s profile.
+
+### Make Offer
+
+Users can also purchase products through the Make Offer feature. After entering a desired offer price and pressing the Send Offer button, the user is redirected to a dedicated offer chat page containing the offer details.
+
+If the seller accepts the offer, the proposed amount is automatically updated as the final payment amount for the transaction.
+
+### Explore
+
+The Explore page provides a Tinder-style swipe interface that allows users to interact with products intuitively. Depending on the swipe direction, users can like/skip a product or purchase a product immediately.
+
+_The same actions can also be performed through buttons located at the bottom of the screen._
+
+### Match Offer System
+
+The Explore page also includes a product matching feature that enables users to suggest 1:1 item exchanges. By pressing the Match icon on a product card, users can select one of their own listed items and send a match offer to another user.
+
+After sending the offer, users are redirected to a dedicated match-offer chat room where both parties can continue the discussion.
+
+_This Match Offer feature is also available from the Marketplace page._
+
+### Sell
+
+After registering product details on the Sell page, users can publish their item as an active listing for sale. Once the listing is submitted, it becomes visible in the Marketplace and can be discovered by other users.
+
+### Likes
+
+Products liked by users from either the Marketplace or Explore pages are automatically stored in the Likes page. Users can freely manage and edit their saved items list.
+
+### Profile
+
+The Profile page becomes accessible after logging in or signing up.
+
+After authentication, users can access:
+
+- My Chats — view all active and previous conversations
+- My Listings — manage uploaded products
+
+Within My Listings, users can edit product details such as description(product title, price, etc.), listing status/cancellation
+
+_Some editing functions are also directly accessible from the Marketplace page for improved convenience._
 
 ---
 
