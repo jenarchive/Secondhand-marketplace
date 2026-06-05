@@ -1,138 +1,114 @@
 # 2025-Secondhand Marketplace
-[![Static Badge](https://img.shields.io/badge/React-61DBFB?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev/)
-[![Static Badge](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Static Badge](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Amazon RDS](https://img.shields.io/badge/AWS%20RDS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/rds/)
-[![Amazon S3](https://img.shields.io/badge/AWS%20S3-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/s3/)
-[![Amazon EC2](https://img.shields.io/badge/AWS%20EC2-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/ec2/)
 
-## Contents
-* [Project overview](#project-overview)
-* [Technology Stack](#technology-stack)
-* [Client Information](#client-information)
-* [Stakeholders](#stakeholders)
-* [User Stories](#user-stories)
-* [User Flow](#user-flow)
-* [Project Structure](#project-structure)
-* [Dev Instructions](#dev-instructions)
-* [Project Management](#project-management)
-* [Team Members](#team-members)
+A mobile-first, gamified secondhand marketplace platform designed to maximise user engagement, trust, and trading efficiency.
 
-## Project overview
+---
 
-Secondhand Marketplace is an online platform for selling, browsing and purchasing secondhand items that emphasises user engagement and efficiency, through polished features and an interactive user interface. This includes an advanced user reputation system and a smart recommendation engine under a wrapper of a gamification system.
+## Project Overview
+
+Secondhand Marketplace is an online platform for selling, browsing, and purchasing secondhand items. It bridges the gap between conventional e-commerce and interactive social experiences by focusing on user engagement, usability, and gamification.
+
+### Core Focus Areas:
+* **Reputation-Based User System:** Builds trust through transparent seller ratings, reviews, and community history.
+* **Smart Recommendation Engine:** Delivers personalised item feeds based on granular user interactions.
+* **Interactive Browsing Experience:** Enhances discovery using playful exploration paradigms like swipe mechanics.
+* **Streamlined Buyer–Seller Flows:** Optimises negotiation, low-latency communication, and secure transaction success rates.
+
+---
 
 ## Technology Stack
 
+### Frontend & Backend
+* **Frontend:** React Native, Expo Framework
+* **Backend:** Python (Flask API Server)
+* **Database:** PostgreSQL (Data Layer)
+* **Development Tools:** Git, GitHub, GitHub Actions (CI/CD)
 
-### Backend:
-* Python
-* PostgreSQL
-### Frontend:
-* React native
-*  expo (react-native framework) 
-### Development tools:
-* Git
-* Github 
-* Github Actions
-
+### System Architecture
 <p align="left">
-  <img width="918" alt="architecture image" src="docs/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="architecture image" src="docs/others/architecture diagram.jpg" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.3);">
 </p>
 
-### Cloud Architecture 
+### Cloud Architecture
 <p align="left">
-<img width="918" alt="architecture image" src="docs/others/image-2.png" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.5)";>
+  <img width="918" alt="cloud architecture image" src="docs/others/image-2.png" style="box-shadow: 5px 5px 10px rgba(0,0,0,0.3);">
 </p>
 
-## Client Information 
-### Client: 
-Marius Jurt has a strong passion for an online second-hand marketplace platform that masters engagement, user-friendliness, and gamification. He loves working with students and has tasked us with building this online experience.
+---
 
-## Stakeholders
-* Buyers
-     - Buyers are the users looking to purchase items. They will be able to find specific items they are looking for that fit their requirements, or discover items recommended by the platform. Many buyers will care about the reliability of sellers, so they will be able to view reviews of individual sellers and the platform's top rated sellers. They will also want a user-friendly system for contacting the seller for queries related to an item or purchase.
-* Viewers
-     - Viewers are the users who browse the platform to see what items are available or to help curate their taste in aesthetic items, such as clothes, without the original intent of buying anything. They will want a fun and interactive system for finding items that match the style they're looking for, and to easily find sellers they might be interested in.
-* Sellers: 
-     - Sellers are the users of the list items for sale. They want to list and manage items with ease and to be recognised for delivering what they promised and on time, with a review and rating system used by potential buyers.
-* Postal Service Providers:
-     - Postal service providers are the external service responsible for delivering items from sellers to buyers. They require accurate address information and effective integration into the app to operate efficiently. It is critical that they have reliable delivery speed and conditions, as this will impact the reputation of sellers and the trustworthiness of the marketplace.
-* Payment Service Providers:
-     - Payment service providers are the external partners that facilitate secure financial transactions between buyers and sellers. They require reliable security protocols to handle payments and manage refunds, which is essential for users' trust in purchasing from the marketplace.
+## Client & Stakeholders
+
+### Client
+* **Marius Jurt:** A secondhand marketplace enthusiast focused on engagement, user-friendliness, and gamification. This project was developed in close collaboration with him to deliver an interactive, next-generation online marketplace experience.
+
+### Key Stakeholders
+* **Buyers:** Users looking to purchase items. They can search for specific items fitting their requirements or explore AI-recommended feeds. Since reliability is paramount, buyers can view detailed reviews of individual sellers and a directory of the platform's top-rated traders. They also utilise a user-friendly chat system for queries.
+* **Sellers:** Users who list items for sale. They want to list and manage inventories with ease and be formally recognised for delivering accurate items on time through a transparent review and rating infrastructure.
+* **Viewers:** Users who browse to explore availability or curate their aesthetic tastes (e.g., fashion, style trends) without immediate purchase intent. They require a fun, highly interactive system to discover items and effortlessly track sellers they might like.
+* **Postal Service Providers:** External services responsible for logistics and fulfilment. They require accurate shipping data and streamlined application integration. Reliable delivery speeds directly protect the reputation of sellers and the marketplace's integrity.
+* **Payment Service Providers:** External partners facilitating secure split-payment and refund architectures. High-volume security protocols are essential to solidify overall platform consumer trust.
+
+---
 
 ## User Stories
-- As a **Buyer**, I want my experience of online second-hand shopping to feel playful and exciting, unlike other online stores. I want an engaging and interactive marketplace to easily find the items I'm looking for, and to explore reviews and ratings of sellers. I would also like to browse or be recommended items that would interest me, with the option to filter by specific requirements.
-- As a **Seller**, I want a user-friendly marketplace to conveniently list the items I want to sell, and for them to reach the right audience of potential buyers. This will encourage me to contribute to the community, instead of throwing away items I don't want anymore.
-- As a **Highly rated Seller**, I want a reliable system allowing buyers to trust me, and enabling me to have an impactful and leading role in the community, potentially building a brand/identity.
+
+* **As a Buyer,** I want my experience of online second-hand shopping to feel playful and exciting, unlike other static online stores. I want an engaging, interactive marketplace to easily discover target items, check seller ratings, and receive personalised recommendations tailored to my filters.
+* **As a Seller,** I want a user-friendly interface to quickly list items I want to sell so that they seamlessly reach the right target audience. This friction-free loop encourages me to contribute to the circular economy instead of discarding usable goods.
+* **As a Highly Rated Seller,** I want a robust reputation system that allows buyers to trust me explicitly, enabling me to build a distinct personal brand/identity and take an impactful, leading role within the trading community.
+
+---
 
 ## User Flow
-### Basic Flow
-#### Buyer: 
-1. Open the app 
-2. Sign up / Log in
-3. Search/Browse to like / buy: 
-     - Scroll through the marketplace
-     - Swipe on the explore page (able to match if the buyer has a listing)
-4. Head to the likes page to check items that they liked
-5. Choose one that they like and buy
-6. Fill in the details for the transaction page and send the offer 
-7. Wait for the seller to accept the offer 
-8. Rate the seller after the offer is accepted
 
-#### Seller: 
-1. Open the app 
-2. Sign up / Log in
-3. Add listing using the add items page
-4. Edit details or remove listings in the MyListings page 
-5. Accept or decline the offer sent by buyers
+### Buyer Flow
+1. **Authentication:** Open the app and sign up or log in securely.
+2. **Discovery:** Scroll through the dashboard feed or swipe on the dedicated interactive exploration page with automatic item matching if the buyer also has active listings.
+3. **Engagement:** Like specific items to save them to a personal collection.
+4. **Review:** Navigate to the Likes page to review bookmarked items.
+5. **Action:** Fill in required parameters on the transaction page and submit an official purchase offer.
+6. **Fulfilment:** Await seller confirmation/acceptance and item dispatching.
+7. **Feedback:** Submit a rating and review for the seller to update community reputation metrics.
 
+### Seller Flow
+1. **Authentication:** Open the app and sign up or log in securely.
+2. **Creation:** Create image-backed product listings using the Add Items page.
+3. **Management:** Dynamically edit details, update stock, or remove listings inside the MyListings dashboard.
+4. **Negotiation:** Review incoming transaction requests to officially accept or decline consumer offers.
+
+---
 
 ## Project Structure
+
 ```text
-├── .github                            # Templates & workflows
-├── README.md                          # Main project overview
-├── ai-tools                           # Overview of AI tools
-├── backend                            # Flask API: Handles business logic and data processing
-│   ├── README.md                      # Backend overview and structure
-│   ├── app                            # Core Flask app (Routes: Auth, Home, Item listings, Upload Items)
-│   ├── tests                          
-│   ├── requirements.txt               # Backend dependencies (Flask, SQLAlchemy, etc.)
-│   ├── run.py                         # Server entry point: Starts the Flask development server
-│   └── .pylintrc                      # Adjustment for pylint in CI 
-├── database                           # Data Layer: PostgreSQL configuration and scripts
-│   ├── README.md                      # Database overview and structure 
-│   ├── config.py                      
-│   ├── main.py                        # Management script for DB init and migrations
-│   └── *.sql                          # SQL scripts
-├── frontend                           # Frontend React Native (Expo) application
-│   ├── README.md                      # Frontend overview and structure 
-│   ├── app                            # File-based Routing (Crucial for UI)
-│   │   ├── (tabs)                     # Main pages for frontend
-│   │   ├── auth                       # Authentication flow
-│   │   ├── items                      # Item details for sub-pages 
-│   │   └── _layout.tsx                # Root layout and theme providers
-│   ├── components                     # Reusable UI components (Headers, Buttons)
-│   ├── constants                      # Design tokens (Colours, Spacing)
-│   ├── contexts                       
-│   ├── hooks                          # Custom React hooks (Theme, Colour schemes)
-│   ├── store                          
-│   ├── test-data.json                 # Mock data for frontend testing
-│   ├── __tests__                      
-│   ├── package.json                   # Frontend dependencies and scripts
-│   └── *                              # Set up files for linting/testing
-├── doc                                # Project documentation and diagrams
-    ├── previous project               # Files related to previous project
-    ├── others                         # Diagrams and files for explaining / planning 
-    └── meetings and feedback         # Meeting notes and feedback for review
+├── .github/                # CI/CD workflows and templates
+├── ai-tools/               # AI/ML-driven tooling and helper scripts
+├── backend/                # Flask API Server
+│   ├── app/                # Core application logic & routes (Auth, Home, Listings)
+│   ├── tests/              # Backend test suites
+│   ├── requirements.txt    # Python dependencies
+│   └── run.py              # Server entry point
+├── database/               # PostgreSQL setup & migration scripts
+│   ├── config.py           # Connection management
+│   ├── main.py             # DB initialisation and migrations execution
+│   └── *.sql               # Raw SQL schemas and seeding queries
+├── frontend/               # React Native + Expo mobile app
+│   ├── app/                # Expo Router (File-based routing)
+│   │   ├── (tabs)/         # Main application navigation tabs
+│   │   ├── auth/           # Authentication user flows
+│   │   ├── items/          # Product details sub-pages
+│   │   └── _layout.tsx     # Root layout and theme context providers
+│   ├── components/         # Reusable UI components (Headers, Buttons)
+│   ├── constants/          # Global design tokens (Colours, Spacing)
+│   ├── hooks/              # Custom React hooks (Theme management)
+│   ├── store/              # Global state management modules
+│   └── package.json        # Node dependencies and npm run scripts
+└── doc/                    # Project documentation & diagrams
+    ├── meetings and feedback/ # Client meeting logs and supervisor notes
+    └── others/             # Architecture diagrams, mockups, and roadmaps
 ```
-
-## User Instructions 
-Note: Ideally, this would be a mobile app that can work on both iOS and Android, and can be downloaded from app stores. However, we can't deploy it as a license is needed for deploying on iOS and Android. Users can now only experience this app by using dev instructions. 
-
 ## Dev Instructions
-### Frontend
-
+### Frontend Setup
+Ensure you have Node.js installed on your machine.
 1. Install dependencies
 
    ```bash
@@ -163,10 +139,8 @@ Alternatively, if you have a Mac, you can run the frontend in an iOS simulator (
 
 If when starting the frontend, underneath the QR code it says ```Using development build```, press s on your keyboard to switch to Expo Go. It should now say ``` Using Expo Go``` which is what we want. 
 
-### Backend
-#### Prerequisites
-
-Ensure you have Python 3.10+ installed.
+### Backend Setup
+Ensure you have Python 3.10+ installed on your machine.
 
 #### Setup Environment and Install Dependencies
 
@@ -201,16 +175,19 @@ flask --app app run
 ```
 
 ## Project Management
-- [Kanban Board](https://github.com/orgs/spe-uob/projects/348/views/1)
-- [Gantt Chart](https://github.com/orgs/spe-uob/projects/348/views/4)
-- [Project Roadmap](doc/others/Roadmap.md)
+
+We actively track milestones, epics, and tasks via GitHub Projects.
+* **Kanban Board:** [Interactive Task Tracker](https://github.com/orgs/spe-uob/projects/348/views/1)
+* **Gantt Chart:** [Project Timeline & Dependencies](https://github.com/orgs/spe-uob/projects/348/views/4)
+* **Project Roadmap:** Detailed breakdown located at [`doc/others/Roadmap.md`](https://github.com/spe-uob/2025-SecondhandMarketplace2/blob/dev/docs/others/Roadmap.md)
+
+---
 
 ## Team Members
 
-Name | Email 
---- | ---
-Alex Hetherington | ss24495@bristol.ac.uk
-Freddie De Bruyn | ii24783@bristol.ac.uk
-Euan Chan | AH24354@bristol.ac.uk
-Jen Lee | dm24602@bristol.ac.uk
-
+| Name | Email |
+| :--- | :--- |
+| **Alex Hetherington** | ss24495@bristol.ac.uk |
+| **Freddie De Bruyn** | ii24783@bristol.ac.uk |
+| **Euan Chan** | AH24354@bristol.ac.uk |
+| **Jen Lee** | dm24602@bristol.ac.uk |
